@@ -8,6 +8,7 @@ import { api } from '~/api';
 import WorkspaceNavigation from './WorkspaceNavigation.vue';
 import QuickNavigation from '~/components/QuickNavigation.vue';
 import { navigation, navigationPath } from './navigation';
+import NavigationFeedback from '~/components/NavigationFeedback.vue';
 const route = useRoute();
 const router = useRouter();
 const session = useSessionStore();
@@ -149,9 +150,10 @@ function focusContent() {
         </div>
       </header>
       <main id="main-content" class="page-content" tabindex="-1">
-        <RouterView v-slot="{ Component }"
-          ><Transition name="page" mode="out-in"><component :is="Component" /></Transition
-        ></RouterView>
+        <NavigationFeedback />
+        <RouterView v-slot="{ Component }">
+          <component :is="Component" :key="route.path" />
+        </RouterView>
       </main>
       <footer class="app-footer">
         <span>CYT Common <span class="footer-dot">·</span> 统一 API 管理平台</span

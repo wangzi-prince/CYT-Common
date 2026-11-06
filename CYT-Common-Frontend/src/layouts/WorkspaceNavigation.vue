@@ -4,9 +4,23 @@ import { SwitchButton } from '@element-plus/icons-vue';
 import { navigation, navigationPath } from './navigation';
 import { useSessionStore } from '~/stores/session';
 defineProps<{ collapsed?: boolean }>();
-defineEmits<{ navigate: []; logout: [] }>();
+const emit = defineEmits<{ navigate: []; logout: [] }>();
 const route = useRoute();
 const session = useSessionStore();
+async function onSelect(
+  _index: string,
+  _indexPath: string[],
+  _item: unknown,
+  result?: Promise<unknown>,
+) {
+  try {
+    const failure = await result;
+    if (!failure) emit('navigate');
+  } catch {
+    // Show the route failure and retry action; release the mobile navigation overlay.
+    emit('navigate');
+  }
+}
 </script>
 <template>
   <RouterLink
@@ -29,7 +43,7 @@ const session = useSessionStore();
       :collapse="collapsed"
       :collapse-transition="false"
       router
-      @select="$emit('navigate')"
+      @select="onSelect"
     >
       <el-menu-item-group v-for="group in navigation" :key="group.title" :title="group.title">
         <el-menu-item

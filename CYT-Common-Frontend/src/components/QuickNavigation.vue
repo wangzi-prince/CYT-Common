@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
-import { useRouter } from 'vue-router';
 import { Search, Right } from '@element-plus/icons-vue';
 import type { InputInstance } from 'element-plus';
 import { destinations } from '~/layouts/navigation';
-const router = useRouter();
+import { navigationFeedback } from '~/router';
 const open = ref(false);
 const query = ref('');
 const active = ref(0);
@@ -27,11 +26,11 @@ function show() {
   active.value = 0;
   open.value = true;
 }
-function select(index: number) {
+async function select(index: number) {
   const item = results.value[index];
   if (!item) return;
   open.value = false;
-  void router.push(item.path);
+  await navigationFeedback.navigate(item.path);
 }
 async function move(direction: number) {
   if (!results.value.length) return;

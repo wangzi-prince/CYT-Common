@@ -906,14 +906,6 @@ kbd {
 .mobile-menu {
   display: none !important;
 }
-.page-enter-active,
-.page-leave-active {
-  transition: opacity 0.12s ease;
-}
-.page-enter-from,
-.page-leave-to {
-  opacity: 0;
-}
 /* Login uses the same component theme as the workspace. */
 .login-page {
   min-height: 100vh;

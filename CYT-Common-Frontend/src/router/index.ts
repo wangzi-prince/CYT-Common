@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import { TOKEN_KEY } from '~/http';
+import { trackNavigation } from './navigation-feedback';
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
@@ -114,8 +115,11 @@ const router = createRouter({
   ],
 });
 router.beforeEach((to) => {
-  document.title = `${String(to.meta.title || '管理平台')} · CYT Common`;
   if (to.path !== '/login' && !localStorage.getItem(TOKEN_KEY))
     return { path: '/login', query: { redirect: to.fullPath } };
+});
+export const navigationFeedback = trackNavigation(router);
+router.afterEach((to, _from, failure) => {
+  if (!failure) document.title = `${String(to.meta.title || '管理平台')} · CYT Common`;
 });
 export default router;
