@@ -1,0 +1,74 @@
+# CYT-Common（Java 版）测试服编排，供 1Panel「容器 → 编排」/ docker compose 使用。
+#
+# 🔴 与旧的 cyt-common-api 完全隔离：镜像名、容器名、编排目录、端口、数据库卷全是新的。
+#    旧服务在 /opt/1panel/docker/compose/common-api，8085 端口，跑的是 Python 网关，不要动。
+#
+# 两个容器：db（专用 MySQL 8）+ app（Spring Boot 单 JAR，前端静态资源已打进 JAR）。
+# 浏览器只访问 app 的 8088，同源提供 /admin/api、/integrations 与页面。
+#
+# 首次启动：Flyway 自动建表 + seed，约 1-2 分钟后 /health 才可用。
+# 健康检查：curl http://192.168.1.182:8088/health   （会真的查一次 MySQL SELECT 1）
+
+services:
+  db:
+    image: ${MYSQL_IMAGE:-mysql:8.0}
+    container_name: cyt-common-java-db
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-cyt_common}
+      MYSQL_USER: ${MYSQL_USER:-cyt_gateway}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?请在 .env 里配置 MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?请在 .env 里配置 MYSQL_ROOT_PASSWORD}
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_bin
+      - --default-time-zone=+08:00
+    volumes:
+      - common_java_mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 45s
+    restart: unless-stopped
+
+  app:
+    image: ${COMMON_JAVA_IMAGE:-192.168.1.182:5000/cyt-common-java:latest}
+    container_name: cyt-common-java
+    pull_policy: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      TZ: Asia/Shanghai
+      HOST: 0.0.0.0
+      PORT: "8189"
+      ENV: ${APP_ENV:-test}
+      # ── 数据库（走 compose 内网服务名 db，不经过宿主机）──
+      MYSQL_URL: "jdbc:mysql://db:3306/${MYSQL_DATABASE:-cyt_common}?connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true&useUnicode=true&characterEncoding=UTF-8"
+      MYSQL_USERNAME: ${MYSQL_USER:-cyt_gateway}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?请在 .env 里配置 MYSQL_PASSWORD}
+      # ── 测试服行为：模拟上游、允许开发身份免密登录、自动 seed 演示数据 ──
+      MOCK_ALL: ${MOCK_ALL:-true}
+      GATEWAY_DEV_MODE: "false"
+      JAVA_SEED_ENABLED: "true"
+      # ── 管理后台登录 / 凭据加密 ──
+      ADMIN_AUTH_MODES: admin_jwt
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?请在 .env 里配置 ADMIN_PASSWORD}
+      ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET:?请在 .env 里配置 ADMIN_JWT_SECRET}
+      CREDENTIAL_MASTER_KEY: ${CREDENTIAL_MASTER_KEY:?请在 .env 里配置 CREDENTIAL_MASTER_KEY}
+    ports:
+      - "${APP_PORT:-8088}:8189"
+    healthcheck:
+      # JRE 镜像里没有 curl，用 bash 的 /dev/tcp 探端口；真正的业务健康由 redeploy.sh 从宿主机查 /health
+      test: ["CMD-SHELL", "timeout 3 bash -c '</dev/tcp/127.0.0.1/8189' || exit 1"]
+      interval: 15s
+      timeout: 5s
+      start_period: 90s
+      retries: 8
+    restart: unless-stopped
+
+volumes:
+  common_java_mysql:

@@ -1,0 +1,37 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<project>
+  <description>刷新 cyt-common-deploy 的 BRANCH 下拉列表 = GitHub 当前分支。新建分支后点一下即可，零插件、不重启 Jenkins。</description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>set -Eeuo pipefail
+TOKEN=$(cat /opt/jenkins/github_token_common)
+REPO="https://wangzi-prince:${TOKEN}@github.com/wangzi-prince/CYT-Common.git"
+PROXY=http://172.18.0.6:7890
+WORK=/tmp/cyt-common-refresh-$$
+trap 'rm -rf "$WORK"' EXIT
+
+if ! env GIT_TERMINAL_PROMPT=0 GIT_HTTP_LOW_SPEED_LIMIT=1000 GIT_HTTP_LOW_SPEED_TIME=20 \
+     git clone --depth 1 --branch main "$REPO" "$WORK"; then
+  echo "==&gt; 直连 GitHub 失败，改走代理 $PROXY 重试"
+  rm -rf "$WORK"
+  env GIT_TERMINAL_PROMPT=0 HTTP_PROXY="$PROXY" HTTPS_PROXY="$PROXY" \
+    git clone --depth 1 --branch main "$REPO" "$WORK"
+fi
+cd "$WORK"
+bash deploy/test-server/refresh-branches.sh main
+</command>
+      <configuredLocalRules/>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers/>
+  <buildWrappers/>
+</project>
