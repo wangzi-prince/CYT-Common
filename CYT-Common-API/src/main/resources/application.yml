@@ -1,0 +1,39 @@
+server:
+  address: ${HOST:127.0.0.1}
+  port: ${PORT:8189}
+  error:
+    include-message: never
+spring:
+  application:
+    name: cyt-common-api-java
+  config:
+    import:
+      - optional:file:./application-local.properties
+      - optional:file:./CYT-Common-API/application-local.properties
+  threads:
+    virtual:
+      enabled: true
+  datasource:
+    url: ${MYSQL_URL:jdbc:mysql://127.0.0.1:3306/cyt_common_api_java?connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true&useUnicode=true&characterEncoding=UTF-8}
+    username: ${MYSQL_USERNAME:cyt_gateway}
+    password: ${MYSQL_PASSWORD:}
+    hikari:
+      maximum-pool-size: 15
+      connection-timeout: 5000
+  flyway:
+    enabled: true
+  jackson:
+    time-zone: UTC
+  web:
+    resources:
+      static-locations: classpath:/web/,classpath:/static/
+  mvc:
+    problemdetails:
+      enabled: false
+  servlet:
+    multipart:
+      max-request-size: 15MB
+      max-file-size: 12MB
+logging:
+  level:
+    group.cyt: INFO

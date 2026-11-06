@@ -1,0 +1,591 @@
+[
+  {
+    "operation": "wecom.approval_templates.list",
+    "params": {},
+    "normalized": {}
+  },
+  {
+    "operation": "wecom.approvals.track",
+    "params": {
+      "request_id": "expense-20261105-001"
+    },
+    "normalized": {
+      "request_id": "expense-20261105-001"
+    }
+  },
+  {
+    "operation": "wecom.approval_templates.get",
+    "params": {
+      "template": "demo-expense"
+    },
+    "normalized": {
+      "template": "demo-expense"
+    }
+  },
+  {
+    "operation": "wecom.approval_templates.bind",
+    "params": {
+      "template_id": "demo-expense",
+      "alias": "expense",
+      "field_aliases": {
+        "reason": "Text-01",
+        "amount": "Money-02"
+      }
+    },
+    "normalized": {
+      "template_id": "demo-expense",
+      "alias": "expense",
+      "field_aliases": {
+        "reason": "Text-01",
+        "amount": "Money-02"
+      }
+    }
+  },
+  {
+    "operation": "wecom.approval_templates.unbind",
+    "params": {
+      "alias": "expense"
+    },
+    "normalized": {
+      "alias": "expense"
+    }
+  },
+  {
+    "operation": "wecom.approval_templates.create",
+    "params": {
+      "name": "费用申请（测试）",
+      "fields": [
+        {
+          "key": "reason",
+          "label": "事由",
+          "control": "Text",
+          "required": true
+        },
+        {
+          "key": "amount",
+          "label": "金额",
+          "control": "Money",
+          "required": true
+        }
+      ],
+      "request_id": "template-create-example"
+    },
+    "normalized": {
+      "name": "费用申请（测试）",
+      "fields": [
+        {
+          "key": "reason",
+          "label": "事由",
+          "control": "Text",
+          "required": true
+        },
+        {
+          "key": "amount",
+          "label": "金额",
+          "control": "Money",
+          "required": true
+        }
+      ],
+      "request_id": "template-create-example"
+    }
+  },
+  {
+    "operation": "wecom.approval_templates.update",
+    "params": {
+      "template": "demo-expense",
+      "name": "费用申请（测试）",
+      "fields": [
+        {
+          "key": "reason",
+          "label": "事由",
+          "control": "Text",
+          "required": true
+        },
+        {
+          "key": "amount",
+          "label": "金额",
+          "control": "Money",
+          "required": true
+        }
+      ],
+      "request_id": "template-update-example"
+    },
+    "normalized": {
+      "template": "demo-expense",
+      "name": "费用申请（测试）",
+      "fields": [
+        {
+          "key": "reason",
+          "label": "事由",
+          "control": "Text",
+          "required": true
+        },
+        {
+          "key": "amount",
+          "label": "金额",
+          "control": "Money",
+          "required": true
+        }
+      ],
+      "request_id": "template-update-example"
+    }
+  },
+  {
+    "operation": "wecom.approval_templates.clone",
+    "params": {
+      "template": "demo-expense",
+      "name": "新的费用申请（测试）",
+      "request_id": "template-clone-example"
+    },
+    "normalized": {
+      "template": "demo-expense",
+      "name": "新的费用申请（测试）",
+      "request_id": "template-clone-example"
+    }
+  },
+  {
+    "operation": "wecom.approvals.prepare",
+    "params": {
+      "template": "demo-expense",
+      "applicant": "fixture-user",
+      "fields": {
+        "事由": "购买办公用品",
+        "金额": "99.50",
+        "费用类型": "办公"
+      }
+    },
+    "normalized": {
+      "template": "demo-expense",
+      "applicant": "fixture-user",
+      "fields": {
+        "事由": "购买办公用品",
+        "金额": "99.50",
+        "费用类型": "办公"
+      }
+    }
+  },
+  {
+    "operation": "wecom.approvals.submit",
+    "params": {
+      "template": "demo-expense",
+      "applicant": "fixture-user",
+      "fields": {
+        "事由": "购买办公用品",
+        "金额": "99.50",
+        "费用类型": "办公"
+      },
+      "request_id": "expense-order-20261105-001"
+    },
+    "normalized": {
+      "template": "demo-expense",
+      "applicant": "fixture-user",
+      "fields": {
+        "事由": "购买办公用品",
+        "金额": "99.50",
+        "费用类型": "办公"
+      },
+      "request_id": "expense-order-20261105-001"
+    }
+  },
+  {
+    "operation": "wecom.approvals.get",
+    "params": {
+      "approval_no": "MOCK-1"
+    },
+    "normalized": {
+      "approval_no": "MOCK-1"
+    }
+  },
+  {
+    "operation": "wecom.approvals.get_many",
+    "params": {
+      "approval_nos": [
+        "MOCK-1"
+      ]
+    },
+    "normalized": {
+      "approval_nos": [
+        "MOCK-1"
+      ]
+    }
+  },
+  {
+    "operation": "wecom.approvals.list",
+    "params": {
+      "include_details": false
+    },
+    "normalized": {
+      "include_details": false,
+      "page_size": 20
+    }
+  },
+  {
+    "operation": "wecom.approvals.collect",
+    "params": {
+      "include_details": false,
+      "max_items": 100
+    },
+    "normalized": {
+      "include_details": false,
+      "max_items": 100,
+      "page_size": 20,
+      "max_pages": 10
+    }
+  },
+  {
+    "operation": "wecom.approvals.engine_get",
+    "params": {
+      "third_no": "fixture-third-001"
+    },
+    "normalized": {
+      "third_no": "fixture-third-001"
+    }
+  },
+  {
+    "operation": "wecom.approvals.engine_launch",
+    "params": {
+      "template_id": "fixture-engine-template",
+      "third_no": "fixture-third-001",
+      "fields": {
+        "事由": "示例"
+      }
+    },
+    "normalized": {
+      "template_id": "fixture-engine-template",
+      "third_no": "fixture-third-001",
+      "fields": {
+        "事由": "示例"
+      },
+      "mode": "create"
+    }
+  },
+  {
+    "operation": "wecom.approvals.legacy_get",
+    "params": {
+      "start_at": "2026-11-01",
+      "end_at": "2026-11-05"
+    },
+    "normalized": {
+      "start_at": "2026-11-01",
+      "end_at": "2026-11-05",
+      "next_spnum": 0
+    }
+  },
+  {
+    "operation": "wecom.approval_files.upload",
+    "params": {
+      "filename": "fixture.txt",
+      "content_base64": "Zml4dHVyZQ=="
+    },
+    "normalized": {
+      "filename": "fixture.txt",
+      "content_base64": "Zml4dHVyZQ=="
+    }
+  },
+  {
+    "operation": "wecom.approval_files.download",
+    "params": {
+      "file_id": "mock-file-fixture"
+    },
+    "normalized": {
+      "file_id": "mock-file-fixture"
+    }
+  },
+  {
+    "operation": "wecom.approval_events.list",
+    "params": {},
+    "normalized": {
+      "after_id": 0,
+      "limit": 50
+    }
+  },
+  {
+    "operation": "wecom.approval_events.retry",
+    "params": {
+      "event_id": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    "normalized": {
+      "event_id": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  },
+  {
+    "operation": "wecom.vacation.config",
+    "params": {},
+    "normalized": {}
+  },
+  {
+    "operation": "wecom.vacation.get",
+    "params": {
+      "userid": "fixture-user"
+    },
+    "normalized": {
+      "userid": "fixture-user"
+    }
+  },
+  {
+    "operation": "wecom.vacation.set",
+    "params": {
+      "userid": "fixture-user",
+      "vacation_id": 1,
+      "remaining": 8,
+      "unit": "hours",
+      "confirm": true,
+      "request_id": "vacation-set-fixture"
+    },
+    "normalized": {
+      "userid": "fixture-user",
+      "vacation_id": 1,
+      "remaining": 8,
+      "unit": "hours",
+      "confirm": true,
+      "request_id": "vacation-set-fixture"
+    }
+  },
+  {
+    "operation": "gmail.messages.search",
+    "params": {},
+    "normalized": {
+      "account": "",
+      "query": "",
+      "label_ids": [],
+      "include_spam_trash": false,
+      "page_size": 50,
+      "max_items": 100,
+      "max_pages": 10,
+      "unread": false,
+      "has_attachment": false,
+      "include_details": true,
+      "include_body": false
+    }
+  },
+  {
+    "operation": "gdrive.files.search",
+    "params": {},
+    "normalized": {
+      "query": "trashed = false",
+      "order_by": null,
+      "spaces": "drive",
+      "corpora": "user",
+      "drive_id": null,
+      "include_items_from_all_drives": false,
+      "supports_all_drives": false,
+      "include_permissions_for_view": null,
+      "include_labels": null,
+      "fields": "nextPageToken,incompleteSearch,files(id,name,mimeType,size,modifiedTime,webViewLink)",
+      "page_size": 50,
+      "max_items": 100,
+      "max_pages": 10
+    }
+  },
+  {
+    "operation": "gcs.objects.collect",
+    "params": {},
+    "normalized": {
+      "prefix": "",
+      "delimiter": null,
+      "include_trailing_delimiter": false,
+      "include_folders_as_prefixes": false,
+      "match_glob": null,
+      "start_offset": null,
+      "end_offset": null,
+      "projection": "noAcl",
+      "versions": false,
+      "soft_deleted": false,
+      "bucket": null,
+      "page_size": 50,
+      "max_items": 100,
+      "max_pages": 10
+    }
+  },
+  {
+    "operation": "nas.objects.collect",
+    "params": {},
+    "normalized": {
+      "prefix": "",
+      "recursive": true,
+      "delimiter": null,
+      "bucket": null,
+      "page_size": 50,
+      "max_items": 100,
+      "max_pages": 10
+    }
+  },
+  {
+    "operation": "shopify.orders.collect",
+    "params": {},
+    "normalized": {
+      "store": null,
+      "query": null,
+      "sort_key": "UPDATED_AT",
+      "reverse": false,
+      "page_size": 50,
+      "max_items": 100,
+      "max_pages": 10
+    }
+  },
+  {
+    "operation": "shopify.products.collect",
+    "params": {},
+    "normalized": {
+      "store": null,
+      "query": null,
+      "sort_key": null,
+      "reverse": false,
+      "page_size": 50,
+      "max_items": 100,
+      "max_pages": 10
+    }
+  },
+  {
+    "operation": "mabang.orders.collect",
+    "params": {},
+    "normalized": {
+      "status": null,
+      "expressTimeStart": null,
+      "expressTimeEnd": null,
+      "createDateStart": null,
+      "createDateEnd": null,
+      "updateTimeStart": null,
+      "updateTimeEnd": null,
+      "paidtimeStart": null,
+      "paidtimeEnd": null,
+      "canSend": null,
+      "shopName": null,
+      "platformOrderIds": null,
+      "trackNumbers": null,
+      "page_size": 50,
+      "max_items": 100,
+      "max_pages": 10
+    }
+  },
+  {
+    "operation": "judgeme.reviews.collect",
+    "params": {},
+    "normalized": {
+      "account": "",
+      "page_size": 50,
+      "max_items": 100,
+      "max_pages": 10
+    }
+  },
+  {
+    "operation": "trustpilot.reviews.collect",
+    "params": {},
+    "normalized": {
+      "account": "",
+      "page_size": 50,
+      "max_items": 100,
+      "max_pages": 10
+    }
+  },
+  {
+    "operation": "stripe.disputes.collect",
+    "params": {},
+    "normalized": {
+      "account": "",
+      "page_size": 50,
+      "max_items": 100,
+      "max_pages": 10
+    }
+  },
+  {
+    "operation": "paypal.disputes.collect",
+    "params": {},
+    "normalized": {
+      "account": "",
+      "page_size": 50,
+      "max_items": 100,
+      "max_pages": 10
+    }
+  },
+  {
+    "operation": "rd.products.collect",
+    "params": {},
+    "normalized": {
+      "account": "",
+      "page_size": 50,
+      "max_items": 100,
+      "max_pages": 10
+    }
+  },
+  {
+    "operation": "docusign.templates.get",
+    "params": {
+      "template_id": "demo-template"
+    },
+    "normalized": {
+      "template_id": "demo-template"
+    }
+  },
+  {
+    "operation": "docusign.envelopes.collect",
+    "params": {},
+    "normalized": {
+      "from_date": null,
+      "to_date": null,
+      "status": null,
+      "page_size": 50,
+      "max_items": 200,
+      "max_pages": 10
+    }
+  },
+  {
+    "operation": "docusign.templates.collect",
+    "params": {},
+    "normalized": {
+      "page_size": 50,
+      "max_items": 200,
+      "max_pages": 10
+    }
+  },
+  {
+    "operation": "quickcep.messages.collect",
+    "params": {
+      "session_id": "demo-session"
+    },
+    "normalized": {
+      "session_id": "demo-session",
+      "account": "",
+      "page_size": 50,
+      "max_items": 200,
+      "max_pages": 10
+    }
+  },
+  {
+    "operation": "lingxing.orders.collect",
+    "params": {
+      "start_date": "2026-11-01",
+      "end_date": "2026-11-06"
+    },
+    "normalized": {
+      "start_date": "2026-11-01",
+      "end_date": "2026-11-06",
+      "account": "",
+      "sid": null,
+      "sid_list": [],
+      "date_type": 1,
+      "order_status": [],
+      "sort_desc_by_date_type": 0,
+      "fulfillment_channel": null,
+      "page_size": 50,
+      "max_items": 200,
+      "max_pages": 10
+    }
+  },
+  {
+    "operation": "lingxing.product.collect",
+    "params": {},
+    "normalized": {
+      "account": "",
+      "sku_list": [],
+      "sku_identifier_list": [],
+      "update_time_start": null,
+      "update_time_end": null,
+      "create_time_start": null,
+      "create_time_end": null,
+      "page_size": 50,
+      "max_items": 200,
+      "max_pages": 10
+    }
+  }
+]

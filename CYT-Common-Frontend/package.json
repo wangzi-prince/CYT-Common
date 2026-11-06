@@ -1,0 +1,37 @@
+{
+  "name": "cyt-common-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "packageManager": "pnpm@11.25.0",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "typecheck": "vue-tsc --noEmit",
+    "test:authoring": "node --experimental-strip-types --test tests/authoring.test.mjs",
+    "build": "vue-tsc --noEmit && vite build",
+    "build:backend": "npm run build && node scripts/sync-backend.mjs",
+    "preview": "vite preview --host 127.0.0.1",
+    "format": "prettier --write src vite.config.ts"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.3.2",
+    "axios": "^1.8.4",
+    "echarts": "^6.0.0",
+    "element-plus": "^2.9.7",
+    "pinia": "^3.0.3",
+    "vue": "^3.5.30",
+    "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "@vitejs/plugin-vue": "^6.0.5",
+    "prettier": "^3.5.3",
+    "typescript": "^5.9.3",
+    "unplugin-vue-components": "^28.8.0",
+    "vite": "^8.0.1",
+    "vue-tsc": "^3.0.8"
+  }
+}

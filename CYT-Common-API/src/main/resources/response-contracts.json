@@ -1,0 +1,476 @@
+{
+  "wecom.directory.users": {
+    "type": "object",
+    "description": "",
+    "properties": {
+      "resolved_paths": {
+        "type": "array",
+        "description": "已成功解析的部门路径",
+        "items": {
+          "type": "object",
+          "description": "",
+          "properties": {
+            "path": {
+              "type": "string",
+              "description": "输入部门路径"
+            },
+            "id": {
+              "type": "integer",
+              "description": "唯一匹配的部门 ID"
+            }
+          }
+        }
+      },
+      "missing_paths": {
+        "type": "array",
+        "description": "不存在或有歧义的部门路径",
+        "items": {
+          "type": "string",
+          "description": "无法唯一匹配的路径"
+        }
+      },
+      "app": {
+        "type": "string",
+        "description": "实际使用的企微应用配置标识"
+      },
+      "counts": {
+        "type": "object",
+        "description": "",
+        "properties": {
+          "departments": {
+            "type": "integer",
+            "description": "部门数量"
+          },
+          "users": {
+            "type": "integer",
+            "description": "返回成员数量"
+          },
+          "missing": {
+            "type": "integer",
+            "description": "未找到目标数量"
+          },
+          "missing_paths": {
+            "type": "integer",
+            "description": "无法匹配的部门路径数量"
+          }
+        }
+      },
+      "users": {
+        "type": "array",
+        "description": "去重后的成员资料，不包含直属领导推断",
+        "items": {
+          "type": "object",
+          "description": "",
+          "properties": {
+            "userid": {
+              "type": "string",
+              "description": "企微成员唯一标识"
+            },
+            "name": {
+              "type": "string",
+              "description": "成员显示姓名"
+            },
+            "alias": {
+              "type": "string",
+              "description": "成员别名"
+            },
+            "position": {
+              "type": "string",
+              "description": "职位名称"
+            },
+            "main_department": {
+              "type": "integer",
+              "description": "主部门 ID；来源可能为空"
+            },
+            "main_department_name": {
+              "type": "string",
+              "description": "主部门名称"
+            },
+            "mobile": {
+              "type": "string",
+              "description": "手机号；是否返回取决于上游权限"
+            },
+            "telephone": {
+              "type": "string",
+              "description": "座机号码"
+            },
+            "email": {
+              "type": "string",
+              "description": "电子邮箱"
+            },
+            "avatar": {
+              "type": "string",
+              "description": "头像地址"
+            },
+            "status": {
+              "type": "integer",
+              "description": "企微成员状态，1 为已激活"
+            },
+            "active": {
+              "type": "boolean",
+              "description": "status 是否为 1"
+            },
+            "department_ids": {
+              "type": "array",
+              "description": "所属部门 ID，主部门优先",
+              "items": {
+                "type": "integer",
+                "description": "部门 ID"
+              }
+            },
+            "department_names": {
+              "type": "array",
+              "description": "与 department_ids 对应的部门名称",
+              "items": {
+                "type": "string",
+                "description": "部门名称"
+              }
+            }
+          }
+        }
+      },
+      "missing": {
+        "type": "array",
+        "description": "指定成员中未找到的 ID",
+        "items": {
+          "type": "string",
+          "description": "未找到的成员 ID"
+        }
+      },
+      "mode": {
+        "type": "string",
+        "description": "实际读取通讯录的授权方式"
+      }
+    }
+  },
+  "wecom.directory.list": {
+    "type": "object",
+    "description": "",
+    "properties": {
+      "resolved_paths": {
+        "type": "array",
+        "description": "已成功解析的部门路径",
+        "items": {
+          "type": "object",
+          "description": "",
+          "properties": {
+            "path": {
+              "type": "string",
+              "description": "输入部门路径"
+            },
+            "id": {
+              "type": "integer",
+              "description": "唯一匹配的部门 ID"
+            }
+          }
+        }
+      },
+      "missing_paths": {
+        "type": "array",
+        "description": "不存在或有歧义的部门路径",
+        "items": {
+          "type": "string",
+          "description": "无法唯一匹配的路径"
+        }
+      },
+      "app": {
+        "type": "string",
+        "description": "实际使用的企微应用配置标识"
+      },
+      "counts": {
+        "type": "object",
+        "description": "",
+        "properties": {
+          "departments": {
+            "type": "integer",
+            "description": "部门数量"
+          },
+          "users": {
+            "type": "integer",
+            "description": "返回成员数量"
+          },
+          "missing": {
+            "type": "integer",
+            "description": "未找到目标数量"
+          },
+          "missing_paths": {
+            "type": "integer",
+            "description": "无法匹配的部门路径数量"
+          }
+        }
+      },
+      "users": {
+        "type": "array",
+        "description": "去重后的成员资料，不包含直属领导推断",
+        "items": {
+          "type": "object",
+          "description": "",
+          "properties": {
+            "userid": {
+              "type": "string",
+              "description": "企微成员唯一标识"
+            },
+            "name": {
+              "type": "string",
+              "description": "成员显示姓名"
+            },
+            "alias": {
+              "type": "string",
+              "description": "成员别名"
+            },
+            "position": {
+              "type": "string",
+              "description": "职位名称"
+            },
+            "main_department": {
+              "type": "integer",
+              "description": "主部门 ID；来源可能为空"
+            },
+            "main_department_name": {
+              "type": "string",
+              "description": "主部门名称"
+            },
+            "mobile": {
+              "type": "string",
+              "description": "手机号；是否返回取决于上游权限"
+            },
+            "telephone": {
+              "type": "string",
+              "description": "座机号码"
+            },
+            "email": {
+              "type": "string",
+              "description": "电子邮箱"
+            },
+            "avatar": {
+              "type": "string",
+              "description": "头像地址"
+            },
+            "status": {
+              "type": "integer",
+              "description": "企微成员状态，1 为已激活"
+            },
+            "active": {
+              "type": "boolean",
+              "description": "status 是否为 1"
+            },
+            "department_ids": {
+              "type": "array",
+              "description": "所属部门 ID，主部门优先",
+              "items": {
+                "type": "integer",
+                "description": "部门 ID"
+              }
+            },
+            "department_names": {
+              "type": "array",
+              "description": "与 department_ids 对应的部门名称",
+              "items": {
+                "type": "string",
+                "description": "部门名称"
+              }
+            }
+          }
+        }
+      },
+      "missing": {
+        "type": "array",
+        "description": "指定成员中未找到的 ID",
+        "items": {
+          "type": "string",
+          "description": "未找到的成员 ID"
+        }
+      },
+      "mode": {
+        "type": "string",
+        "description": "实际读取通讯录的授权方式"
+      },
+      "departments": {
+        "type": "array",
+        "description": "组织部门树节点，不包含经理关系",
+        "items": {
+          "type": "object",
+          "description": "",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "部门 ID"
+            },
+            "name": {
+              "type": "string",
+              "description": "部门名称"
+            },
+            "parent_id": {
+              "type": "integer",
+              "description": "上级部门 ID"
+            },
+            "path": {
+              "type": "string",
+              "description": "从根部门到当前部门的名称路径"
+            },
+            "order": {
+              "type": "integer",
+              "description": "上游部门排序值"
+            }
+          }
+        }
+      }
+    }
+  },
+  "wecom.directory.departments": {
+    "type": "object",
+    "description": "",
+    "properties": {
+      "resolved_paths": {
+        "type": "array",
+        "description": "已成功解析的部门路径",
+        "items": {
+          "type": "object",
+          "description": "",
+          "properties": {
+            "path": {
+              "type": "string",
+              "description": "输入部门路径"
+            },
+            "id": {
+              "type": "integer",
+              "description": "唯一匹配的部门 ID"
+            }
+          }
+        }
+      },
+      "missing_paths": {
+        "type": "array",
+        "description": "不存在或有歧义的部门路径",
+        "items": {
+          "type": "string",
+          "description": "无法唯一匹配的路径"
+        }
+      },
+      "app": {
+        "type": "string",
+        "description": "实际使用的企微应用配置标识"
+      },
+      "counts": {
+        "type": "object",
+        "description": "",
+        "properties": {
+          "departments": {
+            "type": "integer",
+            "description": "部门数量"
+          },
+          "users": {
+            "type": "integer",
+            "description": "返回成员数量"
+          },
+          "missing": {
+            "type": "integer",
+            "description": "未找到目标数量"
+          },
+          "missing_paths": {
+            "type": "integer",
+            "description": "无法匹配的部门路径数量"
+          }
+        }
+      },
+      "departments": {
+        "type": "array",
+        "description": "匹配的部门列表",
+        "items": {
+          "type": "object",
+          "description": "",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "部门 ID"
+            },
+            "name": {
+              "type": "string",
+              "description": "部门名称"
+            },
+            "parent_id": {
+              "type": "integer",
+              "description": "上级部门 ID"
+            },
+            "path": {
+              "type": "string",
+              "description": "从根部门到当前部门的名称路径"
+            },
+            "order": {
+              "type": "integer",
+              "description": "上游部门排序值"
+            }
+          }
+        }
+      },
+      "missing_departments": {
+        "type": "array",
+        "description": "指定部门中未找到的 ID",
+        "items": {
+          "type": "integer",
+          "description": "未找到的部门 ID"
+        }
+      }
+    }
+  },
+  "$collection": {
+    "type": "object",
+    "description": "",
+    "properties": {
+      "items": {
+        "type": "array",
+        "description": "已采集的根记录",
+        "items": {
+          "description": "来源记录，具体字段取决于被汇总的平台接口"
+        }
+      },
+      "folders": {
+        "type": "array",
+        "description": "目录条目；部分来源不提供",
+        "items": {
+          "description": "目录信息，按来源接口返回"
+        }
+      },
+      "errors": {
+        "type": "array",
+        "description": "部分记录读取失败的信息",
+        "items": {
+          "description": "单条读取失败的标识和错误信息"
+        }
+      },
+      "partial": {
+        "type": "boolean",
+        "description": "是否存在部分失败或尚未完成的范围"
+      },
+      "coverage": {
+        "type": "string",
+        "description": "采集范围说明；root_records 不承诺已遍历全部嵌套资源"
+      },
+      "page": {
+        "type": "object",
+        "description": "",
+        "properties": {
+          "has_more": {
+            "type": "boolean",
+            "description": "是否还有待继续采集的数据"
+          },
+          "next_cursor": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "下次续传游标；继续时保持原筛选和 page_size"
+          },
+          "count": {
+            "type": "integer",
+            "description": "本次返回的记录数量"
+          },
+          "pages": {
+            "type": "integer",
+            "description": "本次已读取的上游页数"
+          }
+        }
+      }
+    }
+  }
+}

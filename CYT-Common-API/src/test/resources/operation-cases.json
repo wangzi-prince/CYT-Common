@@ -1,0 +1,1498 @@
+[
+  {
+    "operation": "docusign.envelopes.create",
+    "params": {
+      "template_id": "fixture-template",
+      "template_roles": [
+        {
+          "role_name": "signer",
+          "email": "fixture@example.invalid",
+          "name": "Fixture"
+        }
+      ]
+    },
+    "normalized": {
+      "template_id": "fixture-template",
+      "template_roles": [
+        {
+          "role_name": "signer",
+          "email": "fixture@example.invalid",
+          "name": "Fixture",
+          "routing_order": 1
+        }
+      ],
+      "documents": null,
+      "recipients": null,
+      "email_subject": "请签署合同",
+      "email_blurb": "请查收并完成签署，谢谢。",
+      "status": "sent"
+    }
+  },
+  {
+    "operation": "docusign.envelopes.get",
+    "params": {
+      "envelope_id": "fixture-envelope-id"
+    },
+    "normalized": {
+      "envelope_id": "fixture-envelope-id"
+    }
+  },
+  {
+    "operation": "docusign.envelopes.list",
+    "params": {},
+    "normalized": {
+      "from_date": null,
+      "to_date": null,
+      "status": null,
+      "page_size": 20
+    }
+  },
+  {
+    "operation": "docusign.envelopes.void",
+    "params": {
+      "envelope_id": "fixture-envelope-id",
+      "reason": "fixture-reason"
+    },
+    "normalized": {
+      "envelope_id": "fixture-envelope-id",
+      "reason": "fixture-reason"
+    }
+  },
+  {
+    "operation": "docusign.templates.list",
+    "params": {},
+    "normalized": {
+      "page_size": 20
+    }
+  },
+  {
+    "operation": "docusign.testing.advance",
+    "params": {
+      "envelope_id": "fixture-envelope-id",
+      "status": "sent"
+    },
+    "normalized": {
+      "envelope_id": "fixture-envelope-id",
+      "status": "sent"
+    }
+  },
+  {
+    "operation": "gcs.objects.delete",
+    "params": {
+      "path": "fixture/file.txt"
+    },
+    "normalized": {
+      "path": "fixture/file.txt",
+      "bucket": null
+    }
+  },
+  {
+    "operation": "gcs.objects.get_metadata",
+    "params": {
+      "path": "fixture/file.txt"
+    },
+    "normalized": {
+      "path": "fixture/file.txt",
+      "bucket": null
+    }
+  },
+  {
+    "operation": "gcs.objects.list",
+    "params": {},
+    "normalized": {
+      "prefix": "",
+      "page_size": 50,
+      "page_token": null,
+      "delimiter": null,
+      "include_trailing_delimiter": false,
+      "include_folders_as_prefixes": false,
+      "match_glob": null,
+      "start_offset": null,
+      "end_offset": null,
+      "projection": "noAcl",
+      "versions": false,
+      "soft_deleted": false,
+      "bucket": null
+    }
+  },
+  {
+    "operation": "gcs.objects.upload",
+    "params": {
+      "path": "fixture/file.txt",
+      "content_text": "fixture content"
+    },
+    "normalized": {
+      "path": "fixture/file.txt",
+      "content_base64": null,
+      "content_text": "fixture content",
+      "content_type": "application/octet-stream",
+      "bucket": null
+    }
+  },
+  {
+    "operation": "gdrive.files.get",
+    "params": {
+      "file_id": "fixture-file-id"
+    },
+    "normalized": {
+      "file_id": "fixture-file-id",
+      "fields": "id,name,mimeType,size,modifiedTime,webViewLink,parents",
+      "supports_all_drives": false,
+      "include_permissions_for_view": null,
+      "include_labels": null
+    }
+  },
+  {
+    "operation": "gdrive.files.list",
+    "params": {},
+    "normalized": {
+      "query": "trashed = false",
+      "page_size": 20,
+      "page_token": null,
+      "order_by": null,
+      "spaces": "drive",
+      "corpora": "user",
+      "drive_id": null,
+      "include_items_from_all_drives": false,
+      "supports_all_drives": false,
+      "include_permissions_for_view": null,
+      "include_labels": null,
+      "fields": "nextPageToken,incompleteSearch,files(id,name,mimeType,size,modifiedTime,webViewLink)"
+    }
+  },
+  {
+    "operation": "gdrive.files.upload",
+    "params": {
+      "name": "fixture-name",
+      "content_text": "fixture content"
+    },
+    "normalized": {
+      "name": "fixture-name",
+      "content_base64": null,
+      "content_text": "fixture content",
+      "mime_type": "application/pdf",
+      "parent_id": null,
+      "fields": "id,name,webViewLink",
+      "supports_all_drives": false,
+      "ignore_default_visibility": false,
+      "use_content_as_indexable_text": false,
+      "keep_revision_forever": false
+    }
+  },
+  {
+    "operation": "gdrive.folders.create",
+    "params": {
+      "name": "fixture-name"
+    },
+    "normalized": {
+      "name": "fixture-name",
+      "parent_id": null,
+      "fields": "id,name,webViewLink",
+      "supports_all_drives": false
+    }
+  },
+  {
+    "operation": "gmail.labels.list",
+    "params": {},
+    "normalized": {
+      "account": ""
+    }
+  },
+  {
+    "operation": "gmail.messages.get",
+    "params": {
+      "message_id": "fixture-message-id"
+    },
+    "normalized": {
+      "account": "",
+      "message_id": "fixture-message-id",
+      "format": "metadata",
+      "metadata_headers": []
+    }
+  },
+  {
+    "operation": "gmail.messages.list",
+    "params": {},
+    "normalized": {
+      "account": "",
+      "query": "",
+      "max_results": 20,
+      "page_token": null,
+      "label_ids": [],
+      "include_spam_trash": false
+    }
+  },
+  {
+    "operation": "gmail.messages.restore_from_spam",
+    "params": {
+      "account": "fixture-account",
+      "message_id": "fixture-message-id"
+    },
+    "normalized": {
+      "account": "fixture-account",
+      "message_id": "fixture-message-id"
+    }
+  },
+  {
+    "operation": "gmail.messages.send",
+    "params": {
+      "to": [
+        "fixture-to"
+      ],
+      "subject": "fixture-subject",
+      "body_text": "fixture-body-text"
+    },
+    "normalized": {
+      "account": "",
+      "to": [
+        "fixture-to"
+      ],
+      "subject": "fixture-subject",
+      "body_text": "fixture-body-text",
+      "body_html": null,
+      "cc": [],
+      "bcc": [],
+      "thread_id": null
+    }
+  },
+  {
+    "operation": "gmail.profile.get",
+    "params": {},
+    "normalized": {
+      "account": ""
+    }
+  },
+  {
+    "operation": "judgeme.reviews.list",
+    "params": {},
+    "normalized": {
+      "account": "",
+      "cursor": {},
+      "limit": 100
+    }
+  },
+  {
+    "operation": "lingxing.aftersales.reasons",
+    "params": {},
+    "normalized": {
+      "account": "",
+      "offset": 0,
+      "length": 20
+    }
+  },
+  {
+    "operation": "lingxing.inventory.fba",
+    "params": {},
+    "normalized": {
+      "account": "",
+      "offset": 0,
+      "length": 20,
+      "search_field": "",
+      "search_value": "",
+      "sid": "",
+      "fulfillment_channel_type": "",
+      "is_hide_zero_stock": "0"
+    }
+  },
+  {
+    "operation": "lingxing.inventory.list",
+    "params": {},
+    "normalized": {
+      "account": "",
+      "wid": "",
+      "sku": "",
+      "offset": 0,
+      "length": 20
+    }
+  },
+  {
+    "operation": "lingxing.listing.list",
+    "params": {},
+    "normalized": {
+      "account": "",
+      "sid": "",
+      "search_field": "",
+      "search_value": [],
+      "offset": 0,
+      "length": 100
+    }
+  },
+  {
+    "operation": "lingxing.messages.detail",
+    "params": {
+      "webmail_uuid": "fixture-webmail-uuid"
+    },
+    "normalized": {
+      "account": "",
+      "webmail_uuid": "fixture-webmail-uuid"
+    }
+  },
+  {
+    "operation": "lingxing.messages.list",
+    "params": {},
+    "normalized": {
+      "account": "",
+      "cursor": "0",
+      "limit": 50,
+      "flag": "receive",
+      "email": "",
+      "start_date": "",
+      "end_date": ""
+    }
+  },
+  {
+    "operation": "lingxing.mporders.list",
+    "params": {},
+    "normalized": {
+      "account": "",
+      "offset": 0,
+      "length": 20,
+      "date_type": "update_time",
+      "start_time": null,
+      "end_time": null,
+      "platform_code": [],
+      "store_id": [],
+      "platform_order_nos": [],
+      "platform_order_names": [],
+      "global_order_nos": [],
+      "tracking_nos": [],
+      "order_status": null
+    }
+  },
+  {
+    "operation": "lingxing.orders.detail",
+    "params": {
+      "order_id": "gid://shopify/Order/123"
+    },
+    "normalized": {
+      "account": "",
+      "order_id": "gid://shopify/Order/123"
+    }
+  },
+  {
+    "operation": "lingxing.orders.list",
+    "params": {
+      "start_date": "fixture-start-date",
+      "end_date": "fixture-end-date"
+    },
+    "normalized": {
+      "account": "",
+      "start_date": "fixture-start-date",
+      "end_date": "fixture-end-date",
+      "sid": null,
+      "sid_list": [],
+      "date_type": 1,
+      "order_status": [],
+      "sort_desc_by_date_type": 0,
+      "fulfillment_channel": null,
+      "offset": 0,
+      "length": 100
+    }
+  },
+  {
+    "operation": "lingxing.product.list",
+    "params": {},
+    "normalized": {
+      "account": "",
+      "offset": 0,
+      "length": 1000,
+      "sku_list": [],
+      "sku_identifier_list": [],
+      "update_time_start": null,
+      "update_time_end": null,
+      "create_time_start": null,
+      "create_time_end": null
+    }
+  },
+  {
+    "operation": "lingxing.refund.create",
+    "params": {
+      "sid": 1,
+      "amazonOrderId": "fixture-amazonOrderId",
+      "purchaseDateLocal": "fixture-purchaseDateLocal"
+    },
+    "normalized": {
+      "account": "",
+      "sid": 1,
+      "amazonOrderId": "fixture-amazonOrderId",
+      "purchaseDateLocal": "fixture-purchaseDateLocal",
+      "data": []
+    }
+  },
+  {
+    "operation": "lingxing.return.qty",
+    "params": {},
+    "normalized": {
+      "account": "",
+      "globalOrderNo": null,
+      "orderItemNo": []
+    }
+  },
+  {
+    "operation": "lingxing.seller.list",
+    "params": {},
+    "normalized": {
+      "account": ""
+    }
+  },
+  {
+    "operation": "lingxing.warehouse.list",
+    "params": {},
+    "normalized": {
+      "account": "",
+      "type": 1,
+      "sub_type": 0,
+      "is_delete": "0",
+      "offset": 0,
+      "length": 1000
+    }
+  },
+  {
+    "operation": "lingxing.workorder.add",
+    "params": {
+      "platformOrderNos": [
+        "fixture-platformOrderNos"
+      ]
+    },
+    "normalized": {
+      "account": "",
+      "platformOrderNos": [
+        "fixture-platformOrderNos"
+      ],
+      "afterInfoList": []
+    }
+  },
+  {
+    "operation": "lingxing.workorder.audit",
+    "params": {
+      "businessIdList": [
+        "fixture-businessIdList"
+      ],
+      "flowId": "fixture-flowId"
+    },
+    "normalized": {
+      "account": "",
+      "businessIdList": [
+        "fixture-businessIdList"
+      ],
+      "flowId": "fixture-flowId"
+    }
+  },
+  {
+    "operation": "lingxing.workorder.list",
+    "params": {
+      "start_time": "fixture-start-time",
+      "end_time": "fixture-end-time"
+    },
+    "normalized": {
+      "account": "",
+      "start_time": "fixture-start-time",
+      "end_time": "fixture-end-time",
+      "date_type": "create_time",
+      "offset": 0,
+      "length": 20
+    }
+  },
+  {
+    "operation": "mabang.orders.list",
+    "params": {},
+    "normalized": {
+      "status": null,
+      "expressTimeStart": null,
+      "expressTimeEnd": null,
+      "createDateStart": null,
+      "createDateEnd": null,
+      "updateTimeStart": null,
+      "updateTimeEnd": null,
+      "paidtimeStart": null,
+      "paidtimeEnd": null,
+      "canSend": null,
+      "shopName": null,
+      "platformOrderIds": null,
+      "trackNumbers": null,
+      "cursor": null,
+      "maxRows": null
+    }
+  },
+  {
+    "operation": "mabang.orders.track",
+    "params": {
+      "platformOrderId": "fixture-platformOrderId"
+    },
+    "normalized": {
+      "platformOrderId": "fixture-platformOrderId",
+      "lastUpdateTime": null,
+      "page": null
+    }
+  },
+  {
+    "operation": "nas.buckets.create",
+    "params": {
+      "bucket": "cyt-test-bucket"
+    },
+    "normalized": {
+      "bucket": "cyt-test-bucket",
+      "region": null
+    }
+  },
+  {
+    "operation": "nas.buckets.delete",
+    "params": {
+      "bucket": "cyt-test-bucket"
+    },
+    "normalized": {
+      "bucket": "cyt-test-bucket"
+    }
+  },
+  {
+    "operation": "nas.buckets.list",
+    "params": {},
+    "normalized": {}
+  },
+  {
+    "operation": "nas.objects.copy",
+    "params": {
+      "source_key": "fixture/file.txt",
+      "dest_key": "fixture/file.txt"
+    },
+    "normalized": {
+      "source_key": "fixture/file.txt",
+      "dest_key": "fixture/file.txt",
+      "source_bucket": null,
+      "dest_bucket": null
+    }
+  },
+  {
+    "operation": "nas.objects.copy_prefix",
+    "params": {
+      "source_prefix": "fixture-source/",
+      "dest_prefix": "fixture-target/"
+    },
+    "normalized": {
+      "source_prefix": "fixture-source/",
+      "dest_prefix": "fixture-target/",
+      "delete_source": false,
+      "bucket": null
+    }
+  },
+  {
+    "operation": "nas.objects.delete",
+    "params": {
+      "key": "fixture/file.txt"
+    },
+    "normalized": {
+      "key": "fixture/file.txt",
+      "bucket": null
+    }
+  },
+  {
+    "operation": "nas.objects.delete_batch",
+    "params": {
+      "keys": [
+        "fixture-keys"
+      ]
+    },
+    "normalized": {
+      "keys": [
+        "fixture-keys"
+      ],
+      "bucket": null
+    }
+  },
+  {
+    "operation": "nas.objects.list",
+    "params": {},
+    "normalized": {
+      "prefix": "",
+      "recursive": true,
+      "delimiter": null,
+      "max_keys": 1000,
+      "continuation_token": null,
+      "bucket": null
+    }
+  },
+  {
+    "operation": "nas.objects.presign_get",
+    "params": {
+      "keys": [
+        "fixture-keys"
+      ]
+    },
+    "normalized": {
+      "keys": [
+        "fixture-keys"
+      ],
+      "expires": 3600,
+      "bucket": null
+    }
+  },
+  {
+    "operation": "nas.objects.presign_put",
+    "params": {
+      "filename": "fixture.txt",
+      "folder": "fixture"
+    },
+    "normalized": {
+      "folder": "fixture",
+      "filename": "fixture.txt",
+      "key": null,
+      "expires": 900,
+      "bucket": null
+    }
+  },
+  {
+    "operation": "nas.objects.read_head",
+    "params": {
+      "key": "fixture/file.txt"
+    },
+    "normalized": {
+      "key": "fixture/file.txt",
+      "head_bytes": 65536,
+      "bucket": null
+    }
+  },
+  {
+    "operation": "nas.objects.stat",
+    "params": {
+      "key": "fixture/file.txt"
+    },
+    "normalized": {
+      "key": "fixture/file.txt",
+      "bucket": null
+    }
+  },
+  {
+    "operation": "paypal.disputes.list",
+    "params": {},
+    "normalized": {
+      "account": "",
+      "cursor": {},
+      "limit": 100
+    }
+  },
+  {
+    "operation": "quickcep.analytics.get",
+    "params": {
+      "start": "fixture-start",
+      "end": "fixture-end"
+    },
+    "normalized": {
+      "account": "",
+      "start": "fixture-start",
+      "end": "fixture-end",
+      "channels": []
+    }
+  },
+  {
+    "operation": "quickcep.messages.list",
+    "params": {
+      "session_id": "fixture-session-id"
+    },
+    "normalized": {
+      "account": "",
+      "session_id": "fixture-session-id",
+      "page": 1,
+      "page_size": 50
+    }
+  },
+  {
+    "operation": "quickcep.messages.send",
+    "params": {
+      "session_id": "fixture-session-id",
+      "text": "fixture-text"
+    },
+    "normalized": {
+      "account": "",
+      "session_id": "fixture-session-id",
+      "text": "fixture-text",
+      "as_visitor": false,
+      "owner_id": 0,
+      "channel": "web",
+      "mid": "",
+      "from_addr": ""
+    }
+  },
+  {
+    "operation": "quickcep.sessions.by_operator",
+    "params": {
+      "user_id": "fixture-user-id"
+    },
+    "normalized": {
+      "account": "",
+      "user_id": "fixture-user-id",
+      "chat_type": "all",
+      "page": 1,
+      "page_size": 20
+    }
+  },
+  {
+    "operation": "quickcep.sessions.close",
+    "params": {
+      "session_id": "fixture-session-id"
+    },
+    "normalized": {
+      "account": "",
+      "session_id": "fixture-session-id"
+    }
+  },
+  {
+    "operation": "quickcep.sessions.create",
+    "params": {},
+    "normalized": {
+      "account": "",
+      "email": "",
+      "name": "",
+      "channel": "email",
+      "mode": 2,
+      "tags": [],
+      "third_session_id": ""
+    }
+  },
+  {
+    "operation": "quickcep.sessions.get",
+    "params": {
+      "session_id": "fixture-session-id"
+    },
+    "normalized": {
+      "account": "",
+      "session_id": "fixture-session-id"
+    }
+  },
+  {
+    "operation": "quickcep.sessions.list",
+    "params": {
+      "create_date": "2026-10-01"
+    },
+    "normalized": {
+      "account": "",
+      "create_date": "2026-10-01",
+      "close_date": "",
+      "state": "all",
+      "channel": "all",
+      "page_no": 1
+    }
+  },
+  {
+    "operation": "quickcep.staff.list",
+    "params": {},
+    "normalized": {
+      "account": ""
+    }
+  },
+  {
+    "operation": "rd.products.list",
+    "params": {},
+    "normalized": {
+      "account": "",
+      "cursor": {},
+      "limit": 100
+    }
+  },
+  {
+    "operation": "shopify.inventory.set",
+    "params": {
+      "inventory_item_id": "fixture-inventory-item-id",
+      "location_id": "fixture-location-id",
+      "available": 0
+    },
+    "normalized": {
+      "store": null,
+      "inventory_item_id": "fixture-inventory-item-id",
+      "location_id": "fixture-location-id",
+      "available": 0,
+      "reason": "correction"
+    }
+  },
+  {
+    "operation": "shopify.orders.create",
+    "params": {
+      "reference": "RMA-fixture-01",
+      "customer_email": "fixture@example.invalid",
+      "shipping_address": {
+        "name": "Fixture User",
+        "address1": "Test Street",
+        "countryCode": "US"
+      },
+      "line_items": [
+        {
+          "sku": "fixture-sku",
+          "quantity": 1
+        }
+      ],
+      "confirm": true
+    },
+    "normalized": {
+      "store": null,
+      "order_id": null,
+      "reference": "RMA-fixture-01",
+      "customer_email": "fixture@example.invalid",
+      "currency": "USD",
+      "shipping_address": {
+        "store": null,
+        "name": "Fixture User",
+        "address1": "Test Street",
+        "address2": null,
+        "city": null,
+        "province": null,
+        "zip": null,
+        "countryCode": "US",
+        "phone": null
+      },
+      "line_items": [
+        {
+          "store": null,
+          "sku": "fixture-sku",
+          "quantity": 1
+        }
+      ],
+      "confirm": true
+    }
+  },
+  {
+    "operation": "shopify.orders.get",
+    "params": {
+      "order_id": "gid://shopify/Order/123"
+    },
+    "normalized": {
+      "store": null,
+      "order_id": "gid://shopify/Order/123"
+    }
+  },
+  {
+    "operation": "shopify.orders.list",
+    "params": {},
+    "normalized": {
+      "store": null,
+      "limit": 50,
+      "query": null,
+      "after": null,
+      "sort_key": "UPDATED_AT",
+      "reverse": false
+    }
+  },
+  {
+    "operation": "shopify.orders.update",
+    "params": {
+      "order_id": "gid://shopify/Order/123",
+      "note": "fixture"
+    },
+    "normalized": {
+      "store": null,
+      "order_id": "gid://shopify/Order/123",
+      "note": "fixture",
+      "tags": null,
+      "shipping_address": null
+    }
+  },
+  {
+    "operation": "shopify.products.get",
+    "params": {
+      "product_id": "fixture-product-id"
+    },
+    "normalized": {
+      "store": null,
+      "product_id": "fixture-product-id"
+    }
+  },
+  {
+    "operation": "shopify.products.list",
+    "params": {},
+    "normalized": {
+      "store": null,
+      "limit": 20,
+      "query": null,
+      "after": null,
+      "sort_key": null,
+      "reverse": false
+    }
+  },
+  {
+    "operation": "shopify.refunds.create",
+    "params": {
+      "order_id": "gid://shopify/Order/123",
+      "amount": "1.00",
+      "confirm": true
+    },
+    "normalized": {
+      "store": null,
+      "order_id": "gid://shopify/Order/123",
+      "amount": "1.00",
+      "note": null,
+      "notify": true,
+      "restock": false,
+      "confirm": true,
+      "idempotency_key": null
+    }
+  },
+  {
+    "operation": "shopify.refunds.list",
+    "params": {},
+    "normalized": {
+      "store": null,
+      "limit": 50,
+      "query": null,
+      "after": null
+    }
+  },
+  {
+    "operation": "shopify.returns.list",
+    "params": {},
+    "normalized": {
+      "store": null,
+      "limit": 50,
+      "query": null,
+      "after": null
+    }
+  },
+  {
+    "operation": "stripe.disputes.list",
+    "params": {},
+    "normalized": {
+      "account": "",
+      "cursor": {},
+      "limit": 100
+    }
+  },
+  {
+    "operation": "trustpilot.reviews.list",
+    "params": {},
+    "normalized": {
+      "account": "",
+      "cursor": {},
+      "limit": 100
+    }
+  },
+  {
+    "operation": "wecom.attendees.add",
+    "params": {
+      "schedule_id": "fixture-schedule-id",
+      "attendees": [
+        {
+          "userid": "fixture-userid"
+        }
+      ]
+    },
+    "normalized": {
+      "schedule_id": "fixture-schedule-id",
+      "attendees": [
+        {
+          "userid": "fixture-userid"
+        }
+      ]
+    }
+  },
+  {
+    "operation": "wecom.attendees.remove",
+    "params": {
+      "schedule_id": "fixture-schedule-id",
+      "attendees": [
+        {
+          "userid": "fixture-userid"
+        }
+      ]
+    },
+    "normalized": {
+      "schedule_id": "fixture-schedule-id",
+      "attendees": [
+        {
+          "userid": "fixture-userid"
+        }
+      ]
+    }
+  },
+  {
+    "operation": "wecom.auth.access_token",
+    "params": {},
+    "normalized": {
+      "refresh": 0
+    }
+  },
+  {
+    "operation": "wecom.calendars.create",
+    "params": {
+      "summary": "fixture-summary",
+      "shares": [
+        {
+          "userid": "fixture-user"
+        }
+      ]
+    },
+    "normalized": {
+      "summary": "fixture-summary",
+      "color": "#1A73E8",
+      "description": "",
+      "admins": [],
+      "set_as_default": 0,
+      "is_public": 0,
+      "public_range": null,
+      "is_corp_calendar": 0,
+      "shares": [
+        {
+          "userid": "fixture-user",
+          "permission": 1
+        }
+      ],
+      "agentid": null
+    }
+  },
+  {
+    "operation": "wecom.calendars.delete",
+    "params": {
+      "cal_id": "fixture-cal-id"
+    },
+    "normalized": {
+      "cal_id": "fixture-cal-id"
+    }
+  },
+  {
+    "operation": "wecom.calendars.get_many",
+    "params": {
+      "cal_id_list": [
+        "fixture-cal-id-list"
+      ]
+    },
+    "normalized": {
+      "cal_id_list": [
+        "fixture-cal-id-list"
+      ]
+    }
+  },
+  {
+    "operation": "wecom.calendars.update",
+    "params": {
+      "cal_id": "fixture-cal-id",
+      "summary": "fixture-summary",
+      "color": "#5856D6"
+    },
+    "normalized": {
+      "cal_id": "fixture-cal-id",
+      "summary": "fixture-summary",
+      "color": "#5856D6",
+      "description": "",
+      "admins": [],
+      "public_range": null,
+      "shares": [],
+      "skip_public_range": 0
+    }
+  },
+  {
+    "operation": "wecom.directory.departments",
+    "params": {},
+    "normalized": {
+      "department_ids": null,
+      "paths": null,
+      "app": null
+    }
+  },
+  {
+    "operation": "wecom.directory.list",
+    "params": {},
+    "normalized": {
+      "department_id": 1,
+      "fetch_child": 1,
+      "app": null
+    }
+  },
+  {
+    "operation": "wecom.directory.users",
+    "params": {
+      "userids": [
+        "fixture-user"
+      ]
+    },
+    "normalized": {
+      "userids": [
+        "fixture-user"
+      ],
+      "department_ids": null,
+      "paths": null,
+      "fetch_child": 0,
+      "app": null
+    }
+  },
+  {
+    "operation": "wecom.messages.send_markdown",
+    "params": {
+      "content": "fixture-content"
+    },
+    "normalized": {
+      "safe": 0,
+      "enable_id_trans": 0,
+      "enable_duplicate_check": 0,
+      "duplicate_check_interval": 1800,
+      "content": "fixture-content",
+      "to_users": [],
+      "app": null
+    }
+  },
+  {
+    "operation": "wecom.messages.send_text",
+    "params": {
+      "content": "fixture-content"
+    },
+    "normalized": {
+      "safe": 0,
+      "enable_id_trans": 0,
+      "enable_duplicate_check": 0,
+      "duplicate_check_interval": 1800,
+      "content": "fixture-content",
+      "to_users": [],
+      "to_party": [],
+      "to_tags": [],
+      "app": null
+    }
+  },
+  {
+    "operation": "wecom.schedules.batch_create",
+    "params": {
+      "items": [
+        {
+          "summary": "Fixture",
+          "start_at": "2026-10-30T10:00:00+08:00",
+          "end_at": "2026-10-30T11:00:00+08:00"
+        }
+      ]
+    },
+    "normalized": {
+      "items": [
+        {
+          "summary": "Fixture",
+          "start_at": "2026-10-30T10:00:00+08:00",
+          "end_at": "2026-10-30T11:00:00+08:00"
+        }
+      ],
+      "concurrency": 3
+    }
+  },
+  {
+    "operation": "wecom.schedules.copy",
+    "params": {
+      "schedule_id": "fixture-schedule-id"
+    },
+    "normalized": {
+      "schedule_id": "fixture-schedule-id",
+      "cal_id": null,
+      "summary": null,
+      "start_at": null,
+      "end_at": null
+    }
+  },
+  {
+    "operation": "wecom.schedules.create",
+    "params": {
+      "start_at": "2026-10-30T10:00:00+08:00",
+      "end_at": "2026-10-30T11:00:00+08:00"
+    },
+    "normalized": {
+      "cal_id": null,
+      "summary": "新建事件",
+      "description": "",
+      "location": "",
+      "start_at": null,
+      "end_at": null,
+      "start_time": 1793325600,
+      "end_time": 1793329200,
+      "is_whole_day": 0,
+      "admins": [],
+      "attendees": [],
+      "reminders": null,
+      "agentid": null
+    }
+  },
+  {
+    "operation": "wecom.schedules.delete",
+    "params": {
+      "schedule_id": "fixture-schedule-id"
+    },
+    "normalized": {
+      "schedule_id": "fixture-schedule-id"
+    }
+  },
+  {
+    "operation": "wecom.schedules.get_many",
+    "params": {
+      "schedule_id_list": [
+        "fixture-schedule-id-list"
+      ]
+    },
+    "normalized": {
+      "schedule_id_list": [
+        "fixture-schedule-id-list"
+      ]
+    }
+  },
+  {
+    "operation": "wecom.schedules.list",
+    "params": {
+      "cal_id": "fixture-cal-id"
+    },
+    "normalized": {
+      "cal_id": "fixture-cal-id",
+      "page_size": 500,
+      "cursor": null,
+      "offset": 0,
+      "limit": null
+    }
+  },
+  {
+    "operation": "wecom.schedules.list_all",
+    "params": {
+      "cal_id": "fixture-cal-id"
+    },
+    "normalized": {
+      "cal_id": "fixture-cal-id",
+      "page_size": 500,
+      "max_items": 2000
+    }
+  },
+  {
+    "operation": "wecom.schedules.update",
+    "params": {
+      "schedule_id": "fixture-schedule-id"
+    },
+    "normalized": {
+      "schedule_id": "fixture-schedule-id",
+      "op_mode": 0,
+      "op_start_time": null,
+      "op_start_at": null,
+      "summary": null,
+      "description": null,
+      "location": null,
+      "start_at": null,
+      "end_at": null,
+      "start_time": null,
+      "end_time": null,
+      "is_whole_day": null,
+      "admins": null,
+      "attendees": null,
+      "reminders": null,
+      "agentid": null
+    }
+  },
+  {
+    "operation": "wecom.users.get",
+    "params": {
+      "userid": "fixture-userid"
+    },
+    "normalized": {
+      "userid": "fixture-userid"
+    }
+  },
+  {
+    "operation": "wecom.users.resolve_code",
+    "params": {
+      "code": "fixture-code"
+    },
+    "normalized": {
+      "code": "fixture-code"
+    }
+  },
+  {
+    "operation": "winit.inbound.list",
+    "params": {
+      "destnationWareHouseCode": "fixture-destnationWareHouseCode",
+      "inspectionWareHouseCode": "fixture-inspectionWareHouseCode",
+      "orderCreateDateStart": "fixture-orderCreateDateStart",
+      "orderCreateDateEnd": "fixture-orderCreateDateEnd"
+    },
+    "normalized": {
+      "pageNo": 1,
+      "pageSize": 50,
+      "destnationWareHouseCode": "fixture-destnationWareHouseCode",
+      "inspectionWareHouseCode": "fixture-inspectionWareHouseCode",
+      "orderType": "SD",
+      "orderCreateDateStart": "fixture-orderCreateDateStart",
+      "orderCreateDateEnd": "fixture-orderCreateDateEnd"
+    }
+  },
+  {
+    "operation": "winit.inbound.tracking",
+    "params": {
+      "orderNo": "fixture-orderNo"
+    },
+    "normalized": {
+      "orderNo": "fixture-orderNo"
+    }
+  },
+  {
+    "operation": "winit.inventory.list",
+    "params": {
+      "warehouseCode": "fixture-warehouseCode"
+    },
+    "normalized": {
+      "warehouseCode": "fixture-warehouseCode",
+      "pageNum": 1,
+      "pageSize": 100,
+      "isActive": "",
+      "inReturnInventory": "",
+      "isFilterZeroInventory": ""
+    }
+  },
+  {
+    "operation": "winit.outbound.list",
+    "params": {
+      "dateOrderedStartDate": "fixture-dateOrderedStartDate",
+      "dateOrderedEndDate": "fixture-dateOrderedEndDate"
+    },
+    "normalized": {
+      "pageNo": 1,
+      "pageSize": 50,
+      "dateOrderedStartDate": "fixture-dateOrderedStartDate",
+      "dateOrderedEndDate": "fixture-dateOrderedEndDate",
+      "status": "ALL",
+      "trackingNo": "",
+      "sellerOrderNo": "",
+      "receiverName": ""
+    }
+  },
+  {
+    "operation": "winit.outbound.tracking",
+    "params": {
+      "trackingNos": [
+        "fixture-trackingNos"
+      ]
+    },
+    "normalized": {
+      "trackingNos": [
+        "fixture-trackingNos"
+      ]
+    }
+  },
+  {
+    "operation": "winit.returns.create",
+    "params": {
+      "warehouseCode": "fixture-warehouseCode",
+      "ReturnGoodsList": [
+        {
+          "productCode": "fixture-productCode"
+        }
+      ],
+      "confirm": true,
+      "winitProductCode": "OW01011004124",
+      "packageLength": 11.0,
+      "packageWidth": 22.0,
+      "packageHeight": 33.0,
+      "packageWeight": 4.0,
+      "name": "Fixture User",
+      "country": "US",
+      "city": "Los Angeles",
+      "postcode": "90001",
+      "address1": "1 Test Street"
+    },
+    "normalized": {
+      "confirm": true,
+      "warehouseCode": "fixture-warehouseCode",
+      "customerOrderNo": "",
+      "isWinitOutbound": "N",
+      "outboundOrderNo": "",
+      "shippingNo": "",
+      "winitProductCode": "OW01011004124",
+      "expressNo": "",
+      "supplierName": "",
+      "VATNo": "",
+      "userInfoSource": "IRI",
+      "name": "Fixture User",
+      "email": "",
+      "phone": "",
+      "country": "US",
+      "state": "",
+      "city": "Los Angeles",
+      "postcode": "90001",
+      "houseNo": "",
+      "address1": "1 Test Street",
+      "address2": "",
+      "collectionDate": "",
+      "collectionAddress": "",
+      "packageLength": 11.0,
+      "packageWidth": 22.0,
+      "packageHeight": 33.0,
+      "packageWeight": 4.0,
+      "ReturnGoodsList": [
+        {
+          "productCode": "fixture-productCode",
+          "productNum": 1,
+          "handleMethod": "SA",
+          "shelveMethod": null,
+          "goodMethod": null,
+          "defectiveMethod": null,
+          "specification": "",
+          "itemCodes": []
+        }
+      ]
+    }
+  },
+  {
+    "operation": "winit.returns.items",
+    "params": {},
+    "normalized": {
+      "pageNo": 1,
+      "pageSize": 100,
+      "skuCode": "",
+      "code": "",
+      "isActive": ""
+    }
+  },
+  {
+    "operation": "winit.returns.label",
+    "params": {
+      "returnGoodsOrderNos": [
+        "fixture-returnGoodsOrderNos"
+      ]
+    },
+    "normalized": {
+      "returnGoodsOrderNos": [
+        "fixture-returnGoodsOrderNos"
+      ]
+    }
+  },
+  {
+    "operation": "winit.returns.list",
+    "params": {
+      "OderStartDatetime": "fixture-OderStartDatetime",
+      "OderEndDatetime": "fixture-OderEndDatetime"
+    },
+    "normalized": {
+      "pageNo": 1,
+      "pageSize": 50,
+      "OderStartDatetime": "fixture-OderStartDatetime",
+      "OderEndDatetime": "fixture-OderEndDatetime",
+      "returnGoodsOrderNo": "",
+      "expressNo": "",
+      "outboundOrderNo": "",
+      "customerOrderNo": "",
+      "rmaNo": "",
+      "warehouseCode": ""
+    }
+  },
+  {
+    "operation": "winit.returns.psc",
+    "params": {},
+    "normalized": {}
+  },
+  {
+    "operation": "winit.returns.void",
+    "params": {
+      "returnGoodsOrderNos": [
+        "fixture-returnGoodsOrderNos"
+      ],
+      "confirm": true
+    },
+    "normalized": {
+      "confirm": true,
+      "returnGoodsOrderNos": [
+        "fixture-returnGoodsOrderNos"
+      ],
+      "warehouseCode": ""
+    }
+  },
+  {
+    "operation": "winit.warehouses.list",
+    "params": {},
+    "normalized": {
+      "winitProductCode": "OW01011004124",
+      "warehouseType": "INSJ",
+      "orderType": "SD",
+      "inspectionWarehouseCode": ""
+    }
+  }
+]

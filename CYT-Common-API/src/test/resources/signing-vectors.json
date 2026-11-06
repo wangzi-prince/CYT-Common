@@ -1,0 +1,49 @@
+{
+  "winit": {
+    "params": {
+      "action": "fixture.action",
+      "app_key": "fixture-key",
+      "data": {
+        "z": 1,
+        "a": "",
+        "nested": {
+          "b": false,
+          "a": "中文"
+        }
+      },
+      "format": "json",
+      "platform": "CaseSensitive",
+      "sign_method": "md5",
+      "timestamp": "2026-10-29 12:00:00",
+      "version": "1.0"
+    },
+    "secret": "fixture-secret",
+    "signature": "0F64119564CBAF26D0F9AA75B9AE9B13"
+  },
+  "lingxing": {
+    "params": {
+      "timestamp": 1793232000,
+      "access_token": "fixture-token",
+      "app_key": "0123456789abcdef",
+      "offset": 0,
+      "length": 20,
+      "filters": {
+        "z": 2,
+        "a": "中文"
+      }
+    },
+    "app_id": "0123456789abcdef",
+    "signature": "R3XQ2OBIDZ+NHrJ8OaBXz5kr0hooqMi1izrGRkDi6ik3ciLgYakkxZHNnCfqFj7U"
+  },
+  "s3": {
+    "secret": "fixture-secret",
+    "date": "20261029",
+    "region": "us-east-1",
+    "signing_key": "16b7332b486ebe939d001ab12fc300a753c90e2daf796ac30db8fd03fe04022d"
+  },
+  "fernet": {
+    "master": "fixture-master-key",
+    "plaintext": "中文-private-value",
+    "ciphertext": "gAAAAABq4vSJrvTnQILtuvRP9D6OoOB6DeshFwfmRgcXkmHO5urHetcfpPwyy9u2Lj7GARgHVVqygdBWE8Q5v1S4JMBgj-kB6SFcSSO7YcoD1crPuQCFJWA="
+  }
+}

@@ -1,0 +1,3637 @@
+{
+  "operations": [
+    {
+      "key": "wecom.approval_templates.list",
+      "platform": "wecom",
+      "summary": "列出已注册的业务审批模板",
+      "description": "仅列出当前环境、调用系统和模拟/真实模式下的模板别名。企微没有列出企业全部模板的服务端接口。",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 60,
+      "retry_max": 2,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business",
+        "approval"
+      ],
+      "category": "审批模板",
+      "sort_order": -90,
+      "path": "/integrations/wecom/approval-templates/list",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "examples": [
+          {}
+        ]
+      },
+      "official_docs": ""
+    },
+    {
+      "key": "wecom.approvals.track",
+      "platform": "wecom",
+      "summary": "按业务请求号追踪审批结果",
+      "description": "用提交时的 request_id 找到本系统审批单，再读取最新状态、当前审批人、步骤与业务字段；隔离环境、模拟模式和上游应用。",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 60,
+      "retry_max": 2,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business",
+        "approval"
+      ],
+      "category": "通用审批",
+      "sort_order": -89,
+      "path": "/integrations/wecom/approvals/track",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "description": "稳定业务请求编号；重试时保持相同，不能使用新的随机数"
+          }
+        },
+        "required": [
+          "request_id"
+        ],
+        "examples": [
+          {
+            "request_id": "expense-20261105-001"
+          }
+        ]
+      },
+      "official_docs": "https://developer.work.weixin.qq.com/document/path/91983"
+    },
+    {
+      "key": "wecom.approval_templates.get",
+      "platform": "wecom",
+      "summary": "获取可直接填写的审批表单",
+      "description": "自动整理字段、必填项、可选项、明细和示例。保留官方结构，支持全部官方控件的高级值模式。",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 60,
+      "retry_max": 2,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business",
+        "approval"
+      ],
+      "category": "审批模板",
+      "sort_order": -88,
+      "path": "/integrations/wecom/approval-templates/get",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "template": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160,
+            "description": "业务模板别名或企微模板 ID"
+          }
+        },
+        "required": [
+          "template"
+        ],
+        "examples": [
+          {
+            "template": "demo-expense"
+          }
+        ]
+      },
+      "official_docs": "https://developer.work.weixin.qq.com/document/path/91982"
+    },
+    {
+      "key": "wecom.approval_templates.bind",
+      "platform": "wecom",
+      "summary": "绑定业务模板别名与字段别名",
+      "description": "别名按调用系统隔离；绑定前核对真实模板和控件 ID，不会修改上游模板。",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": true,
+      "timeout_s": 60,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "write",
+        "business",
+        "approval"
+      ],
+      "category": "审批模板",
+      "sort_order": -87,
+      "path": "/integrations/wecom/approval-templates/bind",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "template_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160,
+            "description": ""
+          },
+          "alias": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "description": ""
+          },
+          "field_aliases": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "description": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 255,
+            "description": ""
+          }
+        },
+        "required": [
+          "template_id",
+          "alias"
+        ],
+        "examples": [
+          {
+            "template_id": "demo-expense",
+            "alias": "expense",
+            "field_aliases": {
+              "reason": "Text-01",
+              "amount": "Money-02"
+            }
+          }
+        ]
+      },
+      "official_docs": ""
+    },
+    {
+      "key": "wecom.approval_templates.unbind",
+      "platform": "wecom",
+      "summary": "移除本系统的模板别名",
+      "description": "只移除本地别名，不删除企微模板。",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": true,
+      "timeout_s": 60,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "write",
+        "business",
+        "approval"
+      ],
+      "category": "审批模板",
+      "sort_order": -86,
+      "path": "/integrations/wecom/approval-templates/unbind",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "alias": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "description": ""
+          }
+        },
+        "required": [
+          "alias"
+        ],
+        "examples": [
+          {
+            "alias": "expense"
+          }
+        ]
+      },
+      "official_docs": ""
+    },
+    {
+      "key": "wecom.approval_templates.create",
+      "platform": "wecom",
+      "summary": "按业务字段创建审批模板",
+      "description": "提供字段名与控件类型即可创建。新模板的审批规则需要在企微管理后台确认；支持直接传官方 template_content。",
+      "quota": "120/min",
+      "sensitive": true,
+      "idempotent": true,
+      "timeout_s": 60,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "write",
+        "business",
+        "approval",
+        "idempotency_required"
+      ],
+      "category": "审批模板",
+      "sort_order": -85,
+      "path": "/integrations/wecom/approval-templates/create",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40,
+            "description": "模板名称"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true,
+              "description": "key、label、control、required；选择控件可传 options，Table 可传 children"
+            },
+            "minItems": 1,
+            "maxItems": 100
+          },
+          "template_content": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "高级模式：官方模板内容，不能与 fields 同时传入"
+          },
+          "alias": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "description": ""
+          },
+          "description": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 255,
+            "description": ""
+          },
+          "request_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "description": "稳定业务请求编号；重试时保持相同，不能使用新的随机数"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "examples": [
+          {
+            "name": "费用申请（测试）",
+            "fields": [
+              {
+                "key": "reason",
+                "label": "事由",
+                "control": "Text",
+                "required": true
+              },
+              {
+                "key": "amount",
+                "label": "金额",
+                "control": "Money",
+                "required": true
+              }
+            ],
+            "request_id": "template-create-example"
+          }
+        ]
+      },
+      "official_docs": "https://developer.work.weixin.qq.com/document/path/97437"
+    },
+    {
+      "key": "wecom.approval_templates.update",
+      "platform": "wecom",
+      "summary": "更新审批模板内容",
+      "description": "保留企微既有流程和规则，只允许更新应用有权限的模板。提供完整字段定义或官方 template_content。",
+      "quota": "120/min",
+      "sensitive": true,
+      "idempotent": true,
+      "timeout_s": 60,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "write",
+        "business",
+        "approval",
+        "idempotency_required"
+      ],
+      "category": "审批模板",
+      "sort_order": -84,
+      "path": "/integrations/wecom/approval-templates/update",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "template": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160,
+            "description": "业务模板别名或企微模板 ID"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40,
+            "description": "模板名称"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true,
+              "description": "key、label、control、required；选择控件可传 options，Table 可传 children"
+            },
+            "minItems": 1,
+            "maxItems": 100
+          },
+          "template_content": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "高级模式：官方模板内容，不能与 fields 同时传入"
+          },
+          "alias": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "description": ""
+          },
+          "description": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 255,
+            "description": ""
+          },
+          "request_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "description": "稳定业务请求编号；重试时保持相同，不能使用新的随机数"
+          }
+        },
+        "required": [
+          "template",
+          "name"
+        ],
+        "examples": [
+          {
+            "template": "demo-expense",
+            "name": "费用申请（测试）",
+            "fields": [
+              {
+                "key": "reason",
+                "label": "事由",
+                "control": "Text",
+                "required": true
+              },
+              {
+                "key": "amount",
+                "label": "金额",
+                "control": "Money",
+                "required": true
+              }
+            ],
+            "request_id": "template-update-example"
+          }
+        ]
+      },
+      "official_docs": "https://developer.work.weixin.qq.com/document/path/97438"
+    },
+    {
+      "key": "wecom.approval_templates.clone",
+      "platform": "wecom",
+      "summary": "复制模板为新的业务模板",
+      "description": "读取原模板控件再创建新模板；不会复制原审批流程或管理员规则。",
+      "quota": "120/min",
+      "sensitive": true,
+      "idempotent": true,
+      "timeout_s": 60,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "write",
+        "business",
+        "approval",
+        "idempotency_required"
+      ],
+      "category": "审批模板",
+      "sort_order": -83,
+      "path": "/integrations/wecom/approval-templates/clone",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "template": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160,
+            "description": "业务模板别名或企微模板 ID"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40,
+            "description": ""
+          },
+          "alias": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "description": ""
+          },
+          "description": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 255,
+            "description": ""
+          },
+          "request_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "description": "稳定业务请求编号；重试时保持相同，不能使用新的随机数"
+          }
+        },
+        "required": [
+          "template",
+          "name"
+        ],
+        "examples": [
+          {
+            "template": "demo-expense",
+            "name": "新的费用申请（测试）",
+            "request_id": "template-clone-example"
+          }
+        ]
+      },
+      "official_docs": ""
+    },
+    {
+      "key": "wecom.approvals.prepare",
+      "platform": "wecom",
+      "summary": "预检审批申请并生成官方请求",
+      "description": "按模板校验全部字段，自动转换控件、选项与金额，生成摘要。只读取模板，不会提单。",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 60,
+      "retry_max": 2,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business",
+        "approval"
+      ],
+      "category": "通用审批",
+      "sort_order": -82,
+      "path": "/integrations/wecom/approvals/prepare",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "template": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160,
+            "description": "业务模板别名或企微模板 ID"
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "字段对象，支持业务别名、唯一标题或控件 ID；按模板类型自动转换"
+          },
+          "apply_data": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "高级模式：官方 contents，不可与 fields 同时传入"
+          },
+          "applicant": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "description": "申请人 userid"
+          },
+          "department_id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "flow": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "approve",
+                    "notify",
+                    "handle"
+                  ],
+                  "default": "approve"
+                },
+                "mode": {
+                  "type": "string",
+                  "enum": [
+                    "all",
+                    "any",
+                    "sequential"
+                  ],
+                  "default": "all"
+                },
+                "users": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "description": "成员 userid"
+                  },
+                  "minItems": 1,
+                  "maxItems": 100
+                }
+              },
+              "required": [
+                "users"
+              ]
+            },
+            "minItems": 0,
+            "maxItems": 20
+          },
+          "summary": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 20,
+              "description": "摘要行，最多 20 个字符"
+            },
+            "minItems": 0,
+            "maxItems": 3
+          },
+          "template_version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "description": "预检返回的模板版本；提交时检测模板变更"
+          }
+        },
+        "required": [
+          "template",
+          "applicant"
+        ],
+        "examples": [
+          {
+            "template": "demo-expense",
+            "applicant": "fixture-user",
+            "fields": {
+              "事由": "购买办公用品",
+              "金额": "99.50",
+              "费用类型": "办公"
+            }
+          }
+        ]
+      },
+      "official_docs": "https://developer.work.weixin.qq.com/document/path/91853"
+    },
+    {
+      "key": "wecom.approvals.submit",
+      "platform": "wecom",
+      "summary": "用业务字段一键提交审批",
+      "description": "自动读取最新模板、转换字段、校验流程和生成摘要。默认采用模板审批流程。request_id 防重复提交；超时结果不确定时不自动重发。",
+      "quota": "120/min",
+      "sensitive": true,
+      "idempotent": true,
+      "timeout_s": 60,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "write",
+        "business",
+        "approval",
+        "idempotency_required"
+      ],
+      "category": "通用审批",
+      "sort_order": -81,
+      "path": "/integrations/wecom/approvals/submit",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "template": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160,
+            "description": "业务模板别名或企微模板 ID"
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "字段对象，支持业务别名、唯一标题或控件 ID；按模板类型自动转换"
+          },
+          "apply_data": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "高级模式：官方 contents，不可与 fields 同时传入"
+          },
+          "applicant": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "description": "申请人 userid"
+          },
+          "department_id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "flow": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "approve",
+                    "notify",
+                    "handle"
+                  ],
+                  "default": "approve"
+                },
+                "mode": {
+                  "type": "string",
+                  "enum": [
+                    "all",
+                    "any",
+                    "sequential"
+                  ],
+                  "default": "all"
+                },
+                "users": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "description": "成员 userid"
+                  },
+                  "minItems": 1,
+                  "maxItems": 100
+                }
+              },
+              "required": [
+                "users"
+              ]
+            },
+            "minItems": 0,
+            "maxItems": 20
+          },
+          "summary": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 20,
+              "description": "摘要行，最多 20 个字符"
+            },
+            "minItems": 0,
+            "maxItems": 3
+          },
+          "template_version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "description": "预检返回的模板版本；提交时检测模板变更"
+          },
+          "request_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "description": "稳定业务请求编号；重试时保持相同，不能使用新的随机数"
+          }
+        },
+        "required": [
+          "template",
+          "applicant",
+          "request_id"
+        ],
+        "examples": [
+          {
+            "template": "demo-expense",
+            "applicant": "fixture-user",
+            "fields": {
+              "事由": "购买办公用品",
+              "金额": "99.50",
+              "费用类型": "办公"
+            },
+            "request_id": "expense-order-20261105-001"
+          }
+        ]
+      },
+      "official_docs": "https://developer.work.weixin.qq.com/document/path/91853"
+    },
+    {
+      "key": "wecom.approvals.get",
+      "platform": "wecom",
+      "summary": "获取整理后的审批详情",
+      "description": "统一状态、申请人、字段、附件、明细和流程；保留 official，未知状态保持 unknown。",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 60,
+      "retry_max": 2,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business",
+        "approval"
+      ],
+      "category": "通用审批",
+      "sort_order": -80,
+      "path": "/integrations/wecom/approvals/get",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "approval_no": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "description": ""
+          }
+        },
+        "required": [
+          "approval_no"
+        ],
+        "examples": [
+          {
+            "approval_no": "MOCK-1"
+          }
+        ]
+      },
+      "official_docs": "https://developer.work.weixin.qq.com/document/path/91983"
+    },
+    {
+      "key": "wecom.approvals.get_many",
+      "platform": "wecom",
+      "summary": "批量获取审批详情（支持部分失败）",
+      "description": "去重后逐个读取详情，每个失败单独返回；不会因一个无效单号丢失其他结果。",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 60,
+      "retry_max": 2,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business",
+        "approval"
+      ],
+      "category": "通用审批",
+      "sort_order": -79,
+      "path": "/integrations/wecom/approvals/get-many",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "approval_nos": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64,
+              "description": ""
+            },
+            "minItems": 1,
+            "maxItems": 100
+          }
+        },
+        "required": [
+          "approval_nos"
+        ],
+        "examples": [
+          {
+            "approval_nos": [
+              "MOCK-1"
+            ]
+          }
+        ]
+      },
+      "official_docs": "https://developer.work.weixin.qq.com/document/path/91983"
+    },
+    {
+      "key": "wecom.approvals.list",
+      "platform": "wecom",
+      "summary": "按业务条件查询审批（自动补齐详情）",
+      "description": "支持易读状态、日期和模板别名。自动拆分 31 天窗口；只按游标判断结束，空页也能继续。游标绑定调用系统和筛选条件。",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 60,
+      "retry_max": 2,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business",
+        "approval"
+      ],
+      "category": "通用审批",
+      "sort_order": -78,
+      "path": "/integrations/wecom/approvals/list",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "start_at": {
+            "description": "ISO 日期时间、北京时间或 Unix 秒/毫秒；省略为最近 7 天"
+          },
+          "end_at": {
+            "description": "结束时间；总范围最多 366 天"
+          },
+          "template": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160,
+            "description": ""
+          },
+          "applicant": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "description": ""
+          },
+          "status": {
+            "description": "pending/approved/rejected/cancelled/approval_revoked/deleted/paid，或官方数字状态"
+          },
+          "department_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "minItems": 0,
+            "maxItems": 100
+          },
+          "record_type": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9
+          },
+          "cursor": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 16000,
+            "description": ""
+          },
+          "page_size": {
+            "type": "integer",
+            "default": 20,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "include_details": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "required": [],
+        "examples": [
+          {
+            "include_details": false
+          }
+        ]
+      },
+      "official_docs": "https://developer.work.weixin.qq.com/document/path/91816"
+    },
+    {
+      "key": "wecom.approvals.collect",
+      "platform": "wecom",
+      "summary": "有界汇总审批（自动分页与跨月查询）",
+      "description": "自动翻页和拆分时间窗口，按单号去重。达到 max_items/max_pages 时返回 partial 与续传游标，避免无限拉取或静默截断。",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 90,
+      "retry_max": 2,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business",
+        "approval"
+      ],
+      "category": "通用审批",
+      "sort_order": -77,
+      "path": "/integrations/wecom/approvals/collect",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "start_at": {
+            "description": "ISO 日期时间、北京时间或 Unix 秒/毫秒；省略为最近 7 天"
+          },
+          "end_at": {
+            "description": "结束时间；总范围最多 366 天"
+          },
+          "template": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160,
+            "description": ""
+          },
+          "applicant": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "description": ""
+          },
+          "status": {
+            "description": "pending/approved/rejected/cancelled/approval_revoked/deleted/paid，或官方数字状态"
+          },
+          "department_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "minItems": 0,
+            "maxItems": 100
+          },
+          "record_type": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9
+          },
+          "cursor": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 16000,
+            "description": ""
+          },
+          "page_size": {
+            "type": "integer",
+            "default": 20,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "include_details": {
+            "type": "boolean",
+            "default": true
+          },
+          "max_items": {
+            "type": "integer",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_pages": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 100
+          }
+        },
+        "required": [],
+        "examples": [
+          {
+            "include_details": false,
+            "max_items": 100
+          }
+        ]
+      },
+      "official_docs": "https://developer.work.weixin.qq.com/document/path/91816"
+    },
+    {
+      "key": "wecom.approvals.engine_get",
+      "platform": "wecom",
+      "summary": "查询自建应用 JS-SDK 审批引擎状态",
+      "description": "用于通过企微客户端发起的引擎审批，单号使用开发者 third_no。",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 60,
+      "retry_max": 2,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business",
+        "approval"
+      ],
+      "category": "通用审批",
+      "sort_order": -76,
+      "path": "/integrations/wecom/approvals/engine-get",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "third_no": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "description": ""
+          }
+        },
+        "required": [
+          "third_no"
+        ],
+        "examples": [
+          {
+            "third_no": "fixture-third-001"
+          }
+        ]
+      },
+      "official_docs": "https://developer.work.weixin.qq.com/document/path/90269"
+    },
+    {
+      "key": "wecom.approvals.engine_launch",
+      "platform": "wecom",
+      "summary": "生成客户端审批引擎调用参数",
+      "description": "生成 thirdPartyOpenPage 参数；必须在企微客户端完成 JS-SDK 初始化后调用，不会在服务端直接提单。",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 60,
+      "retry_max": 2,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business",
+        "approval"
+      ],
+      "category": "通用审批",
+      "sort_order": -75,
+      "path": "/integrations/wecom/approvals/engine-launch",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "template_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160,
+            "description": ""
+          },
+          "third_no": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "description": ""
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "create",
+              "view"
+            ],
+            "default": "create"
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "template_id",
+          "third_no"
+        ],
+        "examples": [
+          {
+            "template_id": "fixture-engine-template",
+            "third_no": "fixture-third-001",
+            "fields": {
+              "事由": "示例"
+            }
+          }
+        ]
+      },
+      "official_docs": "https://developer.work.weixin.qq.com/document/path/90269"
+    },
+    {
+      "key": "wecom.approvals.legacy_get",
+      "platform": "wecom",
+      "summary": "读取旧版审批数据（兼容）",
+      "description": "官方旧接口不再维护，新集成请使用 approvals.list/collect。",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 60,
+      "retry_max": 2,
+      "since": "2026-11",
+      "deprecated": true,
+      "tags": [
+        "read",
+        "business",
+        "approval"
+      ],
+      "category": "通用审批",
+      "sort_order": -74,
+      "path": "/integrations/wecom/approvals/legacy-get",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "start_at": {},
+          "end_at": {},
+          "next_spnum": {
+            "type": "integer",
+            "default": 0,
+            "minimum": 0
+          }
+        },
+        "required": [
+          "start_at",
+          "end_at"
+        ],
+        "examples": [
+          {
+            "start_at": "2026-11-01",
+            "end_at": "2026-11-05"
+          }
+        ]
+      },
+      "official_docs": "https://developer.work.weixin.qq.com/document/path/91530"
+    },
+    {
+      "key": "wecom.approval_files.upload",
+      "platform": "wecom",
+      "summary": "上传可用于审批的临时附件",
+      "description": "返回可直接填入 File 字段的 file_id。单文件最多 10 MB，单个审批单最多 6 个附件。",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": true,
+      "timeout_s": 60,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "write",
+        "business",
+        "approval"
+      ],
+      "category": "审批附件",
+      "sort_order": -73,
+      "path": "/integrations/wecom/approval-files/upload",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "filename": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "description": ""
+          },
+          "content_base64": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 14000000,
+            "description": ""
+          }
+        },
+        "required": [
+          "filename",
+          "content_base64"
+        ],
+        "examples": [
+          {
+            "filename": "fixture.txt",
+            "content_base64": "Zml4dHVyZQ=="
+          }
+        ]
+      },
+      "official_docs": ""
+    },
+    {
+      "key": "wecom.approval_files.download",
+      "platform": "wecom",
+      "summary": "读取审批附件内容",
+      "description": "使用 file_id 获取附件，返回 Base64 内容与 MIME 类型，不接受任意远程 URL。",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 60,
+      "retry_max": 2,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business",
+        "approval"
+      ],
+      "category": "审批附件",
+      "sort_order": -72,
+      "path": "/integrations/wecom/approval-files/download",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "file_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512,
+            "description": ""
+          }
+        },
+        "required": [
+          "file_id"
+        ],
+        "examples": [
+          {
+            "file_id": "mock-file-fixture"
+          }
+        ]
+      },
+      "official_docs": ""
+    },
+    {
+      "key": "wecom.approval_events.list",
+      "platform": "wecom",
+      "summary": "增量读取审批事件",
+      "description": "按 after_id 增量读取当前调用系统的验签事件，使用 event_id 去重。与配置的签名 Webhook 转发可同时使用。",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 60,
+      "retry_max": 2,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business",
+        "approval"
+      ],
+      "category": "审批事件",
+      "sort_order": -71,
+      "path": "/integrations/wecom/approval-events/list",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "after_id": {
+            "type": "integer",
+            "default": 0,
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "limit": {
+            "type": "integer",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 200
+          }
+        },
+        "required": [],
+        "examples": [
+          {}
+        ]
+      },
+      "official_docs": ""
+    },
+    {
+      "key": "wecom.approval_events.retry",
+      "platform": "wecom",
+      "summary": "重试本系统失败的审批事件转发",
+      "description": "仅重试 failed/poll_only 事件，不更改审批业务状态。",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": true,
+      "timeout_s": 60,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "write",
+        "business",
+        "approval"
+      ],
+      "category": "审批事件",
+      "sort_order": -70,
+      "path": "/integrations/wecom/approval-events/retry",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "description": ""
+          }
+        },
+        "required": [
+          "event_id"
+        ],
+        "examples": [
+          {
+            "event_id": "0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        ]
+      },
+      "official_docs": ""
+    },
+    {
+      "key": "wecom.vacation.config",
+      "platform": "wecom",
+      "summary": "获取企业假期管理配置",
+      "description": "查询假期类型、计量粒度与余额规则，供通用请假表单使用。",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 60,
+      "retry_max": 2,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business",
+        "approval"
+      ],
+      "category": "假期管理",
+      "sort_order": -69,
+      "path": "/integrations/wecom/vacation/config",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "examples": [
+          {}
+        ]
+      },
+      "official_docs": "https://developer.work.weixin.qq.com/document/path/93375"
+    },
+    {
+      "key": "wecom.vacation.get",
+      "platform": "wecom",
+      "summary": "获取成员假期余额",
+      "description": "返回统一的秒数值和原始明细，按官方天/小时粒度转换，避免假定一天等于八小时。",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 60,
+      "retry_max": 2,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business",
+        "approval"
+      ],
+      "category": "假期管理",
+      "sort_order": -68,
+      "path": "/integrations/wecom/vacation/get",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "userid": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "description": ""
+          }
+        },
+        "required": [
+          "userid"
+        ],
+        "examples": [
+          {
+            "userid": "fixture-user"
+          }
+        ]
+      },
+      "official_docs": "https://developer.work.weixin.qq.com/document/path/93376"
+    },
+    {
+      "key": "wecom.vacation.set",
+      "platform": "wecom",
+      "summary": "用天或小时设置假期余额",
+      "description": "显式选择单位并校验 0.1 单位的精度；需要 confirm=true 和稳定 request_id。",
+      "quota": "120/min",
+      "sensitive": true,
+      "idempotent": true,
+      "timeout_s": 60,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "write",
+        "business",
+        "approval",
+        "idempotency_required"
+      ],
+      "category": "假期管理",
+      "sort_order": -67,
+      "path": "/integrations/wecom/vacation/set",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "userid": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "description": ""
+          },
+          "vacation_id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "remaining": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 24000
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "days",
+              "hours"
+            ]
+          },
+          "remarks": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 200,
+            "description": ""
+          },
+          "confirm": {
+            "type": "boolean",
+            "default": false
+          },
+          "request_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "description": "稳定业务请求编号；重试时保持相同，不能使用新的随机数"
+          }
+        },
+        "required": [
+          "userid",
+          "vacation_id",
+          "remaining",
+          "unit"
+        ],
+        "examples": [
+          {
+            "userid": "fixture-user",
+            "vacation_id": 1,
+            "remaining": 8,
+            "unit": "hours",
+            "confirm": true,
+            "request_id": "vacation-set-fixture"
+          }
+        ]
+      },
+      "official_docs": "https://developer.work.weixin.qq.com/document/path/93377"
+    },
+    {
+      "key": "gmail.messages.search",
+      "platform": "gmail",
+      "summary": "按业务条件搜索邮件并整理内容",
+      "description": "自动分页、统一 items/page/errors；支持 max_items、max_pages 与签名续传游标。仅扫描根记录，嵌套资源遵循原接口的范围。读取能力独立授权，保留原接口兼容。",
+      "quota": "600/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 90,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business",
+        "collection"
+      ],
+      "category": "业务聚合",
+      "sort_order": -50,
+      "path": "/integrations/gmail/messages/search",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "account": {
+            "default": "",
+            "description": "授权邮箱地址；非空时必须与实际身份一致",
+            "maxLength": 254,
+            "title": "Account",
+            "type": "string"
+          },
+          "query": {
+            "default": "",
+            "description": "Gmail 搜索语法，如 from:x@y.com is:unread",
+            "maxLength": 500,
+            "title": "Query",
+            "type": "string"
+          },
+          "label_ids": {
+            "description": "只返回包含所有指定标签的邮件",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 20,
+            "title": "Label Ids",
+            "type": "array",
+            "default": []
+          },
+          "include_spam_trash": {
+            "default": false,
+            "description": "是否把垃圾邮件和垃圾箱邮件也纳入搜索",
+            "title": "Include Spam Trash",
+            "type": "boolean"
+          },
+          "page_size": {
+            "type": "integer",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_items": {
+            "type": "integer",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_pages": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "resume_cursor": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 16000,
+            "description": "回传 page.next_cursor；绑定调用系统和筛选条件"
+          },
+          "sender": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "发件人"
+          },
+          "subject": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "主题关键词"
+          },
+          "since": {},
+          "before": {},
+          "unread": {
+            "type": "boolean",
+            "default": false
+          },
+          "has_attachment": {
+            "type": "boolean",
+            "default": false
+          },
+          "include_details": {
+            "type": "boolean",
+            "default": true
+          },
+          "include_body": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "required": [],
+        "examples": [
+          {}
+        ]
+      },
+      "source_operation": "gmail.messages.list"
+    },
+    {
+      "key": "gdrive.files.search",
+      "platform": "gdrive",
+      "summary": "按文件名、目录和类型搜索文件",
+      "description": "自动分页、统一 items/page/errors；支持 max_items、max_pages 与签名续传游标。仅扫描根记录，嵌套资源遵循原接口的范围。读取能力独立授权，保留原接口兼容。",
+      "quota": "300/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 90,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business",
+        "collection"
+      ],
+      "category": "业务聚合",
+      "sort_order": -50,
+      "path": "/integrations/gdrive/files/search",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "query": {
+            "default": "trashed = false",
+            "description": "Drive 搜索语法 q",
+            "maxLength": 1000,
+            "title": "Query",
+            "type": "string"
+          },
+          "order_by": {
+            "anyOf": [
+              {
+                "maxLength": 256,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "如 modifiedTime desc,name",
+            "title": "Order By"
+          },
+          "spaces": {
+            "default": "drive",
+            "description": "逗号分隔：drive,appDataFolder",
+            "maxLength": 64,
+            "title": "Spaces",
+            "type": "string"
+          },
+          "corpora": {
+            "default": "user",
+            "description": "搜索范围",
+            "enum": [
+              "user",
+              "domain",
+              "drive",
+              "allDrives"
+            ],
+            "title": "Corpora",
+            "type": "string"
+          },
+          "drive_id": {
+            "anyOf": [
+              {
+                "maxLength": 256,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "corpora=drive 时的共享云端硬盘 ID",
+            "title": "Drive Id"
+          },
+          "include_items_from_all_drives": {
+            "default": false,
+            "description": "是否包含我的云端硬盘与共享云端硬盘项目",
+            "title": "Include Items From All Drives",
+            "type": "boolean"
+          },
+          "supports_all_drives": {
+            "default": false,
+            "description": "请求方是否支持共享云端硬盘",
+            "title": "Supports All Drives",
+            "type": "boolean"
+          },
+          "include_permissions_for_view": {
+            "anyOf": [
+              {
+                "const": "published",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "额外返回的权限视图，目前仅 published",
+            "title": "Include Permissions For View"
+          },
+          "include_labels": {
+            "anyOf": [
+              {
+                "maxLength": 512,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "要包含的 Drive 标签 ID，逗号分隔",
+            "title": "Include Labels"
+          },
+          "fields": {
+            "default": "nextPageToken,incompleteSearch,files(id,name,mimeType,size,modifiedTime,webViewLink)",
+            "description": "partial response 字段；默认已包含 nextPageToken 供翻页",
+            "maxLength": 1000,
+            "title": "Fields",
+            "type": "string"
+          },
+          "page_size": {
+            "type": "integer",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_items": {
+            "type": "integer",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_pages": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "resume_cursor": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 16000,
+            "description": "回传 page.next_cursor；绑定调用系统和筛选条件"
+          },
+          "name_contains": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "文件名包含"
+          },
+          "parent_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160,
+            "description": "所在文件夹 ID"
+          },
+          "mime_type": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160,
+            "description": "文件 MIME 类型"
+          },
+          "modified_since": {}
+        },
+        "required": [],
+        "examples": [
+          {}
+        ]
+      },
+      "source_operation": "gdrive.files.list"
+    },
+    {
+      "key": "gcs.objects.collect",
+      "platform": "gcs",
+      "summary": "自动分页汇总：按前缀列出对象",
+      "description": "自动分页、统一 items/page/errors；支持 max_items、max_pages 与签名续传游标。仅扫描根记录，嵌套资源遵循原接口的范围。读取能力独立授权，保留原接口兼容。",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 90,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business",
+        "collection"
+      ],
+      "category": "业务聚合",
+      "sort_order": -50,
+      "path": "/integrations/gcs/objects/collect",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "prefix": {
+            "default": "",
+            "description": "仅返回此前缀开头的对象",
+            "maxLength": 512,
+            "title": "Prefix",
+            "type": "string"
+          },
+          "delimiter": {
+            "anyOf": [
+              {
+                "maxLength": 8,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "常用 '/'；开启类似文件夹的目录列表，响应会有 prefixes[]",
+            "title": "Delimiter"
+          },
+          "include_trailing_delimiter": {
+            "default": false,
+            "description": "对象以 delimiter 结尾时也在 items[] 中返回其元信息",
+            "title": "Include Trailing Delimiter",
+            "type": "boolean"
+          },
+          "include_folders_as_prefixes": {
+            "default": false,
+            "description": "包含空/托管文件夹；要求 delimiter='/'",
+            "title": "Include Folders As Prefixes",
+            "type": "boolean"
+          },
+          "match_glob": {
+            "anyOf": [
+              {
+                "maxLength": 1024,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "对象名 glob，例如 contracts/**/*.pdf",
+            "title": "Match Glob"
+          },
+          "start_offset": {
+            "anyOf": [
+              {
+                "maxLength": 1024,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "按对象名词典序的起始位置（含）",
+            "title": "Start Offset"
+          },
+          "end_offset": {
+            "anyOf": [
+              {
+                "maxLength": 1024,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "按对象名词典序的结束位置（不含）",
+            "title": "End Offset"
+          },
+          "projection": {
+            "default": "noAcl",
+            "description": "返回属性集合；full 会包含 ACL",
+            "enum": [
+              "noAcl",
+              "full"
+            ],
+            "title": "Projection",
+            "type": "string"
+          },
+          "versions": {
+            "default": false,
+            "description": "是否把对象的各版本分别列出",
+            "title": "Versions",
+            "type": "boolean"
+          },
+          "soft_deleted": {
+            "default": false,
+            "description": "仅列出软删除对象；不能与 versions=true 同用",
+            "title": "Soft Deleted",
+            "type": "boolean"
+          },
+          "bucket": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "不填用默认桶",
+            "title": "Bucket"
+          },
+          "page_size": {
+            "type": "integer",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_items": {
+            "type": "integer",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_pages": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "resume_cursor": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 16000,
+            "description": "回传 page.next_cursor；绑定调用系统和筛选条件"
+          }
+        },
+        "required": [],
+        "examples": [
+          {}
+        ]
+      },
+      "source_operation": "gcs.objects.list"
+    },
+    {
+      "key": "nas.objects.collect",
+      "platform": "nas",
+      "summary": "自动分页汇总：列目录 / 列举对象",
+      "description": "自动分页、统一 items/page/errors；支持 max_items、max_pages 与签名续传游标。仅扫描根记录，嵌套资源遵循原接口的范围。读取能力独立授权，保留原接口兼容。",
+      "quota": "30/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 90,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business",
+        "collection"
+      ],
+      "category": "业务聚合",
+      "sort_order": -50,
+      "path": "/integrations/nas/objects/collect",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "prefix": {
+            "default": "",
+            "description": "只看这个前缀下的对象，如 产品培训/",
+            "maxLength": 500,
+            "title": "Prefix",
+            "type": "string"
+          },
+          "recursive": {
+            "default": true,
+            "description": "true=递归列出全部；false=只看当前一层",
+            "title": "Recursive",
+            "type": "boolean"
+          },
+          "delimiter": {
+            "anyOf": [
+              {
+                "maxLength": 8,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "按分隔符折叠（常用 /），只看某一层的目录与文件；与 recursive=true 互斥",
+            "title": "Delimiter"
+          },
+          "bucket": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "不填用默认桶",
+            "title": "Bucket"
+          },
+          "page_size": {
+            "type": "integer",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_items": {
+            "type": "integer",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_pages": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "resume_cursor": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 16000,
+            "description": "回传 page.next_cursor；绑定调用系统和筛选条件"
+          }
+        },
+        "required": [],
+        "examples": [
+          {}
+        ]
+      },
+      "source_operation": "nas.objects.list"
+    },
+    {
+      "key": "shopify.orders.collect",
+      "platform": "shopify",
+      "summary": "自动分页汇总：按更新时间增量拉订单列表（含明细/支付流水/客户/地址）",
+      "description": "自动分页、统一 items/page/errors；支持 max_items、max_pages 与签名续传游标。仅扫描根记录，嵌套资源遵循原接口的范围。读取能力独立授权，保留原接口兼容。",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 90,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business",
+        "collection"
+      ],
+      "category": "业务聚合",
+      "sort_order": -50,
+      "path": "/integrations/shopify/orders/collect",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "store": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "目标店铺，必须与本实例实际授权店铺一致",
+            "title": "Store"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Shopify 搜索语法，如 updated_at:>=2026-10-01T00:00:00Z 或 status:open",
+            "title": "Query"
+          },
+          "sort_key": {
+            "anyOf": [
+              {
+                "enum": [
+                  "CREATED_AT",
+                  "ID",
+                  "UPDATED_AT",
+                  "TOTAL_PRICE"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "UPDATED_AT",
+            "description": "默认按更新时间升序，便于用游标增量",
+            "title": "Sort Key"
+          },
+          "reverse": {
+            "default": false,
+            "description": "是否反向排序",
+            "title": "Reverse",
+            "type": "boolean"
+          },
+          "page_size": {
+            "type": "integer",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_items": {
+            "type": "integer",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_pages": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "resume_cursor": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 16000,
+            "description": "回传 page.next_cursor；绑定调用系统和筛选条件"
+          }
+        },
+        "required": [],
+        "examples": [
+          {}
+        ]
+      },
+      "source_operation": "shopify.orders.list"
+    },
+    {
+      "key": "shopify.products.collect",
+      "platform": "shopify",
+      "summary": "自动分页汇总：商品列表",
+      "description": "自动分页、统一 items/page/errors；支持 max_items、max_pages 与签名续传游标。仅扫描根记录，嵌套资源遵循原接口的范围。读取能力独立授权，保留原接口兼容。",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 90,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business",
+        "collection"
+      ],
+      "category": "业务聚合",
+      "sort_order": -50,
+      "path": "/integrations/shopify/products/collect",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "store": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "目标店铺，必须与本实例实际授权店铺一致",
+            "title": "Store"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Shopify 搜索语法，如 status:active",
+            "title": "Query"
+          },
+          "sort_key": {
+            "anyOf": [
+              {
+                "enum": [
+                  "CREATED_AT",
+                  "ID",
+                  "INVENTORY_TOTAL",
+                  "PRODUCT_TYPE",
+                  "PUBLISHED_AT",
+                  "RELEVANCE",
+                  "TITLE",
+                  "UPDATED_AT",
+                  "VENDOR"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "产品排序字段；query 有全文搜索时可用 RELEVANCE",
+            "title": "Sort Key"
+          },
+          "reverse": {
+            "default": false,
+            "description": "是否反向排序",
+            "title": "Reverse",
+            "type": "boolean"
+          },
+          "page_size": {
+            "type": "integer",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_items": {
+            "type": "integer",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_pages": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "resume_cursor": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 16000,
+            "description": "回传 page.next_cursor；绑定调用系统和筛选条件"
+          }
+        },
+        "required": [],
+        "examples": [
+          {}
+        ]
+      },
+      "source_operation": "shopify.products.list"
+    },
+    {
+      "key": "mabang.orders.collect",
+      "platform": "mabang",
+      "summary": "自动分页汇总：查询马帮订单列表（cursor 翻页）",
+      "description": "自动分页、统一 items/page/errors；支持 max_items、max_pages 与签名续传游标。仅扫描根记录，嵌套资源遵循原接口的范围。读取能力独立授权，保留原接口兼容。",
+      "quota": "60/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 90,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business",
+        "collection"
+      ],
+      "category": "业务聚合",
+      "sort_order": -50,
+      "path": "/integrations/mabang/orders/collect",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "2配货中 3已发货 4已完成 5已作废 6所有未发货 7所有非未发货",
+            "title": "Status"
+          },
+          "expressTimeStart": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "发货时间开始 YYYY-MM-DD HH:mm:ss",
+            "title": "Expresstimestart"
+          },
+          "expressTimeEnd": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "发货时间结束",
+            "title": "Expresstimeend"
+          },
+          "createDateStart": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "创建时间开始",
+            "title": "Createdatestart"
+          },
+          "createDateEnd": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "创建时间结束",
+            "title": "Createdateend"
+          },
+          "updateTimeStart": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "更新开始时间",
+            "title": "Updatetimestart"
+          },
+          "updateTimeEnd": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "更新结束时间",
+            "title": "Updatetimeend"
+          },
+          "paidtimeStart": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "付款时间开始",
+            "title": "Paidtimestart"
+          },
+          "paidtimeEnd": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "付款时间结束",
+            "title": "Paidtimeend"
+          },
+          "canSend": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "1正常订单 2异常订单 3全部订单，默认正常",
+            "title": "Cansend"
+          },
+          "shopName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "店铺名称，支持多个",
+            "title": "Shopname"
+          },
+          "platformOrderIds": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "订单编号，逗号分隔最多10个",
+            "title": "Platformorderids"
+          },
+          "trackNumbers": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "运单号，逗号分隔最多10个",
+            "title": "Tracknumbers"
+          },
+          "page_size": {
+            "type": "integer",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_items": {
+            "type": "integer",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_pages": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "resume_cursor": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 16000,
+            "description": "回传 page.next_cursor；绑定调用系统和筛选条件"
+          }
+        },
+        "required": [],
+        "examples": [
+          {}
+        ]
+      },
+      "source_operation": "mabang.orders.list"
+    },
+    {
+      "key": "judgeme.reviews.collect",
+      "platform": "judgeme",
+      "summary": "自动分页汇总：读取 Judge.me 评价",
+      "description": "自动分页、统一 items/page/errors；支持 max_items、max_pages 与签名续传游标。仅扫描根记录，嵌套资源遵循原接口的范围。读取能力独立授权，保留原接口兼容。",
+      "quota": "30/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 90,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business",
+        "collection"
+      ],
+      "category": "业务聚合",
+      "sort_order": -50,
+      "path": "/integrations/judgeme/reviews/collect",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "account": {
+            "default": "",
+            "maxLength": 254,
+            "title": "Account",
+            "type": "string"
+          },
+          "page_size": {
+            "type": "integer",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_items": {
+            "type": "integer",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_pages": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "resume_cursor": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 16000,
+            "description": "回传 page.next_cursor；绑定调用系统和筛选条件"
+          }
+        },
+        "required": [],
+        "examples": [
+          {}
+        ]
+      },
+      "source_operation": "judgeme.reviews.list"
+    },
+    {
+      "key": "trustpilot.reviews.collect",
+      "platform": "trustpilot",
+      "summary": "自动分页汇总：读取 Trustpilot 评价",
+      "description": "自动分页、统一 items/page/errors；支持 max_items、max_pages 与签名续传游标。仅扫描根记录，嵌套资源遵循原接口的范围。读取能力独立授权，保留原接口兼容。",
+      "quota": "30/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 90,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business",
+        "collection"
+      ],
+      "category": "业务聚合",
+      "sort_order": -50,
+      "path": "/integrations/trustpilot/reviews/collect",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "account": {
+            "default": "",
+            "maxLength": 254,
+            "title": "Account",
+            "type": "string"
+          },
+          "page_size": {
+            "type": "integer",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_items": {
+            "type": "integer",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_pages": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "resume_cursor": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 16000,
+            "description": "回传 page.next_cursor；绑定调用系统和筛选条件"
+          }
+        },
+        "required": [],
+        "examples": [
+          {}
+        ]
+      },
+      "source_operation": "trustpilot.reviews.list"
+    },
+    {
+      "key": "stripe.disputes.collect",
+      "platform": "stripe",
+      "summary": "自动分页汇总：读取 Stripe 支付争议",
+      "description": "自动分页、统一 items/page/errors；支持 max_items、max_pages 与签名续传游标。仅扫描根记录，嵌套资源遵循原接口的范围。读取能力独立授权，保留原接口兼容。",
+      "quota": "30/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 90,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business",
+        "collection"
+      ],
+      "category": "业务聚合",
+      "sort_order": -50,
+      "path": "/integrations/stripe/disputes/collect",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "account": {
+            "default": "",
+            "maxLength": 254,
+            "title": "Account",
+            "type": "string"
+          },
+          "page_size": {
+            "type": "integer",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_items": {
+            "type": "integer",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_pages": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "resume_cursor": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 16000,
+            "description": "回传 page.next_cursor；绑定调用系统和筛选条件"
+          }
+        },
+        "required": [],
+        "examples": [
+          {}
+        ]
+      },
+      "source_operation": "stripe.disputes.list"
+    },
+    {
+      "key": "paypal.disputes.collect",
+      "platform": "paypal",
+      "summary": "自动分页汇总：读取 PayPal 争议及取证信息",
+      "description": "自动分页、统一 items/page/errors；支持 max_items、max_pages 与签名续传游标。仅扫描根记录，嵌套资源遵循原接口的范围。读取能力独立授权，保留原接口兼容。",
+      "quota": "30/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 90,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business",
+        "collection"
+      ],
+      "category": "业务聚合",
+      "sort_order": -50,
+      "path": "/integrations/paypal/disputes/collect",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "account": {
+            "default": "",
+            "maxLength": 254,
+            "title": "Account",
+            "type": "string"
+          },
+          "page_size": {
+            "type": "integer",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_items": {
+            "type": "integer",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_pages": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "resume_cursor": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 16000,
+            "description": "回传 page.next_cursor；绑定调用系统和筛选条件"
+          }
+        },
+        "required": [],
+        "examples": [
+          {}
+        ]
+      },
+      "source_operation": "paypal.disputes.list"
+    },
+    {
+      "key": "rd.products.collect",
+      "platform": "rd",
+      "summary": "自动分页汇总：读取 RD 标准产品目录",
+      "description": "自动分页、统一 items/page/errors；支持 max_items、max_pages 与签名续传游标。仅扫描根记录，嵌套资源遵循原接口的范围。读取能力独立授权，保留原接口兼容。",
+      "quota": "30/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 90,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business",
+        "collection"
+      ],
+      "category": "业务聚合",
+      "sort_order": -50,
+      "path": "/integrations/rd/products/collect",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "account": {
+            "default": "",
+            "maxLength": 254,
+            "title": "Account",
+            "type": "string"
+          },
+          "page_size": {
+            "type": "integer",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_items": {
+            "type": "integer",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_pages": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "resume_cursor": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 16000,
+            "description": "回传 page.next_cursor；绑定调用系统和筛选条件"
+          }
+        },
+        "required": [],
+        "examples": [
+          {}
+        ]
+      },
+      "source_operation": "rd.products.list"
+    },
+    {
+      "key": "docusign.templates.get",
+      "platform": "docusign",
+      "summary": "读取签署模板、角色和字段",
+      "description": "合并模板与收件人字段定义，为业务签署预检提供角色和字段说明。",
+      "quota": "60/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 90,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business"
+      ],
+      "category": "签署模板",
+      "sort_order": -60,
+      "path": "/integrations/docusign/templates/get",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "template_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": ""
+          }
+        },
+        "required": [
+          "template_id"
+        ],
+        "additionalProperties": false,
+        "examples": [
+          {
+            "template_id": "demo-template"
+          }
+        ]
+      }
+    },
+    {
+      "key": "docusign.envelopes.collect",
+      "platform": "docusign",
+      "summary": "自动分页汇总：按日期/状态列出信封",
+      "description": "有界自动分页，统一 items/page/errors 与签名续传；保持原筛选，续传时每页大小固定。",
+      "quota": "60/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 90,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business"
+      ],
+      "category": "业务聚合",
+      "sort_order": -60,
+      "path": "/integrations/docusign/envelopes/collect",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "from_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "起始日期，如 2026-10-01（默认近 30 天）",
+            "title": "From Date"
+          },
+          "to_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "截止日期，如 2026-10-31（默认今天）",
+            "title": "To Date"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "enum": [
+                  "created",
+                  "sent",
+                  "delivered",
+                  "completed",
+                  "declined",
+                  "voided"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "page_size": {
+            "type": "integer",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_items": {
+            "type": "integer",
+            "default": 200,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_pages": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "resume_cursor": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 16000,
+            "description": ""
+          }
+        },
+        "required": [],
+        "additionalProperties": false,
+        "examples": [
+          {}
+        ]
+      }
+    },
+    {
+      "key": "docusign.templates.collect",
+      "platform": "docusign",
+      "summary": "自动分页汇总：列出可用模板",
+      "description": "有界自动分页，统一 items/page/errors 与签名续传；保持原筛选，续传时每页大小固定。",
+      "quota": "60/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 90,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business"
+      ],
+      "category": "业务聚合",
+      "sort_order": -60,
+      "path": "/integrations/docusign/templates/collect",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "page_size": {
+            "type": "integer",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_items": {
+            "type": "integer",
+            "default": 200,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_pages": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "resume_cursor": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 16000,
+            "description": ""
+          }
+        },
+        "required": [],
+        "additionalProperties": false,
+        "examples": [
+          {}
+        ]
+      }
+    },
+    {
+      "key": "quickcep.messages.collect",
+      "platform": "quickcep",
+      "summary": "自动分页汇总：分页查询会话消息",
+      "description": "有界自动分页，统一 items/page/errors 与签名续传；保持原筛选，续传时每页大小固定。",
+      "quota": "60/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 90,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business"
+      ],
+      "category": "业务聚合",
+      "sort_order": -60,
+      "path": "/integrations/quickcep/messages/collect",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "account": {
+            "default": "",
+            "description": "QuickCEP 账号名（如 epomaker / linsoul / sandbox）；空=QUICKCEP_ACCOUNT",
+            "title": "Account",
+            "type": "string"
+          },
+          "session_id": {
+            "description": "子会话 id",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "page_size": {
+            "type": "integer",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_items": {
+            "type": "integer",
+            "default": 200,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_pages": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "resume_cursor": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 16000,
+            "description": ""
+          }
+        },
+        "required": [
+          "session_id"
+        ],
+        "additionalProperties": false,
+        "examples": [
+          {
+            "session_id": "demo-session"
+          }
+        ]
+      }
+    },
+    {
+      "key": "lingxing.orders.collect",
+      "platform": "lingxing",
+      "summary": "自动分页汇总：查询亚马逊订单列表",
+      "description": "有界自动分页，统一 items/page/errors 与签名续传；保持原筛选，续传时每页大小固定。",
+      "quota": "60/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 90,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business"
+      ],
+      "category": "业务聚合",
+      "sort_order": -60,
+      "path": "/integrations/lingxing/orders/collect",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "account": {
+            "default": "",
+            "description": "领星账号名；空则用 LINGXING_ACCOUNT",
+            "title": "Account",
+            "type": "string"
+          },
+          "start_date": {
+            "description": "查询开始时间 Y-m-d 或 Y-m-d H:i:s（左闭）",
+            "title": "Start Date",
+            "type": "string"
+          },
+          "end_date": {
+            "description": "查询结束时间（右开），跨度不能超过一年",
+            "title": "End Date",
+            "type": "string"
+          },
+          "sid": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "店铺 id（单店）",
+            "title": "Sid"
+          },
+          "sid_list": {
+            "description": "店铺 id 列表，最多 20 个",
+            "items": {
+              "type": "integer"
+            },
+            "title": "Sid List",
+            "type": "array",
+            "default": []
+          },
+          "date_type": {
+            "default": 1,
+            "description": "1 订购时间(站点) 2 修改时间(北京) 3 平台更新(UTC) 10 发货时间(站点)",
+            "title": "Date Type",
+            "type": "integer"
+          },
+          "order_status": {
+            "description": "Pending / Unshipped / PartiallyShipped / Shipped / Canceled",
+            "items": {
+              "type": "string"
+            },
+            "title": "Order Status",
+            "type": "array",
+            "default": []
+          },
+          "sort_desc_by_date_type": {
+            "default": 0,
+            "description": "0 不排序 1 降序 2 升序",
+            "title": "Sort Desc By Date Type",
+            "type": "integer"
+          },
+          "fulfillment_channel": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "1 AFN(亚马逊配送) 2 MFN(自发货)",
+            "title": "Fulfillment Channel"
+          },
+          "page_size": {
+            "type": "integer",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_items": {
+            "type": "integer",
+            "default": 200,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_pages": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "resume_cursor": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 16000,
+            "description": ""
+          }
+        },
+        "required": [
+          "start_date",
+          "end_date"
+        ],
+        "additionalProperties": false,
+        "examples": [
+          {
+            "start_date": "2026-11-01",
+            "end_date": "2026-11-06"
+          }
+        ]
+      }
+    },
+    {
+      "key": "lingxing.product.collect",
+      "platform": "lingxing",
+      "summary": "自动分页汇总：查询本地产品列表（sku → pid / 品牌 / 状态）",
+      "description": "有界自动分页，统一 items/page/errors 与签名续传；保持原筛选，续传时每页大小固定。",
+      "quota": "60/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 90,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "business"
+      ],
+      "category": "业务聚合",
+      "sort_order": -60,
+      "path": "/integrations/lingxing/product/collect",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "account": {
+            "default": "",
+            "description": "领星账号名；空则用 LINGXING_ACCOUNT",
+            "title": "Account",
+            "type": "string"
+          },
+          "sku_list": {
+            "description": "本地产品 SKU，精确匹配，可传多个",
+            "items": {
+              "type": "string"
+            },
+            "title": "Sku List",
+            "type": "array",
+            "default": []
+          },
+          "sku_identifier_list": {
+            "description": "SKU 识别码，可传多个（和 sku 是两个字段，别混）",
+            "items": {
+              "type": "string"
+            },
+            "title": "Sku Identifier List",
+            "type": "array",
+            "default": []
+          },
+          "update_time_start": {
+            "anyOf": [
+              {
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "更新时间起（秒级时间戳，左闭右开）",
+            "title": "Update Time Start"
+          },
+          "update_time_end": {
+            "anyOf": [
+              {
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "更新时间止（秒级时间戳，左闭右开）",
+            "title": "Update Time End"
+          },
+          "create_time_start": {
+            "anyOf": [
+              {
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "创建时间起（秒级时间戳，左闭右开）",
+            "title": "Create Time Start"
+          },
+          "create_time_end": {
+            "anyOf": [
+              {
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "创建时间止（秒级时间戳，左闭右开）",
+            "title": "Create Time End"
+          },
+          "page_size": {
+            "type": "integer",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_items": {
+            "type": "integer",
+            "default": 200,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_pages": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "resume_cursor": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 16000,
+            "description": ""
+          }
+        },
+        "required": [],
+        "additionalProperties": false,
+        "examples": [
+          {}
+        ]
+      }
+    }
+  ],
+  "native_extensions": [
+    {
+      "key": "docusign.envelopes.list",
+      "properties": {
+        "start_position": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000000
+        }
+      }
+    },
+    {
+      "key": "docusign.templates.list",
+      "properties": {
+        "start_position": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000000
+        }
+      }
+    },
+    {
+      "key": "docusign.envelopes.create",
+      "properties": {},
+      "definitions": {
+        "TemplateRole": {
+          "additionalProperties": false,
+          "properties": {
+            "role_name": {
+              "description": "模板里的角色名，如 Signer 1",
+              "title": "Role Name",
+              "type": "string"
+            },
+            "email": {
+              "description": "签署人邮箱",
+              "title": "Email",
+              "type": "string"
+            },
+            "name": {
+              "description": "签署人姓名",
+              "title": "Name",
+              "type": "string"
+            },
+            "routing_order": {
+              "default": 1,
+              "description": "签署顺序",
+              "maximum": 99,
+              "minimum": 1,
+              "title": "Routing Order",
+              "type": "integer"
+            },
+            "tabs": {
+              "type": "object",
+              "additionalProperties": true,
+              "description": "模板预填字段；先通过 templates.get 核对角色和标签"
+            }
+          },
+          "required": [
+            "role_name",
+            "email",
+            "name"
+          ],
+          "title": "TemplateRole",
+          "type": "object"
+        }
+      }
+    },
+    {
+      "key": "lingxing.workorder.add",
+      "properties": {
+        "amountCurrency": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000,
+          "description": ""
+        },
+        "globalPurchaseTime": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000,
+          "description": ""
+        },
+        "logisticsProvider": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000,
+          "description": ""
+        },
+        "platformCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000,
+          "description": ""
+        },
+        "preArrivalTime": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000,
+          "description": ""
+        },
+        "reasonUuid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000,
+          "description": ""
+        },
+        "remark": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000,
+          "description": ""
+        },
+        "siteCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000,
+          "description": ""
+        },
+        "trackingNo": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000,
+          "description": ""
+        },
+        "returnWidDesc": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000,
+          "description": ""
+        },
+        "logisticsTypeCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000,
+          "description": ""
+        },
+        "logisticsProviderDesc": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000,
+          "description": ""
+        },
+        "globalTrackNo": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000,
+          "description": ""
+        },
+        "waybillNo": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000,
+          "description": ""
+        },
+        "createManualWork": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9223372036854775807
+        },
+        "cutOff": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9223372036854775807
+        },
+        "globalOrderNo": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9223372036854775807
+        },
+        "hasPrediction": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9223372036854775807
+        },
+        "logisticsType": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9223372036854775807
+        },
+        "salesType": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9223372036854775807
+        },
+        "source": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9223372036854775807
+        },
+        "storeId": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9223372036854775807
+        },
+        "sid": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9223372036854775807
+        },
+        "type": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9223372036854775807
+        },
+        "wid": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9223372036854775807
+        },
+        "returnWid": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9223372036854775807
+        },
+        "deliveryTime": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9223372036854775807
+        },
+        "logisticsTypeId": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9223372036854775807
+        },
+        "platform": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9223372036854775807
+        },
+        "wpType": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9223372036854775807
+        },
+        "workOrderSupplement": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "tagList": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": ""
+          }
+        }
+      }
+    }
+  ],
+  "credentials": [
+    {
+      "platform": "wecom",
+      "vars": [
+        {
+          "name": "WEWORK_APPROVAL_SECRET",
+          "label": "审批应用 Secret",
+          "required": false,
+          "secret": true,
+          "hint": "优先用于审批；未设置时使用当前调用系统的企微自建应用凭据，需要审批数据权限",
+          "per_system": true,
+          "scoped": "WEWORK_{SYSTEM}_APPROVAL_SECRET"
+        },
+        {
+          "name": "WEWORK_CALLBACK_TOKEN",
+          "label": "企微回调 Token",
+          "required": false,
+          "secret": true,
+          "hint": "与企微后台 API 接收配置一致，用于 SHA-1 验签",
+          "per_system": true,
+          "scoped": "WEWORK_{SYSTEM}_CALLBACK_TOKEN"
+        },
+        {
+          "name": "WEWORK_CALLBACK_AES_KEY",
+          "label": "企微回调 EncodingAESKey",
+          "required": false,
+          "secret": true,
+          "hint": "与企微后台 API 接收配置一致，固定 43 位",
+          "per_system": true,
+          "scoped": "WEWORK_{SYSTEM}_CALLBACK_AES_KEY"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="referrer" content="no-referrer">
+<title>CYT Common · 接入指南</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f4f6fa;color:#1e293b;font:14px/1.8 system-ui,-apple-system,"Microsoft YaHei",sans-serif}header,main{max-width:1180px;margin:auto;padding:28px 24px}header{padding-bottom:8px}.eyebrow{font-size:11px;font-weight:700;letter-spacing:.12em;color:#2563eb}h1{margin:10px 0;font-size:30px}h2{font-size:18px;margin:0 0 14px}h3{font-size:14px;margin:0 0 8px}p{color:#526179;margin:8px 0 16px}a{color:#2563eb}button,input,select{font:inherit}button,a,input,select{border-radius:7px}button{cursor:pointer;border:1px solid #dce3ed;background:white;padding:7px 13px;color:#334155}button:focus-visible,a:focus-visible{outline:2px solid #2563eb;outline-offset:2px}input,select{width:100%;border:1px solid #dce3ed;background:white;padding:9px 11px;color:#334155;min-width:0}label{display:grid;gap:7px;font-size:12px}pre,code{font-family:Consolas,monospace}pre{background:#f7f9fc;border:1px solid #e2e8f0;border-radius:8px;padding:18px;overflow:auto;white-space:pre;font-size:12px;line-height:1.9}code{overflow-wrap:anywhere}.panel{background:white;border:1px solid #e2e8f0;border-radius:12px;padding:24px;margin-bottom:20px}.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}.steps b{color:#2563eb}.steps p,.hint{font-size:12px}.downloads{display:flex;gap:16px;flex-wrap:wrap}.downloads a{font-size:12px}.catalog{display:grid;grid-template-columns:260px minmax(0,1fr);gap:20px;align-items:start}.sidebar{position:sticky;top:16px;padding:16px;max-height:80vh;overflow:auto}.filters{display:grid;gap:10px;margin-bottom:16px}.api-list{display:grid;gap:5px}.api-list button{text-align:left;width:100%;border-color:transparent;line-height:1.7}.api-list button.active{background:#eff6ff;border-color:#bed0f9;color:#2563eb}.api-list small{display:block;font:10px/1.7 Consolas,monospace;overflow-wrap:anywhere;color:#64748b}.scope{display:inline-block;background:#eff6ff;color:#2563eb;border:1px solid #bed0f9;border-radius:7px;padding:3px 9px;font-size:12px}.request-options{display:grid;grid-template-columns:minmax(0,1fr) 160px;gap:14px}.endpoint{font-size:12px;color:#2563eb;overflow-wrap:anywhere}.code-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:20px}.code-heading h3{margin:0}.notice{border-left:3px solid #d69526;background:#fff8eb;padding:10px 14px;margin:14px 0;font-size:12px;color:#865d17}.error{color:#b42318}table{width:100%;border-collapse:collapse;font-size:12px}th,td{border-bottom:1px solid #e2e8f0;text-align:left;vertical-align:top;padding:10px 8px;overflow-wrap:anywhere}th{background:#f8fafc}td code{font-size:11px}.parameter-wrap{overflow:auto;margin:16px 0}.status-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.status-grid p{font-size:12px;margin:0}.status-grid b{color:#2563eb}details{margin-top:20px}summary{cursor:pointer;color:#2563eb;font-size:12px}.hidden{display:none!important}
+@media(max-width:760px){header,main{padding:18px 14px}h1{font-size:25px}.panel{padding:18px}.steps,.catalog,.status-grid{grid-template-columns:1fr}.sidebar{position:static;max-height:360px}.request-options{grid-template-columns:1fr}}
+.catalog>div,.panel{min-width:0;max-width:100%}pre{max-width:100%}
+@media(max-width:760px){.steps,.catalog,.status-grid{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<header><span class="eyebrow">CYT COMMON · DEVELOPER GUIDE</span><h1 id="guide-title">接入指南</h1><p id="guide-scope"></p><div class="downloads"><a href="openapi.json" download>OpenAPI</a><a href="sdk/python/cyt_gateway.py" download>Python SDK</a><a href="sdk/typescript/index.ts" download>TypeScript SDK</a></div></header>
+<main>
+<section class="panel"><h2>从这里开始接入</h2><div class="steps"><article><b>1 · 领取调用身份</b><p>向管理员领取本系统独立 API Key，以及接入方可访问的网关地址。密钥放在业务后端环境变量 CYT_API_KEY。</p></article><article><b>2 · 选择接口并复制示例</b><p>下面只包含导出时已获授权的接口。按模块找到所需能力，填写真实业务参数；建议先验证一个只读接口。</p></article><article><b>3 · 核对返回结果</b><p>HTTP 检查 ok、meta.mock 和 data 中的 partial / errors。SDK 成功时直接返回 data；错误保留 trace_id。</p></article></div><p class="hint">本指南可离线阅读，无需管理后台账号。授权与配额在调用时实时检查；如需新增能力，请联系管理员。本包不包含 API Key 或上游凭据。</p></section>
+<div class="catalog"><aside class="panel sidebar"><h2>接口参考</h2><div class="filters"><label>搜索接口<input id="search" type="search" placeholder="名称、操作标识或业务用途"></label><label>调用方向<select id="direction"><option value="">全部授权接口</option><option value="third_party">第三方接入</option><option value="internal">自有系统对外能力</option></select></label><label>业务模块<select id="module"></select></label><span id="result-count" class="hint"></span></div><nav id="api-list" class="api-list" aria-label="接口列表"></nav></aside>
+<div><section class="panel" id="api-detail"><span class="scope" id="category"></span><h2 id="operation-title" style="margin-top:14px"></h2><p class="endpoint" id="endpoint"></p><p id="description"></p><p class="hint" id="quota"></p><div class="request-options"><label>网关基础地址<input id="address" type="url" value="https://gateway.example.com" spellcheck="false"></label><label>示例语言<select id="language"><option value="http">HTTP / cURL</option><option value="python">Python</option><option value="typescript">TypeScript</option></select></label></div><p class="hint">请将示例地址换成管理员提供的网关地址。HTTP 示例适用于 Bash；不要使用管理后台的 /admin/api 路径发业务请求。</p><p id="address-error" class="error hidden">地址需要使用 HTTP / HTTPS，不包含账号密码、查询参数或页面锚点。</p><div id="write-note" class="notice hidden">这是写操作，运行前请核对业务参数。要求幂等键时必须使用稳定业务请求号；超时后先确认原结果。</div><div class="code-heading"><h3>可复制的调用示例</h3><button type="button" id="copy">复制示例</button></div><p class="hint">Python：将 cyt_gateway.py 放入业务项目。TypeScript：将 SDK 目录加入业务项目。示例中的空字段或占位值需替换为实际业务数据。</p><pre id="sample" tabindex="0"></pre><p class="hint" role="status" id="copy-status"></p><h3>请求参数</h3><div class="parameter-wrap"><table><thead><tr><th>参数</th><th>类型</th><th>是否必填</th><th>说明</th></tr></thead><tbody id="parameters"></tbody></table></div><h3>响应字段含义（完整 HTTP 路径）</h3><p class="hint">SDK 成功时直接返回 data。配置型 HTTP 接口的业务内容位于 data.data；未登记的业务字段不会根据模拟结果推测。</p><div class="parameter-wrap"><table><thead><tr><th>字段路径</th><th>类型</th><th>字段含义</th></tr></thead><tbody id="response-fields"></tbody></table></div><details><summary>完整响应 Schema</summary><pre id="response-schema"></pre></details><details><summary>完整请求参数 Schema</summary><pre id="schema"></pre></details></section><section id="empty" class="panel hidden"><h2>当前范围没有接口</h2><p>请调整筛选；若本接入包没有任何接口，请联系管理员分配能力后重新导出。</p></section></div></div>
+<section class="panel"><h2>响应、重试与排错</h2><p>HTTP 成功响应为 { ok, data, meta }，meta.mock=true 表示模拟结果。业务数据结构以对应接口为准，通用 SDK 直接返回 data。</p><div class="status-grid"><p><b>401 / 403</b><br>检查调用方状态、API Key、接口授权和拒绝规则。</p><p><b>422 / 409</b><br>检查参数与幂等键；遇到冲突先核对原业务请求。</p><p><b>429 / 502 / 503</b><br>核对配额与上游状态，向管理员提供 error.trace_id。</p></div><p class="hint">分页结果以 page.has_more 和 next_cursor 判断完成；data.partial / errors 需要逐项处理。写请求不要盲目更换业务编号重试。</p></section>
+</main>
+<script id="openapi-data" type="application/json">__CYT_OPENAPI__</script>
+<script>
+const spec = JSON.parse(document.getElementById('openapi-data').textContent);
+const byId = (id) => document.getElementById(id);
+const operations = Object.entries(spec.paths || {}).filter(([, path]) => path.post).map(([path, item]) => ({path, ...item.post}));
+const category = (operation) => operation['x-cyt-category'] || operation.tags?.[0] || '未分类';
+byId('guide-title').textContent = spec.info?.title || 'CYT Common 接入指南';
+byId('guide-scope').textContent = '调用方：' + (spec['x-cyt-consumer'] || '') + ' · ' + operations.length + ' 项授权接口 · 接口权限以实际调用时为准';
+const moduleOption = (value, label) => { const option = document.createElement('option'); option.value = value; option.textContent = label; byId('module').append(option); };
+moduleOption('', '全部业务模块');
+for (const name of new Set(operations.map(category))) moduleOption(name, name + ' · ' + operations.filter((operation) => category(operation) === name).length);
+byId('direction').value = ['internal','third_party'].includes(spec['x-cyt-direction']) ? spec['x-cyt-direction'] : '';
+let selected = operations.find((operation) => operation['x-cyt-read-only']) || operations[0];
+function resolve(schema) { let value = schema || {}; for(let i = 0; value.$ref && i < 10; i++) value = spec.components?.schemas?.[value.$ref.split('/').pop()] || {}; return value; }
+function example(input, depth = 0) {
+  const schema = resolve(input); if(depth > 8) return {};
+  if(schema.examples?.length) return structuredClone(schema.examples[0]);
+  if(schema.default !== undefined) return structuredClone(schema.default);
+  if(schema.enum?.length) return schema.enum[0];
+  if(schema.anyOf) return example(schema.anyOf.find((value) => value.type !== 'null') || schema.anyOf[0], depth + 1);
+  if(schema.type === 'object' || schema.properties) return Object.fromEntries(Object.entries(schema.properties || {}).filter(([key, value]) => schema.required?.includes(key) || value.default !== undefined).map(([key, value]) => [key, example(value, depth + 1)]));
+  if(schema.type === 'array') return [];
+  if(schema.type === 'integer' || schema.type === 'number') return 1;
+  if(schema.type === 'boolean') return false;
+  return '';
+}
+function address() { try { const url = new URL(byId('address').value.trim()); return ['http:', 'https:'].includes(url.protocol) && !url.username && !url.password && !url.search && !url.hash ? url.toString().replace(/\/+$/, '') : ''; } catch { return ''; } }
+function quote(value) { return "'" + value.replaceAll("'", "'\\''") + "'"; }
+function renderSample() {
+  const base = address(); byId('address-error').classList.toggle('hidden', !!base); byId('copy').disabled = !base || !selected; if(!base || !selected) { byId('sample').textContent = ''; return; }
+  const schema = selected.requestBody?.content?.['application/json']?.schema;
+  const params = example(schema); const required = selected['x-cyt-idempotency-required'];
+  if(required && params && typeof params === 'object' && 'request_id' in params && !params.request_id) params.request_id = '<稳定业务请求号>';
+  const requestId = String(params?.request_id || '<稳定业务请求号>'); const language = byId('language').value; let sample;
+  if(language === 'python') sample = 'import json\nimport os\nfrom cyt_gateway import Gateway\n\ngateway = Gateway(' + JSON.stringify(base) + ', os.environ["CYT_API_KEY"])\nparams = json.loads(' + JSON.stringify(JSON.stringify(params)) + ')\nresult = gateway.call(' + JSON.stringify(selected['x-cyt-operation']) + ', params' + (required ? ', request_id=' + JSON.stringify(requestId) : '') + ')\nprint(result)';
+  else if(language === 'typescript') sample = "import { Gateway } from './sdk/typescript/index';\n\nconst gateway = new Gateway(" + JSON.stringify(base) + ', process.env.CYT_API_KEY!);\nconst params = ' + JSON.stringify(params, null, 2) + ';\nconst result = await gateway.call(' + JSON.stringify(selected['x-cyt-operation']) + ', params' + (required ? ', ' + JSON.stringify(requestId) : '') + ');\nconsole.log(result);';
+  else sample = 'curl -X POST ' + quote(base + selected.path) + ' \\\n  -H "Authorization: Bearer ${CYT_API_KEY}" \\\n  -H \'Content-Type: application/json\'' + (required ? ' \\\n  -H ' + quote('Idempotency-Key: ' + requestId) : '') + ' \\\n  -d ' + quote(JSON.stringify(params, null, 2));
+  byId('sample').textContent = sample; byId('copy-status').textContent = '';
+}
+function fieldRows(input,prefix='',depth=0) {
+  if(depth>8)return [];let schema=resolve(input);
+  if(schema.anyOf) return fieldRows(schema.anyOf.find(s=>s.type!=='null') || schema.anyOf[0],prefix,depth+1);
+  if(schema.type==='array')return fieldRows(schema.items || {},prefix+'[]',depth+1);
+  return Object.entries(schema.properties || {}).flatMap(([name,raw])=>{const field=resolve(raw),path=prefix?prefix+'.'+name:name;return [{path,type:Array.isArray(field.type)?field.type.join(' | '):field.type || (field.properties?'object':'见 Schema'),required:schema.required?.includes(name),description:raw.description || field.description || '未登记字段说明'},...fieldRows(field,path,depth+1)];});
+}
+function renderDetail() {
+  byId('api-detail').classList.toggle('hidden', !selected); byId('empty').classList.toggle('hidden', !!selected); if(!selected) return;
+  byId('category').textContent = category(selected); byId('operation-title').textContent = selected.summary || selected['x-cyt-operation']; byId('endpoint').textContent = 'POST ' + selected.path; byId('description').textContent = selected.description || ''; byId('quota').textContent = '生效配额：' + (selected['x-cyt-effective-quota'] || '以管理员配置为准'); byId('write-note').classList.toggle('hidden', !!selected['x-cyt-read-only']);
+  const schema = resolve(selected.requestBody?.content?.['application/json']?.schema); byId('schema').textContent = JSON.stringify(schema, null, 2); byId('parameters').replaceChildren();
+  for(const row of fieldRows(schema)) { const tr=document.createElement('tr'); for(const value of [row.path,row.type,row.required?'必填':'可选',row.description]) {const td=document.createElement('td');td.textContent=value;tr.append(td);} byId('parameters').append(tr); }
+  const response=resolve(selected.responses?.['200']?.content?.['application/json']?.schema);
+  byId('response-fields').replaceChildren();byId('response-schema').textContent=JSON.stringify(response,null,2);
+  for(const row of fieldRows(response)) {const tr=document.createElement('tr');for(const value of [row.path,row.type,row.description]) {const td=document.createElement('td');td.textContent=value;tr.append(td);}byId('response-fields').append(tr);}
+  renderSample();
+}
+function renderList() {
+  const query = byId('search').value.trim().toLowerCase(); const module = byId('module').value;
+  const results = operations.filter((operation) => (!byId('direction').value || operation['x-cyt-direction']===byId('direction').value) && (!module || category(operation) === module) && (operation['x-cyt-operation'] + ' ' + operation.summary + ' ' + operation.description + ' ' + category(operation)).toLowerCase().includes(query));
+  if(!results.includes(selected)) selected = results.find((operation) => operation['x-cyt-read-only']) || results[0];
+  byId('result-count').textContent = results.length + ' 项匹配接口'; byId('api-list').replaceChildren();
+  for(const operation of results) { const button = document.createElement('button'); button.type = 'button'; button.classList.toggle('active', operation === selected); button.setAttribute('aria-pressed', String(operation === selected)); const title = document.createElement('span'); title.textContent = operation.summary || operation['x-cyt-operation']; const key = document.createElement('small'); key.textContent = operation['x-cyt-operation']; button.append(title, key); button.addEventListener('click', () => { selected = operation; renderList(); }); byId('api-list').append(button); }
+  renderDetail();
+}
+byId('direction').addEventListener('change',renderList); byId('search').addEventListener('input', renderList); byId('module').addEventListener('change', renderList); byId('address').addEventListener('input', renderSample); byId('language').addEventListener('change', renderSample);
+byId('copy').addEventListener('click', async () => { try { await navigator.clipboard.writeText(byId('sample').textContent); byId('copy-status').textContent = '已复制示例，请替换业务参数后在业务后端执行。'; } catch { byId('copy-status').textContent = '当前浏览器未开放剪贴板，请手动复制上面的示例。'; } });
+renderList();
+</script>
+</body></html>

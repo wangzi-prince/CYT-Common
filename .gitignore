@@ -1,0 +1,14 @@
+**/target/
+**/node_modules/
+**/dist/
+**/src/main/resources/web/
+**/.env.local
+**/application-local.properties
+**/*.log
+.idea/
+work/
+
+# Python 编译缓存、开发期改稿备份
+__pycache__/
+*.pyc
+**/tools/backups/

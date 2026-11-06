@@ -1,0 +1,3724 @@
+{
+  "generated_at": "2026-11-05",
+  "scope": "逐项核对全部 151 个内置操作的实际代码；新增业务接口和推荐标签均不自动视为深度封装。",
+  "references": [
+    {
+      "title": "企微审批：模板详情",
+      "url": "https://developer.work.weixin.qq.com/document/path/91982"
+    },
+    {
+      "title": "企微审批：提交申请",
+      "url": "https://developer.work.weixin.qq.com/document/path/91853"
+    },
+    {
+      "title": "企微审批：批量查询",
+      "url": "https://developer.work.weixin.qq.com/document/path/91816"
+    },
+    {
+      "title": "WxJava：按领域组织服务和 DTO",
+      "url": "https://github.com/binarywang/WxJava"
+    },
+    {
+      "title": "Stripe Java：自动分页迭代器",
+      "url": "https://github.com/stripe/stripe-java/blob/master/src/main/java/com/stripe/model/StripeCollection.java"
+    },
+    {
+      "title": "Drive：查询条件与转义",
+      "url": "https://developers.google.com/workspace/drive/api/guides/search-files"
+    },
+    {
+      "title": "Gmail：筛选与时间语义",
+      "url": "https://developers.google.com/workspace/gmail/api/guides/filtering"
+    }
+  ],
+  "depth_summary": {
+    "total": 151,
+    "counts": {
+      "deep": 28,
+      "enhanced": 68,
+      "basic": 49,
+      "supporting": 5,
+      "test_only": 1
+    },
+    "all_deep": false,
+    "conclusion": "当前没有全部完成深度二次封装。推荐调用、business 标签和测试通过均不能替代逐项业务深度判断。",
+    "basis": "静态代码逐项审阅；只评价实际已实现的语义转换、关联补齐与流程编排，不评价供应商真实账号验收。",
+    "scope": "当前检查 151 个注册内置业务操作；本地运行目录未检测到自定义 HTTP 定义。管理端 CRUD 不作为业务深封完成项。",
+    "levels": [
+      {
+        "key": "deep",
+        "label": "深度业务封装",
+        "description": "已实现业务语义转换或关联查询、预检、提交流程；仍需逐项阅读边界，不等于完整生产验收。"
+      },
+      {
+        "key": "enhanced",
+        "label": "增强封装",
+        "description": "已有字段整理、校验、批处理或分页便利，但业务关联或流程仍需调用方完成。"
+      },
+      {
+        "key": "basic",
+        "label": "基础封装",
+        "description": "主要是单项读写、官方参数映射、原始结果或兼容入口。"
+      },
+      {
+        "key": "supporting",
+        "label": "基础管理能力",
+        "description": "凭据、登录换码、桶管理等原子能力，按职责保留，不强行为每项制造业务流程。"
+      },
+      {
+        "key": "test_only",
+        "label": "模拟演练",
+        "description": "只用于模拟，不是已经完成的真实供应商业务能力。"
+      }
+    ],
+    "findings": [
+      {
+        "priority": "P1",
+        "title": "统一网关与推荐标签不能证明深度封装",
+        "operations": [],
+        "detail": "认证、签名、重试、字段改名、推荐调用和自动翻页不单独计为深度业务封装。"
+      },
+      {
+        "priority": "P1",
+        "title": "领星售后链路仍需业务方编排",
+        "operations": [
+          "lingxing.mporders.list",
+          "lingxing.workorder.add",
+          "lingxing.workorder.audit",
+          "lingxing.refund.create"
+        ],
+        "detail": "订单行号、PID、售后原因、已退数量与审批流 ID 没有形成自动关联预检。"
+      },
+      {
+        "priority": "P1",
+        "title": "万邑通退货创建与取面单尚未串联",
+        "operations": [
+          "winit.returns.create",
+          "winit.returns.psc",
+          "winit.returns.items",
+          "winit.returns.label"
+        ],
+        "detail": "创建接口返回单号/RMA/地址，不直接返回面单；缺少业务订单到退货计划的关联补齐。"
+      },
+      {
+        "priority": "P1",
+        "title": "自动翻根页不代表嵌套数据完整",
+        "operations": [
+          "shopify.orders.collect",
+          "shopify.products.collect",
+          "shopify.refunds.list",
+          "shopify.returns.list"
+        ],
+        "detail": "嵌套行、变体和交易有独立查询上限，退款还需根页和页内偏移共同续传。"
+      },
+      {
+        "priority": "P1边界",
+        "title": "文件头识别不代表完整文件校验",
+        "operations": [
+          "nas.objects.read_head"
+        ],
+        "detail": "已识别常见文件签名及图片尺寸，并提示声明 MIME 不一致；仍不执行完整解码、病毒扫描或压缩包内容识别。"
+      },
+      {
+        "priority": "P1",
+        "title": "QuickCEP 缺少一体化会话与回复能力",
+        "operations": [
+          "quickcep.sessions.get",
+          "quickcep.messages.list",
+          "quickcep.messages.send",
+          "quickcep.staff.list"
+        ],
+        "detail": "会话详情、完整正文、坐席/渠道解析和可回复状态仍需分别处理。"
+      },
+      {
+        "priority": "P1",
+        "title": "DocuSign 已补目录分页，业务签署策略仍需显式确定",
+        "operations": [
+          "docusign.envelopes.create",
+          "docusign.envelopes.list",
+          "docusign.templates.list"
+        ],
+        "detail": "已提供模板角色/字段读取、单页与汇总续传；从业务角色到签署策略仍需接入方配置。"
+      },
+      {
+        "priority": "P0接入边界",
+        "title": "审批主流程较深，单项工具与高级控件仍有边界",
+        "operations": [
+          "wecom.approvals.submit",
+          "wecom.approvals.get",
+          "wecom.approvals.engine_get",
+          "wecom.vacation.set"
+        ],
+        "detail": "审批已补业务请求追踪、步骤/字段还原和假期规则预检；高级控件、引擎统一模型和真实账号验收仍有边界。"
+      }
+    ],
+    "auxiliary_interfaces": [
+      {
+        "path": "POST /integrations/batch",
+        "depth": "enhanced",
+        "reason": "统一执行、逐项结果和 stop_on_error；调用依赖、业务回滚和补偿仍由业务层处理。",
+        "evidence": [
+          {
+            "path": "src/main/java/group/cyt/common/module/gateway/service/GatewayExecutor.java",
+            "line": 252,
+            "anchor": "public Object batch("
+          }
+        ]
+      },
+      {
+        "path": "GET /integrations/wecom/webhooks/{system}/events",
+        "depth": "enhanced",
+        "reason": "验签、解密并验证企业接收者，处理接入 challenge，不代表审批业务已经发生。",
+        "evidence": [
+          {
+            "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalController.java",
+            "line": 16,
+            "anchor": "public String verify("
+          }
+        ]
+      },
+      {
+        "path": "POST /integrations/wecom/webhooks/{system}/events",
+        "depth": "deep",
+        "reason": "验签解密、归一状态、所有者路由、加密去重入库和持久转发重试。未知来源与凭据轮换有明确边界。",
+        "evidence": [
+          {
+            "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalEvents.java",
+            "line": 55,
+            "anchor": "public void receive("
+          },
+          {
+            "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalEvents.java",
+            "line": 134,
+            "anchor": "public void deliverPending("
+          }
+        ]
+      },
+      {
+        "path": "POST /integrations/docusign/webhooks/{system}/events（兼容 /integrations/docusign/webhooks/events）",
+        "depth": "enhanced",
+        "reason": "原文验签、事件归一并转发；没有持久去重收件箱和重试作业，失败依赖上游重投。",
+        "evidence": [
+          {
+            "path": "src/main/java/group/cyt/common/module/callback/controller/CallbackController.java",
+            "line": 82,
+            "anchor": "public Object webhook("
+          }
+        ]
+      }
+    ]
+  },
+  "items": [
+    {
+      "key": "docusign.envelopes.create",
+      "platform": "docusign",
+      "summary": "创建并发送信封（模板或直接传文件）",
+      "source": "src/main/java/group/cyt/common/module/adapter/docusign/DocusignAdapter.java",
+      "current": "已将模板角色、文件、签署顺序转换为信封请求。",
+      "proposal": "补充 prepare：核对模板角色、必填签署人和文件，再生成签署业务请求。",
+      "caveat": "发送与作废是有业务影响的写操作；超时后应核对原单。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "支持模板角色或文件构建、签署顺序和文件编号生成。",
+      "remaining_gap": "未读取模板核对角色及签署必填项，业务模板名和字段还要由调用方解析。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/docusign/DocusignAdapter.java",
+          "line": 86,
+          "anchor": "case \"docusign.envelopes.create\""
+        }
+      ]
+    },
+    {
+      "key": "docusign.envelopes.get",
+      "platform": "docusign",
+      "summary": "查询单个信封状态与签署人进度",
+      "source": "src/main/java/group/cyt/common/module/adapter/docusign/DocusignAdapter.java",
+      "current": "已合并信封与签署人两次查询，返回签署进度。",
+      "proposal": "增加 terminal、下一签署人和逾期提示，保留原始状态。",
+      "caveat": "",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "deep",
+      "depth_reason": "合并信封与签署人，计算终态、下一批签署人和草稿/等待动作。",
+      "remaining_gap": "两次读取不是快照；不代替签署人操作，过期判断仍以供应商状态为准。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/docusign/DocusignAdapter.java",
+          "line": 165,
+          "anchor": "case \"docusign.envelopes.get\""
+        }
+      ]
+    },
+    {
+      "key": "docusign.envelopes.list",
+      "platform": "docusign",
+      "summary": "按日期/状态列出信封",
+      "source": "src/main/java/group/cyt/common/module/adapter/docusign/DocusignAdapter.java",
+      "current": "按日期/状态读取单页，返回下一页位置和可见总量。",
+      "proposal": "使用新增有界 collect 汇总，保留原子单页接口。",
+      "caveat": "上游分页不是一致性快照，业务按 ID 去重。",
+      "assessment": "recommended",
+      "recommended_operations": [
+        "docusign.envelopes.collect"
+      ],
+      "depth": "enhanced",
+      "depth_reason": "规范日期与状态，支持原生分页位置并返回可续传的下一位置。",
+      "remaining_gap": "单页原子接口；有界汇总使用 envelopes.collect，不保证上游快照。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/docusign/DocusignAdapter.java",
+          "line": 236,
+          "anchor": "case \"docusign.envelopes.list\""
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/docusign/DocusignAdapter.java",
+          "line": 376,
+          "anchor": "private static Map<String, Object> page("
+        }
+      ]
+    },
+    {
+      "key": "docusign.envelopes.void",
+      "platform": "docusign",
+      "summary": "作废信封（不可撤销）",
+      "source": "src/main/java/group/cyt/common/module/adapter/docusign/DocusignAdapter.java",
+      "current": "读取当前状态，重复作废返回已作废，阻止已完成、拒绝或删除的信封再作废。",
+      "proposal": "继续保持明确原因与稳定业务重试策略。",
+      "caveat": "状态读取和更新之间仍有竞争，供应商做最终校验。",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "deep",
+      "depth_reason": "先读取状态，重复作废返回已作废；阻止已完成/拒绝/删除信封再作废。",
+      "remaining_gap": "状态检查和更新不是原子事务，供应商仍做最终校验；保留原接口兼容。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/docusign/DocusignAdapter.java",
+          "line": 286,
+          "anchor": "case \"docusign.envelopes.void\""
+        }
+      ]
+    },
+    {
+      "key": "docusign.templates.list",
+      "platform": "docusign",
+      "summary": "列出可用模板",
+      "source": "src/main/java/group/cyt/common/module/adapter/docusign/DocusignAdapter.java",
+      "current": "规范模板目录并返回真实下一页位置。",
+      "proposal": "用 templates.collect 汇总、templates.get 读取模板角色和字段。",
+      "caveat": "不自动指定签署人和签署策略。",
+      "assessment": "recommended",
+      "recommended_operations": [
+        "docusign.templates.collect",
+        "docusign.templates.get"
+      ],
+      "depth": "enhanced",
+      "depth_reason": "规范模板目录并暴露原生下一页位置，可组合有界采集。",
+      "remaining_gap": "模板角色和字段请通过 templates.get 读取。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/docusign/DocusignAdapter.java",
+          "line": 321,
+          "anchor": "case \"docusign.templates.list\""
+        }
+      ]
+    },
+    {
+      "key": "docusign.testing.advance",
+      "platform": "docusign",
+      "summary": "【仅模拟模式】推进信封状态，用于验证回调流程",
+      "source": "src/main/java/group/cyt/common/module/adapter/docusign/DocusignAdapter.java",
+      "current": "模拟器推进信封状态，便于回调演练。",
+      "proposal": "仅作为演练工具展示，真实签署由签署人完成。",
+      "caveat": "真实模式不可代替签署人完成签字。",
+      "assessment": "test_only",
+      "recommended_operations": [],
+      "depth": "test_only",
+      "depth_reason": "模拟器推进信封状态。",
+      "remaining_gap": "真实适配器没有代替签署人推进状态的实现。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/docusign/DocusignAdapter.java",
+          "line": 372,
+          "anchor": "default -> throw GatewayException.config"
+        }
+      ]
+    },
+    {
+      "key": "gcs.objects.delete",
+      "platform": "gcs",
+      "summary": "删除对象（不可恢复）",
+      "source": "src/main/java/group/cyt/common/module/adapter/google/GoogleAdapter.java",
+      "current": "对象路径转换为 Cloud Storage 删除请求。",
+      "proposal": "提供可选代际 generation 条件，删除前校验版本，避免覆盖并发更新。",
+      "caveat": "删除不可恢复；业务侧需确定保留策略。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "按对象路径执行单项删除并返回 deleted。",
+      "remaining_gap": "没有 generation 版本条件、业务保留策略或删除预检。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/google/GoogleAdapter.java",
+          "line": 280,
+          "anchor": "if (op.key().equals(\"gcs.objects.delete\"))"
+        }
+      ]
+    },
+    {
+      "key": "gcs.objects.get_metadata",
+      "platform": "gcs",
+      "summary": "对象元信息",
+      "source": "src/main/java/group/cyt/common/module/adapter/google/GoogleAdapter.java",
+      "current": "可读取对象的原始元信息。",
+      "proposal": "统一 size、content_type、etag、generation、updated_at 字段。",
+      "caveat": "",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "按路径直接返回 Storage 元信息。",
+      "remaining_gap": "元信息仍为供应商结构，没有业务文件实体或统一属性模型。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/google/GoogleAdapter.java",
+          "line": 239,
+          "anchor": "private Object gcs("
+        }
+      ]
+    },
+    {
+      "key": "gcs.objects.list",
+      "platform": "gcs",
+      "summary": "按前缀列出对象",
+      "source": "src/main/java/group/cyt/common/module/adapter/google/GoogleAdapter.java",
+      "current": "保留供应商筛选和分页参数，适合作为单页原子接口。",
+      "proposal": "优先使用新增业务接口：有界自动分页、统一结果与签名续传游标。",
+      "caveat": "原接口继续兼容；items 只代表当前页。",
+      "assessment": "recommended",
+      "recommended_operations": [
+        "gcs.objects.collect"
+      ],
+      "depth": "basic",
+      "depth_reason": "映射官方筛选字段及单页 token。",
+      "remaining_gap": "调用方仍管理原生分页；可选用 collect，但后者也不补齐业务关联。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/google/GoogleAdapter.java",
+          "line": 246,
+          "anchor": "if (op.key().equals(\"gcs.objects.list\"))"
+        }
+      ]
+    },
+    {
+      "key": "gcs.objects.upload",
+      "platform": "gcs",
+      "summary": "上传对象",
+      "source": "src/main/java/group/cyt/common/module/adapter/google/GoogleAdapter.java",
+      "current": "处理 Base64 内容、对象路径和 MIME 上传。",
+      "proposal": "增加防覆盖条件和上传结果 checksum 校验；大文件改用签名直传。",
+      "caveat": "Base64 更适合小文件；不应默认覆盖同名对象。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "支持文本/Base64、大小校验和 MIME 上传。",
+      "remaining_gap": "缺少防覆盖版本条件、校验和确认及大文件直传流程。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/google/GoogleAdapter.java",
+          "line": 264,
+          "anchor": "if (op.key().equals(\"gcs.objects.upload\"))"
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/google/GoogleAdapter.java",
+          "line": 287,
+          "anchor": "public static byte[] content("
+        }
+      ]
+    },
+    {
+      "key": "gdrive.files.get",
+      "platform": "gdrive",
+      "summary": "文件元信息",
+      "source": "src/main/java/group/cyt/common/module/adapter/google/GoogleAdapter.java",
+      "current": "支持按文件 ID 与 fields 读取元信息。",
+      "proposal": "提供规范化路径、权限摘要和 shortcuts 目标信息。",
+      "caveat": "元信息查询不等于下载文件内容。",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "转换文件 ID、fields、q 或分页参数，结果接近官方结构。",
+      "remaining_gap": "仍需理解 Drive 字段、目录 ID 和查询语法；目录定位和业务文件解析未封装。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/google/GoogleAdapter.java",
+          "line": 152,
+          "anchor": "private Object drive("
+        }
+      ]
+    },
+    {
+      "key": "gdrive.files.list",
+      "platform": "gdrive",
+      "summary": "搜索文件",
+      "source": "src/main/java/group/cyt/common/module/adapter/google/GoogleAdapter.java",
+      "current": "保留供应商筛选和分页参数，适合作为单页原子接口。",
+      "proposal": "优先使用新增业务接口：有界自动分页、统一结果与签名续传游标。",
+      "caveat": "原接口继续兼容；items 只代表当前页。",
+      "assessment": "recommended",
+      "recommended_operations": [
+        "gdrive.files.search"
+      ],
+      "depth": "basic",
+      "depth_reason": "转换文件 ID、fields、q 或分页参数，结果接近官方结构。",
+      "remaining_gap": "仍需理解 Drive 字段、目录 ID 和查询语法；目录定位和业务文件解析未封装。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/google/GoogleAdapter.java",
+          "line": 152,
+          "anchor": "private Object drive("
+        }
+      ]
+    },
+    {
+      "key": "gdrive.files.upload",
+      "platform": "gdrive",
+      "summary": "上传文件",
+      "source": "src/main/java/group/cyt/common/module/adapter/google/GoogleAdapter.java",
+      "current": "已处理文件内容、名称、MIME 与父目录。",
+      "proposal": "增加按业务目录定位、重复名称策略及上传后校验。",
+      "caveat": "Drive 名称不唯一，不能把名称当文件 ID。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "构建文件元信息与 multipart，校验内容和 MIME。",
+      "remaining_gap": "父目录解析、同名策略和完成后校验仍由业务方处理。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/google/GoogleAdapter.java",
+          "line": 203,
+          "anchor": "ByteArrayOutputStream out = new ByteArrayOutputStream();"
+        }
+      ]
+    },
+    {
+      "key": "gdrive.folders.create",
+      "platform": "gdrive",
+      "summary": "新建文件夹",
+      "source": "src/main/java/group/cyt/common/module/adapter/google/GoogleAdapter.java",
+      "current": "把文件夹名称和父 ID 转成 Drive folder 创建。",
+      "proposal": "增加 ensure_folder：按父目录和名称查重，发生重名时明确返回候选。",
+      "caveat": "不能随意选择同名目录；现接口保持显式创建。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "将名称、父目录和 folder MIME 转成一次创建。",
+      "remaining_gap": "没有 ensure_folder 查重或同名歧义处理。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/google/GoogleAdapter.java",
+          "line": 192,
+          "anchor": "if (op.key().equals(\"gdrive.folders.create\"))"
+        }
+      ]
+    },
+    {
+      "key": "gmail.labels.list",
+      "platform": "gmail",
+      "summary": "列出标签",
+      "source": "src/main/java/group/cyt/common/module/adapter/google/GoogleAdapter.java",
+      "current": "读取当前授权邮箱的标签。",
+      "proposal": "可为业务查询建立标签名到 ID 的唯一映射，并展示系统标签。",
+      "caveat": "",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "读取标签、单封原始邮件或 ID 列表，保留官方格式与 token。",
+      "remaining_gap": "业务方仍要解析标签/邮件结构或逐封补齐；search 提供了更高一层能力。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/google/GoogleAdapter.java",
+          "line": 46,
+          "anchor": "private Object gmail("
+        }
+      ]
+    },
+    {
+      "key": "gmail.messages.get",
+      "platform": "gmail",
+      "summary": "读取单封邮件",
+      "source": "src/main/java/group/cyt/common/module/adapter/google/GoogleAdapter.java",
+      "current": "可选 metadata/full/raw 格式，读取单封邮件。",
+      "proposal": "新增 search 已自动读取详情并整理主题、发件人、MIME 正文和附件元信息。",
+      "caveat": "附件内容仍需独立下载能力；HTML 正文需要下游安全渲染。",
+      "assessment": "recommended",
+      "recommended_operations": [
+        "gmail.messages.search"
+      ],
+      "depth": "basic",
+      "depth_reason": "读取标签、单封原始邮件或 ID 列表，保留官方格式与 token。",
+      "remaining_gap": "业务方仍要解析标签/邮件结构或逐封补齐；search 提供了更高一层能力。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/google/GoogleAdapter.java",
+          "line": 46,
+          "anchor": "private Object gmail("
+        }
+      ]
+    },
+    {
+      "key": "gmail.messages.list",
+      "platform": "gmail",
+      "summary": "按条件列出邮件",
+      "source": "src/main/java/group/cyt/common/module/adapter/google/GoogleAdapter.java",
+      "current": "保留供应商筛选和分页参数，适合作为单页原子接口。",
+      "proposal": "优先使用新增业务接口：有界自动分页、统一结果与签名续传游标。",
+      "caveat": "原接口继续兼容；items 只代表当前页。",
+      "assessment": "recommended",
+      "recommended_operations": [
+        "gmail.messages.search"
+      ],
+      "depth": "basic",
+      "depth_reason": "读取标签、单封原始邮件或 ID 列表，保留官方格式与 token。",
+      "remaining_gap": "业务方仍要解析标签/邮件结构或逐封补齐；search 提供了更高一层能力。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/google/GoogleAdapter.java",
+          "line": 46,
+          "anchor": "private Object gmail("
+        }
+      ]
+    },
+    {
+      "key": "gmail.messages.restore_from_spam",
+      "platform": "gmail",
+      "summary": "测试邮箱垃圾邮件移回收件箱",
+      "source": "src/main/java/group/cyt/common/module/adapter/google/GoogleAdapter.java",
+      "current": "核实测试邮箱身份，且邮件必须在 SPAM、不在 TRASH。",
+      "proposal": "保留严格目标校验，可增加操作前后标签差异。",
+      "caveat": "仅测试白名单邮箱可写。",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "deep",
+      "depth_reason": "先验证邮箱和 SPAM/TRASH 状态，再移除垃圾标签并移回收件箱。",
+      "remaining_gap": "仅适用于明确配置的测试邮箱；不等于通用邮件标签工作流。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/google/GoogleAdapter.java",
+          "line": 84,
+          "anchor": "case \"gmail.messages.restore_from_spam\""
+        }
+      ]
+    },
+    {
+      "key": "gmail.messages.send",
+      "platform": "gmail",
+      "summary": "发送邮件（不可撤回）",
+      "source": "src/main/java/group/cyt/common/module/adapter/google/GoogleAdapter.java",
+      "current": "已组装 UTF-8 MIME，验证邮箱及全部收件人白名单。",
+      "proposal": "补草稿预检、模板变量检查和稳定业务发送编号。",
+      "caveat": "目前仅测试白名单可写；发送超时不代表未发送。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "从业务文本构建 UTF-8 MIME，核对邮箱和全部收件人。",
+      "remaining_gap": "没有消息模板预检、强制业务防重和发送结果追踪；当前受测试白名单约束。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/google/GoogleAdapter.java",
+          "line": 96,
+          "anchor": "case \"gmail.messages.send\""
+        }
+      ]
+    },
+    {
+      "key": "gmail.profile.get",
+      "platform": "gmail",
+      "summary": "读取实际授权邮箱身份",
+      "source": "src/main/java/group/cyt/common/module/adapter/google/GoogleAdapter.java",
+      "current": "返回实际 OAuth 授权邮箱，并验证 account 匹配。",
+      "proposal": "适合作为接入后的身份核对步骤。",
+      "caveat": "account 参数不能切换到未授权邮箱。",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "核对实际授权邮箱与 account 参数，返回授权身份。",
+      "remaining_gap": "这是身份检查，不能算完整邮件业务流程。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/google/GoogleAdapter.java",
+          "line": 52,
+          "anchor": "var profile = http.object("
+        }
+      ]
+    },
+    {
+      "key": "judgeme.reviews.list",
+      "platform": "judgeme",
+      "summary": "读取 Judge.me 评价",
+      "source": "src/main/java/group/cyt/common/module/adapter/source/CustomerSourcesAdapter.java",
+      "current": "将评价归一为客服数据结构，保留来源与游标。",
+      "proposal": "使用 collect 自动分页并显示部分失败；跨来源分析仍需统一评分尺度。",
+      "caveat": "",
+      "assessment": "recommended",
+      "recommended_operations": [
+        "judgeme.reviews.collect"
+      ],
+      "depth": "enhanced",
+      "depth_reason": "评价归一为评分、内容、客户、SKU 和日期。",
+      "remaining_gap": "仍是单来源单页；无订单关联补齐、评价回复或问题归因。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/source/CustomerSourcesAdapter.java",
+          "line": 152,
+          "anchor": "private Map<String, Object> judgemeReviews("
+        }
+      ]
+    },
+    {
+      "key": "lingxing.aftersales.reasons",
+      "platform": "lingxing",
+      "summary": "查询售后原因列表（客服模块）",
+      "source": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+      "current": "整理原因 ID、原因文字和创建信息；无翻译和启用项过滤。",
+      "proposal": "按原因用途建立业务字典，保留来源 reason_id，避免按译名提交。",
+      "caveat": "",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "整理售后原因 ID、原因文字和创建信息。",
+      "remaining_gap": "代码没有翻译或启用项过滤，不能把先前说明当作已有功能。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+          "line": 508,
+          "anchor": "private Object aftersalesReasons("
+        }
+      ]
+    },
+    {
+      "key": "lingxing.inventory.fba",
+      "platform": "lingxing",
+      "summary": "查询 FBA 库存",
+      "source": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+      "current": "转换店铺/SKU 条件，返回 FBA 库存。",
+      "proposal": "统一可售、在途、预留单位与更新时间，禁止跨店铺简单相加。",
+      "caveat": "",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "映射官方库存/Listing/仓库条件，主要通过 rawAndTotal 返回数据。",
+      "remaining_gap": "没有统一可用库存、跨仓关联、仓库解析或有界分页流程。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+          "line": 701,
+          "anchor": "private static Map<String, Object> rawAndTotal("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+          "line": 346,
+          "anchor": "public Object invoke("
+        }
+      ]
+    },
+    {
+      "key": "lingxing.inventory.list",
+      "platform": "lingxing",
+      "summary": "查询仓库库存明细",
+      "source": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+      "current": "按仓库和 SKU 读取本地库存明细。",
+      "proposal": "增加 availability 查询，将仓库、可售和预留合成业务视图。",
+      "caveat": "本地仓与 FBA 含义不同，不能混为同一库存。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "映射官方库存/Listing/仓库条件，主要通过 rawAndTotal 返回数据。",
+      "remaining_gap": "没有统一可用库存、跨仓关联、仓库解析或有界分页流程。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+          "line": 701,
+          "anchor": "private static Map<String, Object> rawAndTotal("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+          "line": 346,
+          "anchor": "public Object invoke("
+        }
+      ]
+    },
+    {
+      "key": "lingxing.listing.list",
+      "platform": "lingxing",
+      "summary": "查询亚马逊 Listing（含库存字段）",
+      "source": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+      "current": "读取亚马逊 Listing 及库存字段。",
+      "proposal": "增加按站点/SKU 的业务查询，显式显示分页与缺失字段。",
+      "caveat": "Listing 库存是渠道维度，不等于仓库可用量。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "映射官方库存/Listing/仓库条件，主要通过 rawAndTotal 返回数据。",
+      "remaining_gap": "没有统一可用库存、跨仓关联、仓库解析或有界分页流程。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+          "line": 701,
+          "anchor": "private static Map<String, Object> rawAndTotal("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+          "line": 346,
+          "anchor": "public Object invoke("
+        }
+      ]
+    },
+    {
+      "key": "lingxing.messages.detail",
+      "platform": "lingxing",
+      "summary": "查询站内信正文详情",
+      "source": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+      "current": "已整理邮件主题、正文、收发地址与附件。",
+      "proposal": "与列表组合成有界邮件查询，并逐封返回补齐错误。",
+      "caveat": "",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "整理邮件正文、收发地址和附件字段。",
+      "remaining_gap": "需要调用方先取得 webmail_uuid，未与列表组合成一次业务检索。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+          "line": 671,
+          "anchor": "private Object data("
+        }
+      ]
+    },
+    {
+      "key": "lingxing.messages.list",
+      "platform": "lingxing",
+      "summary": "查询站内信（邮件消息）列表",
+      "source": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+      "current": "规范邮件条目与 offset 游标，日期范围随游标保持稳定。",
+      "proposal": "本次修复用户指定短日期被扩到一年的问题；后续增加列表与正文的有界聚合。",
+      "caveat": "已校验正向日期和最多 365 天；仍是单页查询。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "整理邮件页，固定查询日期随游标续传。",
+      "remaining_gap": "不自动读取正文，未提供列表加详情的有界业务查询。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+          "line": 545,
+          "anchor": "private Object messagesList("
+        }
+      ]
+    },
+    {
+      "key": "lingxing.mporders.list",
+      "platform": "lingxing",
+      "summary": "查询多平台订单列表（含 Shopify/Temu/TikTok）",
+      "source": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+      "current": "按多平台条件读取订单，主体返回 raw/total/request_id。",
+      "proposal": "增加跨平台订单检索与平台单号/SKU 映射，显式标识部分行项目。",
+      "caveat": "",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "支持按多平台单号或时间查询，主体仍为 raw/total/request_id。",
+      "remaining_gap": "工单需要的 globalOrderNo/orderItemNo/PID 仍由调用方抽取并串联后续接口。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+          "line": 891,
+          "anchor": "private Object mpordersList("
+        }
+      ]
+    },
+    {
+      "key": "lingxing.orders.detail",
+      "platform": "lingxing",
+      "summary": "查询亚马逊订单详情",
+      "source": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+      "current": "读取亚马逊订单详情，主体保留供应商结构。",
+      "proposal": "增加与库存、物流、售后工单的关联查询。",
+      "caveat": "个人信息权限仍以授权账号为准。",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "将供应商订单详情包装为 items/total。",
+      "remaining_gap": "明细主体未归一，未联查物流、售后和库存。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+          "line": 832,
+          "anchor": "private Object ordersDetail("
+        }
+      ]
+    },
+    {
+      "key": "lingxing.orders.list",
+      "platform": "lingxing",
+      "summary": "查询亚马逊订单列表",
+      "source": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+      "current": "支持日期筛选，规范订单与分页字段。",
+      "proposal": "增加有界 collect 与增量同步水位；稳定排序下按订单 ID 去重。",
+      "caveat": "",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "归一订单、金额、店铺和商品行。",
+      "remaining_gap": "仍需调用方管理 offset/length，未自动汇总或做增量水位同步。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+          "line": 729,
+          "anchor": "private Object ordersList("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+          "line": 773,
+          "anchor": "private static Map<String, Object> orderRow("
+        }
+      ]
+    },
+    {
+      "key": "lingxing.product.list",
+      "platform": "lingxing",
+      "summary": "查询本地产品列表（sku → pid / 品牌 / 状态）",
+      "source": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+      "current": "将本地 SKU、PID、品牌和状态整理成业务目录。",
+      "proposal": "增加唯一 SKU 解析，明确重复与无匹配错误，供工单自动补全。",
+      "caveat": "",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "整理本地 SKU、PID 等商品目录字段。",
+      "remaining_gap": "没有唯一 SKU 解析以及用于工单的自动补齐。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+          "line": 957,
+          "anchor": "private Object productList("
+        }
+      ]
+    },
+    {
+      "key": "lingxing.refund.create",
+      "platform": "lingxing",
+      "summary": "发起订单退款（写）",
+      "source": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+      "current": "把订单与明细转换为退款请求。",
+      "proposal": "先读订单与已退款量，生成退款预检和可退金额说明。",
+      "caveat": "不可替调用方决定退款金额；需要真实订单验收与稳定幂等编号。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "校验测试账号后传递 sid、订单号、购买时间及官方 data。",
+      "remaining_gap": "未联查订单、成功交易、已退款量或生成退款预检计划。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+          "line": 848,
+          "anchor": "private Object refundCreate("
+        }
+      ]
+    },
+    {
+      "key": "lingxing.return.qty",
+      "platform": "lingxing",
+      "summary": "查询已退货数量（含本地产品ID）",
+      "source": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+      "current": "联合返回退货数量和本地产品 ID。",
+      "proposal": "供退货预检校验剩余数量，明确累计值和本次值。",
+      "caveat": "",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "验证订单/行标识并整理退货数量响应。",
+      "remaining_gap": "仍依赖官方订单行号，未与工单和本地商品目录编排。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+          "line": 933,
+          "anchor": "private Object returnQty("
+        }
+      ]
+    },
+    {
+      "key": "lingxing.seller.list",
+      "platform": "lingxing",
+      "summary": "查询亚马逊店铺列表",
+      "source": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+      "current": "已规范店铺 ID、名称、国家等字段。",
+      "proposal": "作为其他业务接口的店铺选择字典，处理同名店铺。",
+      "caveat": "",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "归一店铺标识、名称等目录字段。",
+      "remaining_gap": "没有店铺业务别名及同名候选解析。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+          "line": 705,
+          "anchor": "private Object sellerList("
+        }
+      ]
+    },
+    {
+      "key": "lingxing.warehouse.list",
+      "platform": "lingxing",
+      "summary": "查询仓库列表",
+      "source": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+      "current": "读取仓库目录。",
+      "proposal": "统一仓库编码、类型、地区和启用状态，供库存业务筛选。",
+      "caveat": "",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "映射官方库存/Listing/仓库条件，主要通过 rawAndTotal 返回数据。",
+      "remaining_gap": "没有统一可用库存、跨仓关联、仓库解析或有界分页流程。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+          "line": 701,
+          "anchor": "private static Map<String, Object> rawAndTotal("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+          "line": 346,
+          "anchor": "public Object invoke("
+        }
+      ]
+    },
+    {
+      "key": "lingxing.workorder.add",
+      "platform": "lingxing",
+      "summary": "新增售后工单（仅退货类型）",
+      "source": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+      "current": "限定退货类型并转换工单字段。",
+      "proposal": "增加 prepare：通过订单、SKU 和退货数量补齐 PID、原因和仓库。",
+      "caveat": "业务原因和退货数量需调用方确认，不能自动猜测。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "补齐官方顶层工单字段的传递，避免遗漏系统单号、原因、退货仓等必需信息。",
+      "remaining_gap": "仍需显式提供订单行、PID、原因与退货数量；未自动编排售后审批或退款。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+          "line": 464,
+          "anchor": "private static Map<String, Object> workOrderPayload("
+        }
+      ]
+    },
+    {
+      "key": "lingxing.workorder.audit",
+      "platform": "lingxing",
+      "summary": "提交售后工单审批流",
+      "source": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+      "current": "把已有工单提交到审批流程。",
+      "proposal": "核对工单状态及缺项；返回可继续操作或需人工处理的状态。",
+      "caveat": "提交审核与审批通过不同。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "提交官方工单明细或审批流 ID，返回 raw 和 request_id。",
+      "remaining_gap": "审核流程仍需业务明确选择，未自动审批。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+          "line": 360,
+          "anchor": "case \"workorder.add\""
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+          "line": 367,
+          "anchor": "case \"workorder.audit\""
+        }
+      ]
+    },
+    {
+      "key": "lingxing.workorder.list",
+      "platform": "lingxing",
+      "summary": "查询售后工单列表",
+      "source": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+      "current": "读取售后工单并规范分页。",
+      "proposal": "增加按订单的售后进度视图，连接审核、退货与退款状态。",
+      "caveat": "",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "传递日期/偏移并返回工单 raw/total。",
+      "remaining_gap": "没有按业务订单整合审核、到仓、退款进度。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/lingxing/LingxingAdapter.java",
+          "line": 869,
+          "anchor": "private Object workOrderList("
+        }
+      ]
+    },
+    {
+      "key": "mabang.orders.list",
+      "platform": "mabang",
+      "summary": "查询马帮订单列表（cursor 翻页）",
+      "source": "src/main/java/group/cyt/common/module/adapter/mabang/MabangAdapter.java",
+      "current": "已封装马帮签名、筛选和 cursor 翻页。",
+      "proposal": "优先使用新增有界自动分页接口，减少调用方的游标处理。",
+      "caveat": "",
+      "assessment": "recommended",
+      "recommended_operations": [
+        "mabang.orders.collect"
+      ],
+      "depth": "enhanced",
+      "depth_reason": "统一订单页和 next_cursor/has_next，识别响应形态。",
+      "remaining_gap": "订单数据仍来自供应商结构，调用方原接口需自己翻页。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/mabang/MabangAdapter.java",
+          "line": 160,
+          "anchor": "case \"mabang.orders.list\""
+        }
+      ]
+    },
+    {
+      "key": "mabang.orders.track",
+      "platform": "mabang",
+      "summary": "查询马帮订单物流轨迹（批量 ≤100）",
+      "source": "src/main/java/group/cyt/common/module/adapter/mabang/MabangAdapter.java",
+      "current": "支持最多 100 个订单查询，并整理物流状态。",
+      "proposal": "可补批量拆组和每单错误，不因一个失败丢失其他物流。",
+      "caveat": "物流事件不等于订单结算状态。",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "兼容空响应并归一批量物流状态和轨迹。",
+      "remaining_gap": "未拆分超过单批上限的订单，也未提供逐单错误与订单查询联动。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/mabang/MabangAdapter.java",
+          "line": 179,
+          "anchor": "case \"mabang.orders.track\""
+        }
+      ]
+    },
+    {
+      "key": "nas.buckets.create",
+      "platform": "nas",
+      "summary": "新建桶",
+      "source": "src/main/java/group/cyt/common/module/adapter/nas/NasAdapter.java",
+      "current": "处理 S3 桶创建和区域配置。",
+      "proposal": "保持管理员原子操作；业务系统通常只需被分配的桶或目录。",
+      "caveat": "",
+      "assessment": "low_level",
+      "recommended_operations": [],
+      "depth": "supporting",
+      "depth_reason": "提供 S3 桶生命周期与目录管理。",
+      "remaining_gap": "按基础设施职责保留；业务应用宜使用分配后的文件能力。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/nas/NasAdapter.java",
+          "line": 161,
+          "anchor": "case \"buckets.list\""
+        }
+      ]
+    },
+    {
+      "key": "nas.buckets.delete",
+      "platform": "nas",
+      "summary": "删除桶（必须为空）",
+      "source": "src/main/java/group/cyt/common/module/adapter/nas/NasAdapter.java",
+      "current": "删除指定桶，供应商要求为空。",
+      "proposal": "增加桶非空预检，展示对象量后再决定删除。",
+      "caveat": "不应隐式清空桶。",
+      "assessment": "low_level",
+      "recommended_operations": [],
+      "depth": "supporting",
+      "depth_reason": "提供 S3 桶生命周期与目录管理。",
+      "remaining_gap": "按基础设施职责保留；业务应用宜使用分配后的文件能力。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/nas/NasAdapter.java",
+          "line": 161,
+          "anchor": "case \"buckets.list\""
+        }
+      ]
+    },
+    {
+      "key": "nas.buckets.list",
+      "platform": "nas",
+      "summary": "列出全部桶",
+      "source": "src/main/java/group/cyt/common/module/adapter/nas/NasAdapter.java",
+      "current": "将 S3 桶目录整理为名称与创建时间。",
+      "proposal": "保留运维入口；可按业务授权限制可见桶。",
+      "caveat": "",
+      "assessment": "low_level",
+      "recommended_operations": [],
+      "depth": "supporting",
+      "depth_reason": "提供 S3 桶生命周期与目录管理。",
+      "remaining_gap": "按基础设施职责保留；业务应用宜使用分配后的文件能力。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/nas/NasAdapter.java",
+          "line": 161,
+          "anchor": "case \"buckets.list\""
+        }
+      ]
+    },
+    {
+      "key": "nas.objects.copy",
+      "platform": "nas",
+      "summary": "服务端复制对象",
+      "source": "src/main/java/group/cyt/common/module/adapter/nas/NasAdapter.java",
+      "current": "服务端复制单对象，返回结果元信息。",
+      "proposal": "增加覆盖策略和源版本条件，明确 copy 与 move 的差异。",
+      "caveat": "并发写入期间复制不是快照事务。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "复制单个源键到目标键。",
+      "remaining_gap": "没有覆盖策略、源版本校验或完整迁移任务。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/nas/NasAdapter.java",
+          "line": 247,
+          "anchor": "private Object copy("
+        }
+      ]
+    },
+    {
+      "key": "nas.objects.copy_prefix",
+      "platform": "nas",
+      "summary": "整目录复制 / 移动（前缀级）",
+      "source": "src/main/java/group/cyt/common/module/adapter/nas/NasAdapter.java",
+      "current": "已有整目录复制/移动、最多 50000 对象、逐项失败；全部复制成功才删除源。",
+      "proposal": "大目录改为后台作业，支持进度、取消和按对象重试。",
+      "caveat": "跨对象不具原子性，可能部分成功；移动后应检查 failed。",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "deep",
+      "depth_reason": "自动枚举目录、逐项复制，全部复制成功才允许删除源，并返回失败项。",
+      "remaining_gap": "跨对象非事务；大任务无持久进度和续跑，复制时并发写入不提供一致性快照。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/nas/NasAdapter.java",
+          "line": 311,
+          "anchor": "private Object copyPrefix("
+        }
+      ]
+    },
+    {
+      "key": "nas.objects.delete",
+      "platform": "nas",
+      "summary": "删除对象（不可恢复）",
+      "source": "src/main/java/group/cyt/common/module/adapter/nas/NasAdapter.java",
+      "current": "删除单对象。",
+      "proposal": "增加保留策略检查或软删除业务接口。",
+      "caveat": "当前永久删除不可恢复。",
+      "assessment": "low_level",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "按键执行删除。",
+      "remaining_gap": "没有业务保留策略或软删除。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/nas/NasAdapter.java",
+          "line": 146,
+          "anchor": "case \"objects.delete\""
+        }
+      ]
+    },
+    {
+      "key": "nas.objects.delete_batch",
+      "platform": "nas",
+      "summary": "批量删除对象（不可恢复）",
+      "source": "src/main/java/group/cyt/common/module/adapter/nas/NasAdapter.java",
+      "current": "已有批次拆分及逐项 deleted/errors 返回。",
+      "proposal": "增加 dry_run 与业务范围检查，保留每个对象失败原因。",
+      "caveat": "必须处理部分失败。",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "拆分批量删除并保留每项成功/错误。",
+      "remaining_gap": "批次处理本身不是业务范围预检或可审核的删除计划。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/nas/NasAdapter.java",
+          "line": 277,
+          "anchor": "private Object delete("
+        }
+      ]
+    },
+    {
+      "key": "nas.objects.list",
+      "platform": "nas",
+      "summary": "列目录 / 列举对象",
+      "source": "src/main/java/group/cyt/common/module/adapter/nas/NasAdapter.java",
+      "current": "支持目录分隔、递归和 S3 续传标记。",
+      "proposal": "优先用新增 collect，保留 folders 与统一分页信息。",
+      "caveat": "目录是对象前缀，不是真实文件系统目录。",
+      "assessment": "recommended",
+      "recommended_operations": [
+        "nas.objects.collect"
+      ],
+      "depth": "enhanced",
+      "depth_reason": "整理文件、目录前缀和续传标记。",
+      "remaining_gap": "仍是单页前缀检索，没有业务文件实体和目录定位。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/nas/NasAdapter.java",
+          "line": 209,
+          "anchor": "private Object list("
+        }
+      ]
+    },
+    {
+      "key": "nas.objects.presign_get",
+      "platform": "nas",
+      "summary": "批量签发文件读取链接",
+      "source": "src/main/java/group/cyt/common/module/adapter/nas/NasAdapter.java",
+      "current": "已批量生成带期限的临时读链接。",
+      "proposal": "对外作为文档下载能力，明确到期时间与逐项结果。",
+      "caveat": "链接属于临时访问凭证，勿写入公开日志。",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "批量生成带期限的读取链接。",
+      "remaining_gap": "不补齐文件业务权限、有效性和下载完成结果。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/nas/NasAdapter.java",
+          "line": 40,
+          "anchor": "case \"objects.presign_get\""
+        }
+      ]
+    },
+    {
+      "key": "nas.objects.presign_put",
+      "platform": "nas",
+      "summary": "签发文件直传链接（自动生成键名）",
+      "source": "src/main/java/group/cyt/common/module/adapter/nas/NasAdapter.java",
+      "current": "自动生成键名、规范扩展名，签发直传链接。",
+      "proposal": "增加上传完成回执与 head 校验，确认大小和真实类型。",
+      "caveat": "签发成功不等于文件已上传。",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "自动生成日期/UUID 键名和扩展名，提供直传信息。",
+      "remaining_gap": "签发链接不代表上传成功，尚无完成回执与真实类型校验。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/nas/NasAdapter.java",
+          "line": 61,
+          "anchor": "case \"objects.presign_put\""
+        }
+      ]
+    },
+    {
+      "key": "nas.objects.read_head",
+      "platform": "nas",
+      "summary": "读文件头（识别真实类型 / 图片尺寸）",
+      "source": "src/main/java/group/cyt/common/module/adapter/nas/NasAdapter.java",
+      "current": "读取有限字节并返回 Base64 与上游 Content-Type；未实现自动类型识别或图片尺寸解析。",
+      "proposal": "补 magic bytes 和图片尺寸解析，再与上传回执结合形成通用文件验收。",
+      "caveat": "当前文件头的业务解析仍由调用方完成。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "读取有界文件头，按签名识别常见图片/PDF/ZIP、解析图片尺寸并提示 MIME 不一致。",
+      "remaining_gap": "仅检查文件头，不验证完整性、恶意内容或压缩包中的实际类型；较长 JPEG 头可能需要增加 head_bytes。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/nas/NasAdapter.java",
+          "line": 111,
+          "anchor": "case \"objects.read_head\""
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/nas/FileHeaderInspector.java",
+          "line": 14,
+          "anchor": "public static Map<String, Object> inspect("
+        }
+      ]
+    },
+    {
+      "key": "nas.objects.stat",
+      "platform": "nas",
+      "summary": "查对象元信息",
+      "source": "src/main/java/group/cyt/common/module/adapter/nas/NasAdapter.java",
+      "current": "整理对象大小、MIME、etag 和更新时间。",
+      "proposal": "作为上传后验证与下载前检查的基础。",
+      "caveat": "",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "把 HEAD 结果整理为大小、MIME、etag 和修改时间。",
+      "remaining_gap": "仍是元信息单项读取，不验证业务上传是否完成或内容是否合规。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/nas/NasAdapter.java",
+          "line": 94,
+          "anchor": "case \"objects.stat\""
+        }
+      ]
+    },
+    {
+      "key": "paypal.disputes.list",
+      "platform": "paypal",
+      "summary": "读取 PayPal 争议及取证信息",
+      "source": "src/main/java/group/cyt/common/module/adapter/source/CustomerSourcesAdapter.java",
+      "current": "读取争议并补齐取证详情，归一客服字段。",
+      "proposal": "使用 collect 汇总；进一步可生成取证缺项清单。",
+      "caveat": "详情补齐存在额外调用成本；当前来源详情失败会使该页报错，后续可深化为逐条失败保留。",
+      "assessment": "recommended",
+      "recommended_operations": [
+        "paypal.disputes.collect"
+      ],
+      "depth": "deep",
+      "depth_reason": "自动从列表逐项补齐争议详情，整理买家、订单、金额和响应期限。",
+      "remaining_gap": "任一详情失败仍会使当页失败；多笔争议交易只选首笔，不是完整取证工作流。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/source/CustomerSourcesAdapter.java",
+          "line": 298,
+          "anchor": "private Map<String, Object> paypalDisputes("
+        }
+      ]
+    },
+    {
+      "key": "quickcep.analytics.get",
+      "platform": "quickcep",
+      "summary": "会话分析（有效会话/首响时长/流失率/解决率）",
+      "source": "src/main/java/group/cyt/common/module/adapter/quickcep/QuickcepAdapter.java",
+      "current": "按时间和渠道读取统计数据。",
+      "proposal": "统一指标口径、时区与零分母处理，返回数据覆盖范围。",
+      "caveat": "首响、流失等指标的口径需要保留来源解释。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "转换日期/渠道后返回供应商统计主体。",
+      "remaining_gap": "指标口径、时间范围完整性和业务解读未规范。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/quickcep/QuickcepAdapter.java",
+          "line": 77,
+          "anchor": "case \"analytics.get\""
+        }
+      ]
+    },
+    {
+      "key": "quickcep.messages.list",
+      "platform": "quickcep",
+      "summary": "分页查询会话消息",
+      "source": "src/main/java/group/cyt/common/module/adapter/quickcep/QuickcepAdapter.java",
+      "current": "已转换会话 ID、页码，返回 total/total_page。",
+      "proposal": "增加 transcript：自动翻页、按时间排序、发件角色规范化。",
+      "caveat": "",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "统一消息页码、总量和页数。",
+      "remaining_gap": "未自动汇总会话全文或归一参与者角色。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/quickcep/QuickcepAdapter.java",
+          "line": 62,
+          "anchor": "case \"messages.list\""
+        }
+      ]
+    },
+    {
+      "key": "quickcep.messages.send",
+      "platform": "quickcep",
+      "summary": "发消息（坐席回复 / 访客模拟）",
+      "source": "src/main/java/group/cyt/common/module/adapter/quickcep/QuickcepAdapter.java",
+      "current": "已区分坐席回复/访客模拟，检查坐席 owner_id。",
+      "proposal": "增加 reply：从会话读取渠道和坐席，预检可回复状态与稳定 mid。",
+      "caveat": "真实发送有业务影响；访客模拟须明确。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "区分坐席/访客，构建消息并检查 owner_id。",
+      "remaining_gap": "调用方仍要提供会话、渠道和坐席；未查询可回复状态和自动补齐。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/quickcep/QuickcepAdapter.java",
+          "line": 112,
+          "anchor": "case \"messages.send\""
+        }
+      ]
+    },
+    {
+      "key": "quickcep.sessions.by_operator",
+      "platform": "quickcep",
+      "summary": "某坐席的会话列表（可按「未接收」筛）",
+      "source": "src/main/java/group/cyt/common/module/adapter/quickcep/QuickcepAdapter.java",
+      "current": "将坐席、会话类型和排序转为供应商参数。",
+      "proposal": "增加坐席名/ID 解析与有界列表，明确未接收筛选。",
+      "caveat": "",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "转换坐席筛选及分页信息。",
+      "remaining_gap": "没有坐席名称解析、自动翻页和会话详情补齐。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/quickcep/QuickcepAdapter.java",
+          "line": 82,
+          "anchor": "case \"sessions.by_operator\""
+        }
+      ]
+    },
+    {
+      "key": "quickcep.sessions.close",
+      "platform": "quickcep",
+      "summary": "关闭子会话（幂等）",
+      "source": "src/main/java/group/cyt/common/module/adapter/quickcep/QuickcepAdapter.java",
+      "current": "按会话 ID 关闭，保留幂等语义。",
+      "proposal": "增加当前状态和最终关闭结果，让重复关闭可直接理解。",
+      "caveat": "",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "调用供应商关闭会话。",
+      "remaining_gap": "未读取原状态或归一重复关闭的最终状态。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/quickcep/QuickcepAdapter.java",
+          "line": 97,
+          "anchor": "case \"sessions.close\""
+        }
+      ]
+    },
+    {
+      "key": "quickcep.sessions.create",
+      "platform": "quickcep",
+      "summary": "查询或创建会话（mode=2 为测试会话）",
+      "source": "src/main/java/group/cyt/common/module/adapter/quickcep/QuickcepAdapter.java",
+      "current": "查询或创建会话，支持第三方会话号和测试模式。",
+      "proposal": "按业务会话号提供 ensure_session，并返回 created 与 resolved。",
+      "caveat": "测试 mode=2 与正式会话需要明确区分。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "转换访客与第三方会话号，使用供应商 getOrCreate。",
+      "remaining_gap": "未形成网关自身的业务会话解析和可继续操作视图。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/quickcep/QuickcepAdapter.java",
+          "line": 101,
+          "anchor": "case \"sessions.create\""
+        }
+      ]
+    },
+    {
+      "key": "quickcep.sessions.get",
+      "platform": "quickcep",
+      "summary": "会话详情（访客/坐席/标签/状态/未读数）",
+      "source": "src/main/java/group/cyt/common/module/adapter/quickcep/QuickcepAdapter.java",
+      "current": "返回会话详情，但主体仍是供应商字段。",
+      "proposal": "整理渠道、参与人、坐席、未读、可回复状态与下一动作。",
+      "caveat": "",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "读取原会话主体、会话 ID 页或坐席主体。",
+      "remaining_gap": "会话与消息、坐席未关联，供应商角色和状态仍需业务侧理解。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/quickcep/QuickcepAdapter.java",
+          "line": 28,
+          "anchor": "public Object invoke("
+        }
+      ]
+    },
+    {
+      "key": "quickcep.sessions.list",
+      "platform": "quickcep",
+      "summary": "按创建/关闭日期拉子会话 id 列表",
+      "source": "src/main/java/group/cyt/common/module/adapter/quickcep/QuickcepAdapter.java",
+      "current": "按创建/关闭日期读取会话 ID，分离有效 ID。",
+      "proposal": "增加日期拆分、分页与详情聚合，返回每项错误。",
+      "caveat": "当前返回的是 ID 列表，不是完整会话。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "读取原会话主体、会话 ID 页或坐席主体。",
+      "remaining_gap": "会话与消息、坐席未关联，供应商角色和状态仍需业务侧理解。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/quickcep/QuickcepAdapter.java",
+          "line": 28,
+          "anchor": "public Object invoke("
+        }
+      ]
+    },
+    {
+      "key": "quickcep.staff.list",
+      "platform": "quickcep",
+      "summary": "坐席列表（staffId / userId / 在线状态）",
+      "source": "src/main/java/group/cyt/common/module/adapter/quickcep/QuickcepAdapter.java",
+      "current": "读取供应商坐席目录。",
+      "proposal": "归一 staffId/userId、显示名、在线和接待状态，提供唯一解析。",
+      "caveat": "",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "读取原会话主体、会话 ID 页或坐席主体。",
+      "remaining_gap": "会话与消息、坐席未关联，供应商角色和状态仍需业务侧理解。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/quickcep/QuickcepAdapter.java",
+          "line": 28,
+          "anchor": "public Object invoke("
+        }
+      ]
+    },
+    {
+      "key": "rd.products.list",
+      "platform": "rd",
+      "summary": "读取 RD 标准产品目录",
+      "source": "src/main/java/group/cyt/common/module/adapter/source/CustomerSourcesAdapter.java",
+      "current": "目录适配器将来源产品规范为统一列表。",
+      "proposal": "使用 collect 保持统一读取协议；后续增加 SKU 冲突提示。",
+      "caveat": "来源若不提供分页，collect 的完整性仍取决于来源快照。",
+      "assessment": "recommended",
+      "recommended_operations": [
+        "rd.products.collect"
+      ],
+      "depth": "enhanced",
+      "depth_reason": "适配来源目录并整理为统一产品列表。",
+      "remaining_gap": "尚无 SKU 冲突处理、产品关联和增量变更模型。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/source/CustomerSourcesAdapter.java",
+          "line": 382,
+          "anchor": "private Map<String, Object> rdProducts("
+        }
+      ]
+    },
+    {
+      "key": "shopify.inventory.set",
+      "platform": "shopify",
+      "summary": "设置可售库存（直接覆盖）",
+      "source": "src/main/java/group/cyt/common/module/adapter/shopify/ShopifyAdapter.java",
+      "current": "将库存覆盖转换为 GraphQL mutation。",
+      "proposal": "增加库存预检、可选 compareQuantity 并发校验，显示库位与变动量。",
+      "caveat": "覆盖值与增量不同，不能自动猜测库位。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "把库存条目、库位和覆盖数量转为 mutation。",
+      "remaining_gap": "仍需官方 ID；没有 SKU/库位解析、差异预览和比较版本前置条件。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/shopify/ShopifyAdapter.java",
+          "line": 86,
+          "anchor": "case \"inventory.set\""
+        }
+      ]
+    },
+    {
+      "key": "shopify.orders.create",
+      "platform": "shopify",
+      "summary": "创建零金额补发订单（仅测试店铺）",
+      "source": "src/main/java/group/cyt/common/module/adapter/shopify/ShopifyAdapter.java",
+      "current": "已有业务 reference 查重、SKU 唯一匹配、地址校验和零金额补发，并限制测试店铺。",
+      "proposal": "补独立的补发预检计划、原订单关联和并发唯一性。",
+      "caveat": "测试店铺限制保留，不能宣称已开放正式订单写入。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "deep",
+      "depth_reason": "按业务 reference 查重，逐 SKU 唯一解析变体，校验地址并创建零金额补发单。",
+      "remaining_gap": "限测试店铺；按标签查重不是并发唯一约束，尚无完整预检计划和原订单校验。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/shopify/ShopifyAdapter.java",
+          "line": 181,
+          "anchor": "private Object create("
+        }
+      ]
+    },
+    {
+      "key": "shopify.orders.get",
+      "platform": "shopify",
+      "summary": "查询订单",
+      "source": "src/main/java/group/cyt/common/module/adapter/shopify/ShopifyAdapter.java",
+      "current": "合并 GraphQL 订单及明细查询。",
+      "proposal": "增加业务字段视图和嵌套连接完整性信息。",
+      "caveat": "嵌套 lineItems/transactions 的 first 上限不代表全量。",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "返回预定义 GraphQL 的订单或商品节点。",
+      "remaining_gap": "业务关联和嵌套连接完整性仍需调用方处理。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/shopify/ShopifyAdapter.java",
+          "line": 63,
+          "anchor": "case \"orders.get\""
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/shopify/ShopifyAdapter.java",
+          "line": 69,
+          "anchor": "case \"products.get\""
+        }
+      ]
+    },
+    {
+      "key": "shopify.orders.list",
+      "platform": "shopify",
+      "summary": "按更新时间增量拉订单列表（含明细/支付流水/客户/地址）",
+      "source": "src/main/java/group/cyt/common/module/adapter/shopify/ShopifyAdapter.java",
+      "current": "已整理订单结果和 GraphQL page_info。",
+      "proposal": "优先用 collect 自动翻根订单页；后续单独补齐大订单嵌套连接。",
+      "caveat": "本次 collect 的 coverage=root_records，不承诺嵌套明细全量。",
+      "assessment": "recommended",
+      "recommended_operations": [
+        "shopify.orders.collect"
+      ],
+      "depth": "enhanced",
+      "depth_reason": "将根连接转成 items 和 page_info。",
+      "remaining_gap": "仅根分页；订单行和变体等嵌套连接仍受查询 first 限制。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/shopify/ShopifyAdapter.java",
+          "line": 128,
+          "anchor": "private Object list("
+        }
+      ]
+    },
+    {
+      "key": "shopify.orders.update",
+      "platform": "shopify",
+      "summary": "更新订单备注 / 标签 / 收货地址",
+      "source": "src/main/java/group/cyt/common/module/adapter/shopify/ShopifyAdapter.java",
+      "current": "转换备注、标签与收货地址更新。",
+      "proposal": "增加字段级变更预览；标签区分追加、删除和全量替换。",
+      "caveat": "覆盖标签前需读取最新状态。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "映射备注、标签、地址等更新字段。",
+      "remaining_gap": "没有现状读取、标签增删语义和差异预览。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/shopify/ShopifyAdapter.java",
+          "line": 76,
+          "anchor": "case \"orders.update\""
+        }
+      ]
+    },
+    {
+      "key": "shopify.products.get",
+      "platform": "shopify",
+      "summary": "商品详情",
+      "source": "src/main/java/group/cyt/common/module/adapter/shopify/ShopifyAdapter.java",
+      "current": "读取商品、变体和库存关联信息。",
+      "proposal": "提供按 SKU 的唯一变体解析，展示重复 SKU 与子连接截断。",
+      "caveat": "",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "返回预定义 GraphQL 的订单或商品节点。",
+      "remaining_gap": "业务关联和嵌套连接完整性仍需调用方处理。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/shopify/ShopifyAdapter.java",
+          "line": 63,
+          "anchor": "case \"orders.get\""
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/shopify/ShopifyAdapter.java",
+          "line": 69,
+          "anchor": "case \"products.get\""
+        }
+      ]
+    },
+    {
+      "key": "shopify.products.list",
+      "platform": "shopify",
+      "summary": "商品列表",
+      "source": "src/main/java/group/cyt/common/module/adapter/shopify/ShopifyAdapter.java",
+      "current": "返回商品页和 GraphQL page_info。",
+      "proposal": "优先用 collect 自动翻商品根页，再按需要补齐变体。",
+      "caveat": "不能把根分页完成等同于全部嵌套变体已读取。",
+      "assessment": "recommended",
+      "recommended_operations": [
+        "shopify.products.collect"
+      ],
+      "depth": "enhanced",
+      "depth_reason": "将根连接转成 items 和 page_info。",
+      "remaining_gap": "仅根分页；订单行和变体等嵌套连接仍受查询 first 限制。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/shopify/ShopifyAdapter.java",
+          "line": 128,
+          "anchor": "private Object list("
+        }
+      ]
+    },
+    {
+      "key": "shopify.refunds.create",
+      "platform": "shopify",
+      "summary": "发起退款（不可逆，必须 confirm=true）",
+      "source": "src/main/java/group/cyt/common/module/adapter/shopify/ShopifyAdapter.java",
+      "current": "已读取订单余额及成功 SALE 流水，校验可退金额并构造退款/退库请求。",
+      "proposal": "补独立的退款计划、强制稳定业务编号、多支付分摊和逐项退库。",
+      "caveat": "退款不可逆；当前 restock=true 使用当前订单行数量，需明确业务范围。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "deep",
+      "depth_reason": "读取订单余额和成功 SALE 流水，检查可退金额并构建退款/退库请求。",
+      "remaining_gap": "默认随机生成供应商幂等键；多支付分摊和逐项退库未封装，restock=true 使用当前订单行数量。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/shopify/ShopifyAdapter.java",
+          "line": 269,
+          "anchor": "private Object refund("
+        }
+      ]
+    },
+    {
+      "key": "shopify.refunds.list",
+      "platform": "shopify",
+      "summary": "拉退款记录（含退款明细/原因备注/支付渠道）",
+      "source": "src/main/java/group/cyt/common/module/adapter/shopify/ShopifyAdapter.java",
+      "current": "把按订单查询的退款展平成业务记录并附带订单。",
+      "proposal": "设计双层游标：根订单页与页内退款偏移，再提供 collect。",
+      "caveat": "当前游标以订单为单位；退款数量可能大于 limit，不能套用通用收集器。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "整理退货/退款查询；退款展平时附带订单信息。",
+      "remaining_gap": "退款游标属于根订单且子记录有独立数量，未提供双层续传与所有内连接补齐。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/shopify/ShopifyAdapter.java",
+          "line": 128,
+          "anchor": "private Object list("
+        }
+      ]
+    },
+    {
+      "key": "shopify.returns.list",
+      "platform": "shopify",
+      "summary": "拉退货单（含退货原因/状态/明细 SKU）",
+      "source": "src/main/java/group/cyt/common/module/adapter/shopify/ShopifyAdapter.java",
+      "current": "读取退货单及退货原因、状态与明细。",
+      "proposal": "独立处理退货根连接及明细连接，提供 coverage 和续传。",
+      "caveat": "嵌套连接仍有上限，本次未套通用 collect。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "整理退货/退款查询；退款展平时附带订单信息。",
+      "remaining_gap": "退款游标属于根订单且子记录有独立数量，未提供双层续传与所有内连接补齐。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/shopify/ShopifyAdapter.java",
+          "line": 128,
+          "anchor": "private Object list("
+        }
+      ]
+    },
+    {
+      "key": "stripe.disputes.list",
+      "platform": "stripe",
+      "summary": "读取 Stripe 支付争议",
+      "source": "src/main/java/group/cyt/common/module/adapter/source/CustomerSourcesAdapter.java",
+      "current": "已整理争议状态、证据和来源单号。",
+      "proposal": "使用 collect 汇总；截止日期和可提交动作应以供应商状态为准。",
+      "caveat": "不自动提交证据或接受争议。",
+      "assessment": "recommended",
+      "recommended_operations": [
+        "stripe.disputes.collect"
+      ],
+      "depth": "enhanced",
+      "depth_reason": "统一争议金额单位、币种、客户、订单和截止日期。",
+      "remaining_gap": "订单号来自已有 metadata，没有自动关联交易/订单和生成取证缺项。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/source/CustomerSourcesAdapter.java",
+          "line": 248,
+          "anchor": "private Map<String, Object> stripeDisputes("
+        }
+      ]
+    },
+    {
+      "key": "trustpilot.reviews.list",
+      "platform": "trustpilot",
+      "summary": "读取 Trustpilot 评价",
+      "source": "src/main/java/group/cyt/common/module/adapter/source/CustomerSourcesAdapter.java",
+      "current": "将评价与业务来源关联，维护分页游标。",
+      "proposal": "使用 collect 自动分页；后续可添加回复状态与低分原因分类。",
+      "caveat": "",
+      "assessment": "recommended",
+      "recommended_operations": [
+        "trustpilot.reviews.collect"
+      ],
+      "depth": "enhanced",
+      "depth_reason": "区分公开/私有读取并整理评价、客户与订单字段。",
+      "remaining_gap": "无跨源订单关联和回复流程，字段可见性取决于凭据。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/source/CustomerSourcesAdapter.java",
+          "line": 196,
+          "anchor": "private Map<String, Object> trustpilotReviews("
+        }
+      ]
+    },
+    {
+      "key": "wecom.attendees.add",
+      "platform": "wecom",
+      "summary": "新增日程参与者",
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+      "current": "按日程 ID 转换参与人列表。",
+      "proposal": "增加参与人差异预检，避免重复通知和无效成员。",
+      "caveat": "",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "按日程 ID 转交参与者增删。",
+      "remaining_gap": "未读取原参与者、计算差异或预检可操作角色。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 222,
+          "anchor": "if (key.equals(\"attendees.add\")"
+        }
+      ]
+    },
+    {
+      "key": "wecom.attendees.remove",
+      "platform": "wecom",
+      "summary": "删除日程参与者",
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+      "current": "按日程 ID 转换移除成员。",
+      "proposal": "显示当前参与人及移除后结果，保护组织者等受限角色。",
+      "caveat": "",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "按日程 ID 转交参与者增删。",
+      "remaining_gap": "未读取原参与者、计算差异或预检可操作角色。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 222,
+          "anchor": "if (key.equals(\"attendees.add\")"
+        }
+      ]
+    },
+    {
+      "key": "wecom.auth.access_token",
+      "platform": "wecom",
+      "summary": "获取应用 access_token",
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+      "current": "缓存企微应用 token，按凭据选择应用。",
+      "proposal": "业务方优先调用领域接口；token 仅保留必要的可信兼容场景。",
+      "caveat": "access_token 属于上游凭据，不能用作普通页面数据。",
+      "assessment": "low_level",
+      "recommended_operations": [],
+      "depth": "supporting",
+      "depth_reason": "提供应用令牌或网页授权换码的基础兼容入口。",
+      "remaining_gap": "不作为业务深封完成项；业务侧优先使用领域接口和自己的登录流程。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 50,
+          "anchor": "if (key.equals(\"auth.access_token\"))"
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 65,
+          "anchor": "if (key.equals(\"users.resolve_code\"))"
+        }
+      ]
+    },
+    {
+      "key": "wecom.calendars.create",
+      "platform": "wecom",
+      "summary": "创建日历",
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+      "current": "已将所有者、权限和日历属性转换为官方请求。",
+      "proposal": "增加业务日历别名与 prepare，检查所有者及共享范围。",
+      "caveat": "",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "清理日历参数并转换官方 calendar 请求。",
+      "remaining_gap": "无业务日历别名、所有者解析、共享权限预检和差异更新。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 139,
+          "anchor": "if (key.startsWith(\"calendars.\"))"
+        }
+      ]
+    },
+    {
+      "key": "wecom.calendars.delete",
+      "platform": "wecom",
+      "summary": "删除日历",
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+      "current": "按 cal_id 删除日历。",
+      "proposal": "增加关联日程预检，显式展示影响范围。",
+      "caveat": "不能默认联动删除业务记录。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "按 cal_id 删除。",
+      "remaining_gap": "没有关联日程影响预检。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 162,
+          "anchor": "if (action.equals(\"delete\"))"
+        }
+      ]
+    },
+    {
+      "key": "wecom.calendars.get_many",
+      "platform": "wecom",
+      "summary": "查询日历详情",
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+      "current": "支持批量读取日历详情。",
+      "proposal": "归一 owner、共享范围及逐个失败信息。",
+      "caveat": "",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "批量读取并增加 id 别名，主体保留官方字段。",
+      "remaining_gap": "无逐个错误隔离和所有者/共享范围的业务解释。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 141,
+          "anchor": "if (action.equals(\"get_many\"))"
+        }
+      ]
+    },
+    {
+      "key": "wecom.calendars.update",
+      "platform": "wecom",
+      "summary": "更新日历",
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+      "current": "把日历属性映射为更新请求。",
+      "proposal": "增加差异预览，区分不修改与清空字段。",
+      "caveat": "",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "清理日历参数并转换官方 calendar 请求。",
+      "remaining_gap": "无业务日历别名、所有者解析、共享权限预检和差异更新。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 139,
+          "anchor": "if (key.startsWith(\"calendars.\"))"
+        }
+      ]
+    },
+    {
+      "key": "wecom.directory.departments",
+      "platform": "wecom",
+      "summary": "查询部门列表（按 ID / 路径 / 名称，单个/多个）",
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+      "current": "已有按 ID/名称/完整路径查询与去重，支持单个/多个。",
+      "proposal": "将未找到与歧义路径的原因分开，供表单部门选择使用。",
+      "caveat": "当前二者都记录为 missing_paths；同名部门宜通过路径或 ID 区分。",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "deep",
+      "depth_reason": "组合部门树、路径/名称解析、去重与成员补齐，并按凭据能力选择读取方式。",
+      "remaining_gap": "未找到和歧义路径都进 missing_paths；大企业边界和部分失败还可细化。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 385,
+          "anchor": "private Object directory("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 538,
+          "anchor": "private String departmentPath("
+        }
+      ]
+    },
+    {
+      "key": "wecom.directory.list",
+      "platform": "wecom",
+      "summary": "获取企业通讯录（部门树 + 全员）",
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+      "current": "合并部门树和成员，规范用户显示字段。",
+      "proposal": "大企业增加有界输出、按部门选择与可见范围说明。",
+      "caveat": "结果受通讯录权限限制，不代表企业全部成员。",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "deep",
+      "depth_reason": "组合部门树、路径/名称解析、去重与成员补齐，并按凭据能力选择读取方式。",
+      "remaining_gap": "未找到和歧义路径都进 missing_paths；大企业边界和部分失败还可细化。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 385,
+          "anchor": "private Object directory("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 538,
+          "anchor": "private String departmentPath("
+        }
+      ]
+    },
+    {
+      "key": "wecom.directory.users",
+      "platform": "wecom",
+      "summary": "查询成员（按账号或按部门，均支持单个/多个）",
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+      "current": "支持成员账号或部门列表，补齐部门名和路径。",
+      "proposal": "作为审批申请人与流程节点的选择能力，保留唯一性检查。",
+      "caveat": "调用方仍需单独拥有通讯录权限。",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "deep",
+      "depth_reason": "组合部门树、路径/名称解析、去重与成员补齐，并按凭据能力选择读取方式。",
+      "remaining_gap": "未找到和歧义路径都进 missing_paths；大企业边界和部分失败还可细化。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 385,
+          "anchor": "private Object directory("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 538,
+          "anchor": "private String departmentPath("
+        }
+      ]
+    },
+    {
+      "key": "wecom.messages.send_markdown",
+      "platform": "wecom",
+      "summary": "发送应用 markdown 消息",
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+      "current": "按应用、接收者构建 markdown 消息。",
+      "proposal": "增加模板变量预检、分批收件人与 invaliduser 等部分失败归一。",
+      "caveat": "不能因网关 200 就认为所有收件人均成功。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "构建应用消息并拼接接收成员/部门/标签。",
+      "remaining_gap": "返回仍有官方 invaliduser 等字段；未做业务模板、收件人解析和投递结果统一。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 67,
+          "anchor": "if (key.startsWith(\"messages.\"))"
+        }
+      ]
+    },
+    {
+      "key": "wecom.messages.send_text",
+      "platform": "wecom",
+      "summary": "发送应用文本消息",
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+      "current": "按应用、接收者构建文本消息。",
+      "proposal": "与 markdown 统一为通知业务层，增加模板和每类无效接收人结果。",
+      "caveat": "发送超时需核对，不自动更换业务编号重发。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "构建应用消息并拼接接收成员/部门/标签。",
+      "remaining_gap": "返回仍有官方 invaliduser 等字段；未做业务模板、收件人解析和投递结果统一。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 67,
+          "anchor": "if (key.startsWith(\"messages.\"))"
+        }
+      ]
+    },
+    {
+      "key": "wecom.schedules.batch_create",
+      "platform": "wecom",
+      "summary": "批量创建日程（部分成功不回滚）",
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+      "current": "已有批量创建、逐项结果，部分成功不回滚。",
+      "proposal": "增加每项稳定外部编号和预检，支持只重试失败项。",
+      "caveat": "批次不是事务，调用方必须处理部分成功。",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "deep",
+      "depth_reason": "逐项规范化和创建，按索引返回成功、失败及批次摘要。",
+      "remaining_gap": "部分成功不回滚，每项业务编号和只重试失败项的持久编排仍需补充。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 91,
+          "anchor": "if (key.equals(\"schedules.batch_create\"))"
+        }
+      ]
+    },
+    {
+      "key": "wecom.schedules.copy",
+      "platform": "wecom",
+      "summary": "复制日程（可换日历 / 换时间）",
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+      "current": "读取原日程，可替换日历和时间后创建。",
+      "proposal": "增加时间偏移表达和复制内容预览，明确通知参与人。",
+      "caveat": "",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "deep",
+      "depth_reason": "读取源日程，覆盖目标日历/时间并自动创建副本。",
+      "remaining_gap": "源返回字段复制到创建请求，仍宜采用可写字段白名单和复制预览。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 114,
+          "anchor": "if (key.equals(\"schedules.copy\"))"
+        }
+      ]
+    },
+    {
+      "key": "wecom.schedules.create",
+      "platform": "wecom",
+      "summary": "创建日程",
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+      "current": "已转换日程时间、提醒与参与者。",
+      "proposal": "增加自然的 ISO 时间/时区表达与 prepare，不推断业务时区。",
+      "caveat": "",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "时间规范化和基本日程结构清理。",
+      "remaining_gap": "还需显式给成员与日历 ID，未做参与人和业务日历解析。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 316,
+          "anchor": "private Map<String, Object> scheduleCreate("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/registry/service/ParameterRules.java",
+          "line": 93,
+          "anchor": "key.equals(\"wecom.schedules.create\")"
+        }
+      ]
+    },
+    {
+      "key": "wecom.schedules.delete",
+      "platform": "wecom",
+      "summary": "删除日程",
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+      "current": "按 schedule_id 删除。",
+      "proposal": "增加取消原因与影响预检，返回最终状态。",
+      "caveat": "",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "按官方 ID 删除或更新日程字段。",
+      "remaining_gap": "无状态预检、差异说明和版本冲突处理。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 205,
+          "anchor": "if (key.equals(\"schedules.update\"))"
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 214,
+          "anchor": "if (key.equals(\"schedules.delete\"))"
+        }
+      ]
+    },
+    {
+      "key": "wecom.schedules.get_many",
+      "platform": "wecom",
+      "summary": "获取日程详情",
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+      "current": "批量获取并规范状态与参与者响应。",
+      "proposal": "增加每项错误与未找到单号，避免整批丢失。",
+      "caveat": "",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "规范日程状态、时间与参与者响应。",
+      "remaining_gap": "单项读取错误隔离和业务关联未完成。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 189,
+          "anchor": "if (key.equals(\"schedules.get_many\"))"
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 585,
+          "anchor": "private Map<String, Object> scheduleView("
+        }
+      ]
+    },
+    {
+      "key": "wecom.schedules.list",
+      "platform": "wecom",
+      "summary": "获取日历下的日程列表",
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+      "current": "已返回整理日程与 page.next_cursor。",
+      "proposal": "用于单页交互，批量读取可用 list_all。",
+      "caveat": "",
+      "assessment": "ready",
+      "recommended_operations": [
+        "wecom.schedules.list_all"
+      ],
+      "depth": "enhanced",
+      "depth_reason": "整理日程页，list_all 可自动翻页。",
+      "remaining_gap": "list_all 超过 max_items 抛错，没有保留已有结果并返回续传位置。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 330,
+          "anchor": "private Object schedules("
+        }
+      ]
+    },
+    {
+      "key": "wecom.schedules.list_all",
+      "platform": "wecom",
+      "summary": "拉完一个日历下的所有日程（自动翻页）",
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+      "current": "已有自动翻页及 max_items 限制。",
+      "proposal": "改为达到上限时返回 partial 与续传游标，避免全部结果因超限报错丢失。",
+      "caveat": "当前超出 max_items 会报错；分页读取不是一致性快照。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "整理日程页，list_all 可自动翻页。",
+      "remaining_gap": "list_all 超过 max_items 抛错，没有保留已有结果并返回续传位置。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 330,
+          "anchor": "private Object schedules("
+        }
+      ]
+    },
+    {
+      "key": "wecom.schedules.update",
+      "platform": "wecom",
+      "summary": "更新日程",
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+      "current": "转换日程属性更新。",
+      "proposal": "增加差异预检、版本冲突提示与通知范围。",
+      "caveat": "",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "按官方 ID 删除或更新日程字段。",
+      "remaining_gap": "无状态预检、差异说明和版本冲突处理。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 205,
+          "anchor": "if (key.equals(\"schedules.update\"))"
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 214,
+          "anchor": "if (key.equals(\"schedules.delete\"))"
+        }
+      ]
+    },
+    {
+      "key": "wecom.users.get",
+      "platform": "wecom",
+      "summary": "查询成员信息",
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+      "current": "按 userid 查询成员。",
+      "proposal": "业务侧可优先使用目录 users 的批量和部门路径封装。",
+      "caveat": "",
+      "assessment": "ready",
+      "recommended_operations": [
+        "wecom.directory.users"
+      ],
+      "depth": "basic",
+      "depth_reason": "按 userid 返回官方成员资料。",
+      "remaining_gap": "没有成员别名/部门路径解析；更高层能力在 directory.users。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 63,
+          "anchor": "if (key.equals(\"users.get\"))"
+        }
+      ]
+    },
+    {
+      "key": "wecom.users.resolve_code",
+      "platform": "wecom",
+      "summary": "网页授权 code 换 userid",
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+      "current": "网页授权 code 换成员身份。",
+      "proposal": "作为登录流程原子能力，绑定回调 state/nonce 并由业务认证层验证。",
+      "caveat": "一次性 code 不宜重放或用于任意人员查询。",
+      "assessment": "low_level",
+      "recommended_operations": [],
+      "depth": "supporting",
+      "depth_reason": "提供应用令牌或网页授权换码的基础兼容入口。",
+      "remaining_gap": "不作为业务深封完成项；业务侧优先使用领域接口和自己的登录流程。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 50,
+          "anchor": "if (key.equals(\"auth.access_token\"))"
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/WecomAdapter.java",
+          "line": 65,
+          "anchor": "if (key.equals(\"users.resolve_code\"))"
+        }
+      ]
+    },
+    {
+      "key": "winit.inbound.list",
+      "platform": "winit",
+      "summary": "查询入库单（退件是否到仓）",
+      "source": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+      "current": "已整理入库结果、到仓状态和分页。",
+      "proposal": "按客户退货单提供到仓进度，关联物流和验收结果。",
+      "caveat": "",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "映射官方条件并包装 pageParams/list 或 warehouseList。",
+      "remaining_gap": "仍需要官方仓库、单号和日期字段，列表内容未形成统一业务实体或关联流程。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+          "line": 197,
+          "anchor": "private Map<String, Object> buildData("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+          "line": 454,
+          "anchor": "public Object invoke("
+        }
+      ]
+    },
+    {
+      "key": "winit.inbound.tracking",
+      "platform": "winit",
+      "summary": "入库单轨迹（R10 物流异常）",
+      "source": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+      "current": "已提取入库轨迹并处理供应商特殊响应形态。",
+      "proposal": "统一轨迹时间、事件码与异常提示，保留原始事件。",
+      "caveat": "",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "按入库单返回 trackingList。",
+      "remaining_gap": "未将入库、物流异常和到仓状态合成业务进度。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+          "line": 249,
+          "anchor": "case \"inbound.tracking\" ->"
+        }
+      ]
+    },
+    {
+      "key": "winit.inventory.list",
+      "platform": "winit",
+      "summary": "查询海外仓库存",
+      "source": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+      "current": "规范 SKU/仓库库存页。",
+      "proposal": "增加可用量业务查询，明确预留、在途及库存计量单位。",
+      "caveat": "",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "映射官方条件并包装 pageParams/list 或 warehouseList。",
+      "remaining_gap": "仍需要官方仓库、单号和日期字段，列表内容未形成统一业务实体或关联流程。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+          "line": 197,
+          "anchor": "private Map<String, Object> buildData("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+          "line": 454,
+          "anchor": "public Object invoke("
+        }
+      ]
+    },
+    {
+      "key": "winit.outbound.list",
+      "platform": "winit",
+      "summary": "查询出库单（发给终端客户的订单）",
+      "source": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+      "current": "转换出库订单条件并整理分页。",
+      "proposal": "增加按平台单号的关联解析与出库进度。",
+      "caveat": "",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "映射官方条件并包装 pageParams/list 或 warehouseList。",
+      "remaining_gap": "仍需要官方仓库、单号和日期字段，列表内容未形成统一业务实体或关联流程。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+          "line": 197,
+          "anchor": "private Map<String, Object> buildData("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+          "line": 454,
+          "anchor": "public Object invoke("
+        }
+      ]
+    },
+    {
+      "key": "winit.outbound.tracking",
+      "platform": "winit",
+      "summary": "出库单轨迹（R10 物流异常）",
+      "source": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+      "current": "正确拼接 trackingnos 并整理批量轨迹。",
+      "proposal": "增加逐单错误与异常事件归一。",
+      "caveat": "",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "统一轨迹字段并排序，兼容批量结果。",
+      "remaining_gap": "缺少逐单异常解释和出库订单关联。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+          "line": 351,
+          "anchor": "private static Map<String, Object> outboundTrackingResult("
+        }
+      ]
+    },
+    {
+      "key": "winit.returns.create",
+      "platform": "winit",
+      "summary": "创建退货订单（取 ReturnLabel 面单）",
+      "source": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+      "current": "已有退货字段校验与地址/箱尺/商品转换，返回退货单号、RMA 和地址。",
+      "proposal": "联查渠道、商品档案与仓库形成退货计划，再自动衔接面单查询。",
+      "caveat": "当前创建结果不含面单，仍需调用 returns.label；业务地址和箱尺需确认。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "验证退货字段并构造商品/包裹，返回退货单号、RMA 和退货地址。",
+      "remaining_gap": "仓库、SKU、渠道和箱尺仍需人工拼装，面单还需调用 returns.label；没有一键退货计划。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+          "line": 273,
+          "anchor": "private static Map<String, Object> returnCreateData("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+          "line": 477,
+          "anchor": "case \"returns.create\" -> {"
+        }
+      ]
+    },
+    {
+      "key": "winit.returns.items",
+      "platform": "winit",
+      "summary": "查询退货商品档案（SKU 建档与箱尺来源）",
+      "source": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+      "current": "读取退货商品档案和箱尺来源。",
+      "proposal": "增加 SKU 唯一解析，为创建退货预检补齐资料。",
+      "caveat": "",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "映射官方条件并包装 pageParams/list 或 warehouseList。",
+      "remaining_gap": "仍需要官方仓库、单号和日期字段，列表内容未形成统一业务实体或关联流程。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+          "line": 197,
+          "anchor": "private Map<String, Object> buildData("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+          "line": 454,
+          "anchor": "public Object invoke("
+        }
+      ]
+    },
+    {
+      "key": "winit.returns.label",
+      "platform": "winit",
+      "summary": "查询 ReturnLabel 面单与跟踪号",
+      "source": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+      "current": "将 ReturnLabel 面单链接和跟踪号规范为业务结果。",
+      "proposal": "显示链接到期时间与面单准备状态，必要时支持轮询。",
+      "caveat": "暂无链接不一定代表创建失败。",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "整理面单 Base64、跟踪号和 has_label。",
+      "remaining_gap": "无面单准备状态轮询或与创建流程自动衔接。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+          "line": 412,
+          "anchor": "private static Map<String, Object> labelResult("
+        }
+      ]
+    },
+    {
+      "key": "winit.returns.list",
+      "platform": "winit",
+      "summary": "查询退货订单",
+      "source": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+      "current": "规范退货订单列表与分页。",
+      "proposal": "增加按业务退货单的状态视图和有界 collect。",
+      "caveat": "",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "映射官方条件并包装 pageParams/list 或 warehouseList。",
+      "remaining_gap": "仍需要官方仓库、单号和日期字段，列表内容未形成统一业务实体或关联流程。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+          "line": 197,
+          "anchor": "private Map<String, Object> buildData("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+          "line": 454,
+          "anchor": "public Object invoke("
+        }
+      ]
+    },
+    {
+      "key": "winit.returns.psc",
+      "platform": "winit",
+      "summary": "查询退货渠道（PSC，可做 ReturnLabel 的那些）",
+      "source": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+      "current": "已整理支持 ReturnLabel 的退货渠道。",
+      "proposal": "结合国家、邮编、箱尺过滤可用渠道并解释不适用原因。",
+      "caveat": "",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "明确标记是否支持 ReturnLabel。",
+      "remaining_gap": "没有根据国家、邮编、箱尺自动选出候选渠道并解释约束。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+          "line": 393,
+          "anchor": "private static Map<String, Object> pscResult("
+        }
+      ]
+    },
+    {
+      "key": "winit.returns.void",
+      "platform": "winit",
+      "summary": "取消退货订单",
+      "source": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+      "current": "按退货单号取消退货。",
+      "proposal": "增加当前状态预检，明确已经使用的面单能否取消。",
+      "caveat": "取消是否成功以供应商最终状态为准。",
+      "assessment": "enhance",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "把取消结果归一为每项 ok/reason。",
+      "remaining_gap": "未读取订单状态或核对已使用面单。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+          "line": 431,
+          "anchor": "private static Map<String, Object> voidResult("
+        }
+      ]
+    },
+    {
+      "key": "winit.warehouses.list",
+      "platform": "winit",
+      "summary": "查询验货仓 / 目的仓",
+      "source": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+      "current": "已整理验货仓/目的仓目录。",
+      "proposal": "加入国家、邮编、用途和启用状态供退货预检选择。",
+      "caveat": "",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "basic",
+      "depth_reason": "映射官方条件并包装 pageParams/list 或 warehouseList。",
+      "remaining_gap": "仍需要官方仓库、单号和日期字段，列表内容未形成统一业务实体或关联流程。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+          "line": 197,
+          "anchor": "private Map<String, Object> buildData("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/winit/WinitAdapter.java",
+          "line": 454,
+          "anchor": "public Object invoke("
+        }
+      ]
+    },
+    {
+      "key": "wecom.approval_templates.list",
+      "platform": "wecom",
+      "summary": "列出已注册的业务审批模板",
+      "assessment": "recommended",
+      "current": "仅列出当前环境、调用系统和模拟/真实模式下的模板别名。企微没有列出企业全部模板的服务端接口。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "真实环境需要对应应用权限；本次通过模拟上游、加密协议向量和隔离 MySQL 验证，未向供应商提交真实业务。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+      "depth": "basic",
+      "depth_reason": "读取当前系统已绑定的模板目录。",
+      "remaining_gap": "这是本地目录查询，不是企业全部模板自动发现。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 47,
+          "anchor": "if (key.equals(\"wecom.approval_templates.list\"))"
+        }
+      ]
+    },
+    {
+      "key": "wecom.approvals.track",
+      "platform": "wecom",
+      "summary": "按业务请求号追踪审批结果",
+      "assessment": "recommended",
+      "current": "用提交时的 request_id 找到本系统审批单，再读取最新状态、当前审批人、步骤与业务字段；隔离环境、模拟模式和上游应用。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "真实环境需要对应应用权限；本次通过模拟上游、加密协议向量和隔离 MySQL 验证，未向供应商提交真实业务。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+      "depth": "deep",
+      "depth_reason": "统一单据/节点状态、待处理人、备注和明细业务别名；track 按本系统业务请求号关联审批并验证上游应用。",
+      "remaining_gap": "高级控件仍保留部分官方值；流程读取不是一致性快照；未记录的超时提单不能推断成未提交。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 703,
+          "anchor": "private Map<String, Object> detail("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 136,
+          "anchor": "if (key.equals(\"wecom.approvals.track\"))"
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 835,
+          "anchor": "private static Map<String, Object> businessValues("
+        }
+      ]
+    },
+    {
+      "key": "wecom.approval_templates.get",
+      "platform": "wecom",
+      "summary": "获取可直接填写的审批表单",
+      "assessment": "recommended",
+      "current": "自动整理字段、必填项、可选项、明细和示例。保留官方结构，支持全部官方控件的高级值模式。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "真实环境需要对应应用权限；本次通过模拟上游、加密协议向量和隔离 MySQL 验证，未向供应商提交真实业务。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+      "depth": "deep",
+      "depth_reason": "解析业务别名和真实模板，生成字段、必填项、选项、明细与业务示例。",
+      "remaining_gap": "少数高级控件仍需官方值结构；未完成真实企业所有控件验收。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 77,
+          "anchor": "key.equals(\"wecom.approval_templates.get\")"
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/ApprovalFormCodec.java",
+          "line": 61,
+          "anchor": "public static Map<String, Object> describe("
+        }
+      ]
+    },
+    {
+      "key": "wecom.approval_templates.bind",
+      "platform": "wecom",
+      "summary": "绑定业务模板别名与字段别名",
+      "assessment": "recommended",
+      "current": "别名按调用系统隔离；绑定前核对真实模板和控件 ID，不会修改上游模板。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "真实环境需要对应应用权限；本次通过模拟上游、加密协议向量和隔离 MySQL 验证，未向供应商提交真实业务。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+      "depth": "enhanced",
+      "depth_reason": "核对真实控件并持久化当前系统的模板/字段别名。",
+      "remaining_gap": "字段别名需要明确配置，不会猜测业务含义。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 77,
+          "anchor": "key.equals(\"wecom.approval_templates.bind\")"
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 364,
+          "anchor": "private void validateAliases("
+        }
+      ]
+    },
+    {
+      "key": "wecom.approval_templates.unbind",
+      "platform": "wecom",
+      "summary": "移除本系统的模板别名",
+      "assessment": "recommended",
+      "current": "只移除本地别名，不删除企微模板。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "真实环境需要对应应用权限；本次通过模拟上游、加密协议向量和隔离 MySQL 验证，未向供应商提交真实业务。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+      "depth": "basic",
+      "depth_reason": "移除当前系统的本地模板别名。",
+      "remaining_gap": "按原子配置职责保留，不修改上游模板。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 64,
+          "anchor": "if (key.equals(\"wecom.approval_templates.unbind\"))"
+        }
+      ]
+    },
+    {
+      "key": "wecom.approval_templates.create",
+      "platform": "wecom",
+      "summary": "按业务字段创建审批模板",
+      "assessment": "recommended",
+      "current": "提供字段名与控件类型即可创建。新模板的审批规则需要在企微管理后台确认；支持直接传官方 template_content。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "真实环境需要对应应用权限；本次通过模拟上游、加密协议向量和隔离 MySQL 验证，未向供应商提交真实业务。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+      "depth": "deep",
+      "depth_reason": "按业务字段构建控件、数字 ID 和别名；更新优先保留原控件 ID。",
+      "remaining_gap": "复杂 config 和审批规则仍需明确配置，未自动设计审批人或管理员规则。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 513,
+          "anchor": "private Object saveTemplate("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 601,
+          "anchor": "private List<Object> buildControls("
+        }
+      ]
+    },
+    {
+      "key": "wecom.approval_templates.update",
+      "platform": "wecom",
+      "summary": "更新审批模板内容",
+      "assessment": "recommended",
+      "current": "保留企微既有流程和规则，只允许更新应用有权限的模板。提供完整字段定义或官方 template_content。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "真实环境需要对应应用权限；本次通过模拟上游、加密协议向量和隔离 MySQL 验证，未向供应商提交真实业务。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+      "depth": "deep",
+      "depth_reason": "按业务字段构建控件、数字 ID 和别名；更新优先保留原控件 ID。",
+      "remaining_gap": "复杂 config 和审批规则仍需明确配置，未自动设计审批人或管理员规则。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 513,
+          "anchor": "private Object saveTemplate("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 601,
+          "anchor": "private List<Object> buildControls("
+        }
+      ]
+    },
+    {
+      "key": "wecom.approval_templates.clone",
+      "platform": "wecom",
+      "summary": "复制模板为新的业务模板",
+      "assessment": "recommended",
+      "current": "读取原模板控件再创建新模板；不会复制原审批流程或管理员规则。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "真实环境需要对应应用权限；本次通过模拟上游、加密协议向量和隔离 MySQL 验证，未向供应商提交真实业务。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+      "depth": "deep",
+      "depth_reason": "读取模板并创建新模板，可复用业务字段别名。",
+      "remaining_gap": "只复制控件，不复制原审批流程及管理员规则。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 525,
+          "anchor": "if (operation.endsWith(\"clone\"))"
+        }
+      ]
+    },
+    {
+      "key": "wecom.approvals.prepare",
+      "platform": "wecom",
+      "summary": "预检审批申请并生成官方请求",
+      "assessment": "recommended",
+      "current": "按模板校验全部字段，自动转换控件、选项与金额，生成摘要。只读取模板，不会提单。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "真实环境需要对应应用权限；本次通过模拟上游、加密协议向量和隔离 MySQL 验证，未向供应商提交真实业务。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+      "depth": "deep",
+      "depth_reason": "自动读取模板、聚合校验、类型/选项/金额转换、摘要和流程生成；提交沿用持久防重。",
+      "remaining_gap": "高级控件需要显式官方值；当前未在真实企业完成全部权限/控件联调。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 386,
+          "anchor": "private Map<String, Object> prepare("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/ApprovalFormCodec.java",
+          "line": 161,
+          "anchor": "public static Map<String, Object> encode("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/gateway/service/GatewayExecutor.java",
+          "line": 67,
+          "anchor": "op.tags().contains(\"idempotency_required\")"
+        }
+      ]
+    },
+    {
+      "key": "wecom.approvals.submit",
+      "platform": "wecom",
+      "summary": "用业务字段一键提交审批",
+      "assessment": "recommended",
+      "current": "自动读取最新模板、转换字段、校验流程和生成摘要。默认采用模板审批流程。request_id 防重复提交；超时结果不确定时不自动重发。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "真实环境需要对应应用权限；本次通过模拟上游、加密协议向量和隔离 MySQL 验证，未向供应商提交真实业务。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+      "depth": "deep",
+      "depth_reason": "自动读取模板、聚合校验、类型/选项/金额转换、摘要和流程生成；提交沿用持久防重。",
+      "remaining_gap": "高级控件需要显式官方值；当前未在真实企业完成全部权限/控件联调。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 386,
+          "anchor": "private Map<String, Object> prepare("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/ApprovalFormCodec.java",
+          "line": 161,
+          "anchor": "public static Map<String, Object> encode("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/gateway/service/GatewayExecutor.java",
+          "line": 67,
+          "anchor": "op.tags().contains(\"idempotency_required\")"
+        }
+      ]
+    },
+    {
+      "key": "wecom.approvals.get",
+      "platform": "wecom",
+      "summary": "获取整理后的审批详情",
+      "assessment": "recommended",
+      "current": "统一状态、申请人、字段、附件、明细和流程；保留 official，未知状态保持 unknown。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "真实环境需要对应应用权限；本次通过模拟上游、加密协议向量和隔离 MySQL 验证，未向供应商提交真实业务。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+      "depth": "deep",
+      "depth_reason": "统一单据/节点状态、待处理人、备注和明细业务别名；track 按本系统业务请求号关联审批并验证上游应用。",
+      "remaining_gap": "高级控件仍保留部分官方值；流程读取不是一致性快照；未记录的超时提单不能推断成未提交。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 703,
+          "anchor": "private Map<String, Object> detail("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 136,
+          "anchor": "if (key.equals(\"wecom.approvals.track\"))"
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 835,
+          "anchor": "private static Map<String, Object> businessValues("
+        }
+      ]
+    },
+    {
+      "key": "wecom.approvals.get_many",
+      "platform": "wecom",
+      "summary": "批量获取审批详情（支持部分失败）",
+      "assessment": "recommended",
+      "current": "去重后逐个读取详情，每个失败单独返回；不会因一个无效单号丢失其他结果。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "真实环境需要对应应用权限；本次通过模拟上游、加密协议向量和隔离 MySQL 验证，未向供应商提交真实业务。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+      "depth": "enhanced",
+      "depth_reason": "自动去重单号、逐项读取并保留错误。",
+      "remaining_gap": "是批处理便利，尚无业务订单映射和流程级补齐。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 928,
+          "anchor": "private Map<String, Object> details("
+        }
+      ]
+    },
+    {
+      "key": "wecom.approvals.list",
+      "platform": "wecom",
+      "summary": "按业务条件查询审批（自动补齐详情）",
+      "assessment": "recommended",
+      "current": "支持易读状态、日期和模板别名。自动拆分 31 天窗口；只按游标判断结束，空页也能继续。游标绑定调用系统和筛选条件。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "真实环境需要对应应用权限；本次通过模拟上游、加密协议向量和隔离 MySQL 验证，未向供应商提交真实业务。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+      "depth": "deep",
+      "depth_reason": "业务条件/模板别名转换、跨 31 天窗口、有界自动分页和详情补齐。",
+      "remaining_gap": "不同批次需按单号去重，不提供一致性快照；失败详情需调用方处理。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 953,
+          "anchor": "private Object query("
+        }
+      ]
+    },
+    {
+      "key": "wecom.approvals.collect",
+      "platform": "wecom",
+      "summary": "有界汇总审批（自动分页与跨月查询）",
+      "assessment": "recommended",
+      "current": "自动翻页和拆分时间窗口，按单号去重。达到 max_items/max_pages 时返回 partial 与续传游标，避免无限拉取或静默截断。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "真实环境需要对应应用权限；本次通过模拟上游、加密协议向量和隔离 MySQL 验证，未向供应商提交真实业务。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+      "depth": "deep",
+      "depth_reason": "业务条件/模板别名转换、跨 31 天窗口、有界自动分页和详情补齐。",
+      "remaining_gap": "不同批次需按单号去重，不提供一致性快照；失败详情需调用方处理。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 953,
+          "anchor": "private Object query("
+        }
+      ]
+    },
+    {
+      "key": "wecom.approvals.engine_get",
+      "platform": "wecom",
+      "summary": "查询自建应用 JS-SDK 审批引擎状态",
+      "assessment": "recommended",
+      "current": "用于通过企微客户端发起的引擎审批，单号使用开发者 third_no。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "真实环境需要对应应用权限；本次通过模拟上游、加密协议向量和隔离 MySQL 验证，未向供应商提交真实业务。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+      "depth": "basic",
+      "depth_reason": "按 third_no 获取并转交审批引擎 data。",
+      "remaining_gap": "引擎详情及状态未归一成普通审批模型。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 159,
+          "anchor": "if (key.equals(\"wecom.approvals.engine_get\"))"
+        }
+      ]
+    },
+    {
+      "key": "wecom.approvals.engine_launch",
+      "platform": "wecom",
+      "summary": "生成客户端审批引擎调用参数",
+      "assessment": "recommended",
+      "current": "生成 thirdPartyOpenPage 参数；必须在企微客户端完成 JS-SDK 初始化后调用，不会在服务端直接提单。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "真实环境需要对应应用权限；本次通过模拟上游、加密协议向量和隔离 MySQL 验证，未向供应商提交真实业务。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+      "depth": "enhanced",
+      "depth_reason": "从字段对象构建客户端审批引擎调用参数。",
+      "remaining_gap": "只生成 JS-SDK 参数，客户端初始化和实际操作仍需业务系统完成。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 169,
+          "anchor": "if (key.equals(\"wecom.approvals.engine_launch\"))"
+        }
+      ]
+    },
+    {
+      "key": "wecom.approvals.legacy_get",
+      "platform": "wecom",
+      "summary": "读取旧版审批数据（兼容）",
+      "assessment": "recommended",
+      "current": "官方旧接口不再维护，新集成请使用 approvals.list/collect。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "真实环境需要对应应用权限；本次通过模拟上游、加密协议向量和隔离 MySQL 验证，未向供应商提交真实业务。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+      "depth": "basic",
+      "depth_reason": "校验 30 天日期窗口后读取旧接口。",
+      "remaining_gap": "保留兼容，旧结果不做通用审批归一。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 197,
+          "anchor": "if (key.equals(\"wecom.approvals.legacy_get\"))"
+        }
+      ]
+    },
+    {
+      "key": "wecom.approval_files.upload",
+      "platform": "wecom",
+      "summary": "上传可用于审批的临时附件",
+      "assessment": "recommended",
+      "current": "返回可直接填入 File 字段的 file_id。单文件最多 10 MB，单个审批单最多 6 个附件。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "真实环境需要对应应用权限；本次通过模拟上游、加密协议向量和隔离 MySQL 验证，未向供应商提交真实业务。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+      "depth": "enhanced",
+      "depth_reason": "Base64/二进制转换、文件名与大小校验或 MIME 返回。",
+      "remaining_gap": "是附件读写便利，未形成业务文件管理和申请关联流程。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 209,
+          "anchor": "if (key.equals(\"wecom.approval_files.upload\"))"
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 240,
+          "anchor": "if (key.equals(\"wecom.approval_files.download\"))"
+        }
+      ]
+    },
+    {
+      "key": "wecom.approval_files.download",
+      "platform": "wecom",
+      "summary": "读取审批附件内容",
+      "assessment": "recommended",
+      "current": "使用 file_id 获取附件，返回 Base64 内容与 MIME 类型，不接受任意远程 URL。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "真实环境需要对应应用权限；本次通过模拟上游、加密协议向量和隔离 MySQL 验证，未向供应商提交真实业务。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+      "depth": "enhanced",
+      "depth_reason": "Base64/二进制转换、文件名与大小校验或 MIME 返回。",
+      "remaining_gap": "是附件读写便利，未形成业务文件管理和申请关联流程。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 209,
+          "anchor": "if (key.equals(\"wecom.approval_files.upload\"))"
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 240,
+          "anchor": "if (key.equals(\"wecom.approval_files.download\"))"
+        }
+      ]
+    },
+    {
+      "key": "wecom.approval_events.list",
+      "platform": "wecom",
+      "summary": "增量读取审批事件",
+      "assessment": "recommended",
+      "current": "按 after_id 增量读取当前调用系统的验签事件，使用 event_id 去重。与配置的签名 Webhook 转发可同时使用。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "真实环境需要对应应用权限；本次通过模拟上游、加密协议向量和隔离 MySQL 验证，未向供应商提交真实业务。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+      "depth": "deep",
+      "depth_reason": "消费验签解密、按提交所有者分流、加密入库的持久事件，支持增量拉取和转发重试。",
+      "remaining_gap": "外部发起的未知审批回到接收系统；凭据轮换后的旧单路由需核对。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 254,
+          "anchor": "if (key.equals(\"wecom.approval_events.list\"))"
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalEvents.java",
+          "line": 55,
+          "anchor": "public void receive("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalEvents.java",
+          "line": 134,
+          "anchor": "public void deliverPending("
+        }
+      ]
+    },
+    {
+      "key": "wecom.approval_events.retry",
+      "platform": "wecom",
+      "summary": "重试本系统失败的审批事件转发",
+      "assessment": "recommended",
+      "current": "仅重试 failed/poll_only 事件，不更改审批业务状态。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "真实环境需要对应应用权限；本次通过模拟上游、加密协议向量和隔离 MySQL 验证，未向供应商提交真实业务。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+      "depth": "enhanced",
+      "depth_reason": "限定当前系统与失败状态，重新排队转发。",
+      "remaining_gap": "是事件恢复工具，不改变审批状态或自动修复业务失败。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 291,
+          "anchor": "if (key.equals(\"wecom.approval_events.retry\"))"
+        }
+      ]
+    },
+    {
+      "key": "wecom.vacation.config",
+      "platform": "wecom",
+      "summary": "获取企业假期管理配置",
+      "assessment": "recommended",
+      "current": "查询假期类型、计量粒度与余额规则，供通用请假表单使用。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "真实环境需要对应应用权限；本次通过模拟上游、加密协议向量和隔离 MySQL 验证，未向供应商提交真实业务。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+      "depth": "enhanced",
+      "depth_reason": "将企业假期配置整理为单位、日历和发放规则，保留官方值。",
+      "remaining_gap": "未知规则保留 unknown；不替代实际排班、适用范围或可申请时长计算。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 1208,
+          "anchor": "private static List<Map<String, Object>> vacationRules("
+        }
+      ]
+    },
+    {
+      "key": "wecom.vacation.get",
+      "platform": "wecom",
+      "summary": "获取成员假期余额",
+      "assessment": "recommended",
+      "current": "返回统一的秒数值和原始明细，按官方天/小时粒度转换，避免假定一天等于八小时。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "真实环境需要对应应用权限；本次通过模拟上游、加密协议向量和隔离 MySQL 验证，未向供应商提交真实业务。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+      "depth": "deep",
+      "depth_reason": "联查企业规则和成员余额，返回明确单位的 remaining 及原始秒数；规则查询失败保留余额和逐项错误。",
+      "remaining_gap": "不是排班引擎，不计算某次请假的实际可用工作时长。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 1086,
+          "anchor": "private Object vacation("
+        }
+      ]
+    },
+    {
+      "key": "wecom.vacation.set",
+      "platform": "wecom",
+      "summary": "用天或小时设置假期余额",
+      "assessment": "recommended",
+      "current": "显式选择单位并校验 0.1 单位的精度；需要 confirm=true 和稳定 request_id。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "真实环境需要对应应用权限；本次通过模拟上游、加密协议向量和隔离 MySQL 验证，未向供应商提交真实业务。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+      "depth": "deep",
+      "depth_reason": "先核对企业假期 ID 与单位，再转换秒数并校验精度、范围、确认与稳定防重编号。",
+      "remaining_gap": "余额为绝对设置值；不代算请假扣减或跨系统原子事务。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/wecom/approval/WecomApprovalService.java",
+          "line": 1155,
+          "anchor": "if (!JsonUtils.bool(p.get(\"confirm\")))"
+        }
+      ]
+    },
+    {
+      "key": "gmail.messages.search",
+      "platform": "gmail",
+      "summary": "按业务条件搜索邮件并整理内容",
+      "assessment": "recommended",
+      "current": "自动分页、统一 items/page/errors；支持 max_items、max_pages 与签名续传游标。仅扫描根记录，嵌套资源遵循原接口的范围。读取能力独立授权，保留原接口兼容。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "自动翻页覆盖根记录；嵌套连接、供应商可见范围和来源快照仍有各自限制。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+      "depth": "deep",
+      "depth_reason": "组合业务筛选、自动分页、逐封详情补齐和 MIME 正文/附件元信息解析。",
+      "remaining_gap": "不自动下载附件或关联订单，单封错误仍须业务方处理。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 361,
+          "anchor": "public static String gmailQuery("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 263,
+          "anchor": "var enriched = new ArrayList<Object>();"
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 409,
+          "anchor": "private static Map<String, Object> mail("
+        }
+      ]
+    },
+    {
+      "key": "gdrive.files.search",
+      "platform": "gdrive",
+      "summary": "按文件名、目录和类型搜索文件",
+      "assessment": "recommended",
+      "current": "自动分页、统一 items/page/errors；支持 max_items、max_pages 与签名续传游标。仅扫描根记录，嵌套资源遵循原接口的范围。读取能力独立授权，保留原接口兼容。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "自动翻页覆盖根记录；嵌套连接、供应商可见范围和来源快照仍有各自限制。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+      "depth": "enhanced",
+      "depth_reason": "自动转义文件名/目录/类型筛选并有界翻页。",
+      "remaining_gap": "目录仍需官方 ID；不解析业务路径、同名歧义或文件所属业务。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 382,
+          "anchor": "public static String driveQuery("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 166,
+          "anchor": "while (more && pages < maxPages"
+        }
+      ]
+    },
+    {
+      "key": "gcs.objects.collect",
+      "platform": "gcs",
+      "summary": "自动分页汇总：按前缀列出对象",
+      "assessment": "recommended",
+      "current": "自动分页、统一 items/page/errors；支持 max_items、max_pages 与签名续传游标。仅扫描根记录，嵌套资源遵循原接口的范围。读取能力独立授权，保留原接口兼容。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "自动翻页覆盖根记录；嵌套连接、供应商可见范围和来源快照仍有各自限制。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+      "depth": "enhanced",
+      "depth_reason": "在固定只读能力上增加上限、分页、去重、统一返回和签名续传。",
+      "remaining_gap": "没有业务文件关联或对象版本策略。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 101,
+          "anchor": "public Object invoke("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 327,
+          "anchor": "\"root_records\""
+        }
+      ]
+    },
+    {
+      "key": "nas.objects.collect",
+      "platform": "nas",
+      "summary": "自动分页汇总：列目录 / 列举对象",
+      "assessment": "recommended",
+      "current": "自动分页、统一 items/page/errors；支持 max_items、max_pages 与签名续传游标。仅扫描根记录，嵌套资源遵循原接口的范围。读取能力独立授权，保留原接口兼容。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "自动翻页覆盖根记录；嵌套连接、供应商可见范围和来源快照仍有各自限制。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+      "depth": "enhanced",
+      "depth_reason": "在固定只读能力上增加上限、分页、去重、统一返回和签名续传。",
+      "remaining_gap": "保留目录前缀，但不形成迁移/验收作业。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 101,
+          "anchor": "public Object invoke("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 327,
+          "anchor": "\"root_records\""
+        }
+      ]
+    },
+    {
+      "key": "shopify.orders.collect",
+      "platform": "shopify",
+      "summary": "自动分页汇总：按更新时间增量拉订单列表（含明细/支付流水/客户/地址）",
+      "assessment": "recommended",
+      "current": "自动分页、统一 items/page/errors；支持 max_items、max_pages 与签名续传游标。仅扫描根记录，嵌套资源遵循原接口的范围。读取能力独立授权，保留原接口兼容。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "自动翻页覆盖根记录；嵌套连接、供应商可见范围和来源快照仍有各自限制。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+      "depth": "enhanced",
+      "depth_reason": "在固定只读能力上增加上限、分页、去重、统一返回和签名续传。",
+      "remaining_gap": "只补根订单页，嵌套商品行和交易有 first 上限。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 101,
+          "anchor": "public Object invoke("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 327,
+          "anchor": "\"root_records\""
+        }
+      ]
+    },
+    {
+      "key": "shopify.products.collect",
+      "platform": "shopify",
+      "summary": "自动分页汇总：商品列表",
+      "assessment": "recommended",
+      "current": "自动分页、统一 items/page/errors；支持 max_items、max_pages 与签名续传游标。仅扫描根记录，嵌套资源遵循原接口的范围。读取能力独立授权，保留原接口兼容。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "自动翻页覆盖根记录；嵌套连接、供应商可见范围和来源快照仍有各自限制。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+      "depth": "enhanced",
+      "depth_reason": "在固定只读能力上增加上限、分页、去重、统一返回和签名续传。",
+      "remaining_gap": "只补商品根页，大量变体需独立翻子连接。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 101,
+          "anchor": "public Object invoke("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 327,
+          "anchor": "\"root_records\""
+        }
+      ]
+    },
+    {
+      "key": "mabang.orders.collect",
+      "platform": "mabang",
+      "summary": "自动分页汇总：查询马帮订单列表（cursor 翻页）",
+      "assessment": "recommended",
+      "current": "自动分页、统一 items/page/errors；支持 max_items、max_pages 与签名续传游标。仅扫描根记录，嵌套资源遵循原接口的范围。读取能力独立授权，保留原接口兼容。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "自动翻页覆盖根记录；嵌套连接、供应商可见范围和来源快照仍有各自限制。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+      "depth": "enhanced",
+      "depth_reason": "在固定只读能力上增加上限、分页、去重、统一返回和签名续传。",
+      "remaining_gap": "保留原生订单结构，未联查物流或售后。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 101,
+          "anchor": "public Object invoke("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 327,
+          "anchor": "\"root_records\""
+        }
+      ]
+    },
+    {
+      "key": "judgeme.reviews.collect",
+      "platform": "judgeme",
+      "summary": "自动分页汇总：读取 Judge.me 评价",
+      "assessment": "recommended",
+      "current": "自动分页、统一 items/page/errors；支持 max_items、max_pages 与签名续传游标。仅扫描根记录，嵌套资源遵循原接口的范围。读取能力独立授权，保留原接口兼容。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "自动翻页覆盖根记录；嵌套连接、供应商可见范围和来源快照仍有各自限制。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+      "depth": "enhanced",
+      "depth_reason": "在固定只读能力上增加上限、分页、去重、统一返回和签名续传。",
+      "remaining_gap": "没有评价到订单/SKU 的进一步关联和回复流程。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 101,
+          "anchor": "public Object invoke("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 327,
+          "anchor": "\"root_records\""
+        }
+      ]
+    },
+    {
+      "key": "trustpilot.reviews.collect",
+      "platform": "trustpilot",
+      "summary": "自动分页汇总：读取 Trustpilot 评价",
+      "assessment": "recommended",
+      "current": "自动分页、统一 items/page/errors；支持 max_items、max_pages 与签名续传游标。仅扫描根记录，嵌套资源遵循原接口的范围。读取能力独立授权，保留原接口兼容。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "自动翻页覆盖根记录；嵌套连接、供应商可见范围和来源快照仍有各自限制。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+      "depth": "enhanced",
+      "depth_reason": "在固定只读能力上增加上限、分页、去重、统一返回和签名续传。",
+      "remaining_gap": "没有跨来源评价语义和订单补齐。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 101,
+          "anchor": "public Object invoke("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 327,
+          "anchor": "\"root_records\""
+        }
+      ]
+    },
+    {
+      "key": "stripe.disputes.collect",
+      "platform": "stripe",
+      "summary": "自动分页汇总：读取 Stripe 支付争议",
+      "assessment": "recommended",
+      "current": "自动分页、统一 items/page/errors；支持 max_items、max_pages 与签名续传游标。仅扫描根记录，嵌套资源遵循原接口的范围。读取能力独立授权，保留原接口兼容。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "自动翻页覆盖根记录；嵌套连接、供应商可见范围和来源快照仍有各自限制。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+      "depth": "enhanced",
+      "depth_reason": "在固定只读能力上增加上限、分页、去重、统一返回和签名续传。",
+      "remaining_gap": "未联查支付订单或生成取证计划。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 101,
+          "anchor": "public Object invoke("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 327,
+          "anchor": "\"root_records\""
+        }
+      ]
+    },
+    {
+      "key": "paypal.disputes.collect",
+      "platform": "paypal",
+      "summary": "自动分页汇总：读取 PayPal 争议及取证信息",
+      "assessment": "recommended",
+      "current": "自动分页、统一 items/page/errors；支持 max_items、max_pages 与签名续传游标。仅扫描根记录，嵌套资源遵循原接口的范围。读取能力独立授权，保留原接口兼容。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "自动翻页覆盖根记录；嵌套连接、供应商可见范围和来源快照仍有各自限制。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+      "depth": "deep",
+      "depth_reason": "在逐笔详情补齐和争议业务字段整理之上增加有界分页。",
+      "remaining_gap": "继承来源单条失败导致当页失败的限制，也未实现取证准备或争议处置。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 101,
+          "anchor": "public Object invoke("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/source/CustomerSourcesAdapter.java",
+          "line": 298,
+          "anchor": "private Map<String, Object> paypalDisputes("
+        }
+      ]
+    },
+    {
+      "key": "rd.products.collect",
+      "platform": "rd",
+      "summary": "自动分页汇总：读取 RD 标准产品目录",
+      "assessment": "recommended",
+      "current": "自动分页、统一 items/page/errors；支持 max_items、max_pages 与签名续传游标。仅扫描根记录，嵌套资源遵循原接口的范围。读取能力独立授权，保留原接口兼容。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "自动翻页覆盖根记录；嵌套连接、供应商可见范围和来源快照仍有各自限制。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+      "depth": "enhanced",
+      "depth_reason": "在固定只读能力上增加上限、分页、去重、统一返回和签名续传。",
+      "remaining_gap": "统一读取协议不等于 SKU 解析与目录治理。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 101,
+          "anchor": "public Object invoke("
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 327,
+          "anchor": "\"root_records\""
+        }
+      ]
+    },
+    {
+      "key": "docusign.templates.get",
+      "platform": "docusign",
+      "summary": "读取签署模板、角色和字段",
+      "assessment": "recommended",
+      "current": "合并模板与收件人字段定义，为业务签署预检提供角色和字段说明。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "自动翻页覆盖根记录；嵌套连接、供应商可见范围和来源快照仍有各自限制。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/docusign/DocusignAdapter.java",
+      "depth": "deep",
+      "depth_reason": "联查模板定义与收件人字段，返回角色和 tabs。",
+      "remaining_gap": "复杂角色、条件字段和签署策略需明确配置，不推断签署人。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/docusign/DocusignAdapter.java",
+          "line": 354,
+          "anchor": "case \"docusign.templates.get\""
+        }
+      ]
+    },
+    {
+      "key": "docusign.envelopes.collect",
+      "platform": "docusign",
+      "summary": "自动分页汇总：按日期/状态列出信封",
+      "assessment": "recommended",
+      "current": "有界自动分页，统一 items/page/errors 与签名续传；保持原筛选，续传时每页大小固定。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "自动翻页覆盖根记录；嵌套连接、供应商可见范围和来源快照仍有各自限制。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+      "depth": "enhanced",
+      "depth_reason": "固定原生页大小、有界自动汇总、页内续传，并绑定系统与筛选条件。",
+      "remaining_gap": "自动分页不是完整业务事务；根记录范围和上游一致性仍有边界。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 20,
+          "anchor": "public static final Map<String, Spec> SPECS"
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 223,
+          "anchor": "case \"total_offset\""
+        }
+      ]
+    },
+    {
+      "key": "docusign.templates.collect",
+      "platform": "docusign",
+      "summary": "自动分页汇总：列出可用模板",
+      "assessment": "recommended",
+      "current": "有界自动分页，统一 items/page/errors 与签名续传；保持原筛选，续传时每页大小固定。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "自动翻页覆盖根记录；嵌套连接、供应商可见范围和来源快照仍有各自限制。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+      "depth": "enhanced",
+      "depth_reason": "固定原生页大小、有界自动汇总、页内续传，并绑定系统与筛选条件。",
+      "remaining_gap": "自动分页不是完整业务事务；根记录范围和上游一致性仍有边界。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 20,
+          "anchor": "public static final Map<String, Spec> SPECS"
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 223,
+          "anchor": "case \"total_offset\""
+        }
+      ]
+    },
+    {
+      "key": "quickcep.messages.collect",
+      "platform": "quickcep",
+      "summary": "自动分页汇总：分页查询会话消息",
+      "assessment": "recommended",
+      "current": "有界自动分页，统一 items/page/errors 与签名续传；保持原筛选，续传时每页大小固定。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "自动翻页覆盖根记录；嵌套连接、供应商可见范围和来源快照仍有各自限制。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+      "depth": "enhanced",
+      "depth_reason": "固定原生页大小、有界自动汇总、页内续传，并绑定系统与筛选条件。",
+      "remaining_gap": "自动分页不是完整业务事务；根记录范围和上游一致性仍有边界。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 20,
+          "anchor": "public static final Map<String, Spec> SPECS"
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 223,
+          "anchor": "case \"total_offset\""
+        }
+      ]
+    },
+    {
+      "key": "lingxing.orders.collect",
+      "platform": "lingxing",
+      "summary": "自动分页汇总：查询亚马逊订单列表",
+      "assessment": "recommended",
+      "current": "有界自动分页，统一 items/page/errors 与签名续传；保持原筛选，续传时每页大小固定。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "自动翻页覆盖根记录；嵌套连接、供应商可见范围和来源快照仍有各自限制。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+      "depth": "enhanced",
+      "depth_reason": "固定原生页大小、有界自动汇总、页内续传，并绑定系统与筛选条件。",
+      "remaining_gap": "自动分页不是完整业务事务；根记录范围和上游一致性仍有边界。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 20,
+          "anchor": "public static final Map<String, Spec> SPECS"
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 223,
+          "anchor": "case \"total_offset\""
+        }
+      ]
+    },
+    {
+      "key": "lingxing.product.collect",
+      "platform": "lingxing",
+      "summary": "自动分页汇总：查询本地产品列表（sku → pid / 品牌 / 状态）",
+      "assessment": "recommended",
+      "current": "有界自动分页，统一 items/page/errors 与签名续传；保持原筛选，续传时每页大小固定。",
+      "proposal": "使用接入文档和 Python/TypeScript SDK；保留稳定业务编号、续传游标与逐项错误。",
+      "caveat": "自动翻页覆盖根记录；嵌套连接、供应商可见范围和来源快照仍有各自限制。",
+      "recommended_operations": [],
+      "source": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+      "depth": "enhanced",
+      "depth_reason": "固定原生页大小、有界自动汇总、页内续传，并绑定系统与筛选条件。",
+      "remaining_gap": "自动分页不是完整业务事务；根记录范围和上游一致性仍有边界。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 20,
+          "anchor": "public static final Map<String, Spec> SPECS"
+        },
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/support/BusinessWorkflows.java",
+          "line": 223,
+          "anchor": "case \"total_offset\""
+        }
+      ]
+    }
+  ]
+}
