@@ -24,6 +24,9 @@ public class UpstreamHttp {
           .followRedirects(false)
           .followSslRedirects(false)
           .retryOnConnectionFailure(false)
+          // A cancelled exchange can leave a half-open HTTP/2 connection in the pool, and every
+          // later call reusing it stalls until its own timeout. Pings make okhttp evict it.
+          .pingInterval(Duration.ofSeconds(15))
           .build();
 
   public Object json(
