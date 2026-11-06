@@ -50,8 +50,9 @@ services:
       MYSQL_USERNAME: ${MYSQL_USER:-cyt_gateway}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:?请在 .env 里配置 MYSQL_PASSWORD}
       # ── 测试服行为：模拟上游、允许开发身份免密登录、自动 seed 演示数据 ──
+      # 两个开关都由 .env 决定：切到真上游时 MOCK_ALL=false，调用方沿用 X-System-Id 免密钥时 GATEWAY_DEV_MODE=true
       MOCK_ALL: ${MOCK_ALL:-true}
-      GATEWAY_DEV_MODE: "false"
+      GATEWAY_DEV_MODE: ${GATEWAY_DEV_MODE:-false}
       JAVA_SEED_ENABLED: "true"
       # ── 管理后台登录 / 凭据加密 ──
       ADMIN_AUTH_MODES: admin_jwt
