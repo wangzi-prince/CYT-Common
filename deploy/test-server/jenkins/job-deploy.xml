@@ -1,6 +1,6 @@
 <?xml version='1.1' encoding='UTF-8'?>
 <project>
-  <description>CYT-Common（Java 版）测试服一键部署：选分支 → 临时检出 → 构建镜像 → 推局域网仓库 → 重建容器 → 健康检查。服务器不留源码，只跑镜像。与旧的 cyt-common-api（8085）完全隔离。</description>
+  <description>CYT-Common（Java 版）测试服一键部署：选分支 → 取源码 → 构建镜像 → 推局域网仓库 → 重建容器 → 健康检查。服务器不留源码，只跑镜像。与旧的 cyt-common-api（8085）完全隔离。</description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <hudson.model.ParametersDefinitionProperty>
@@ -30,33 +30,16 @@
   <builders>
     <hudson.tasks.Shell>
       <command>set -Eeuo pipefail
-TOKEN=$(cat /opt/jenkins/github_token_common)
-REPO="https://wangzi-prince:${TOKEN}@github.com/wangzi-prince/CYT-Common.git"
-PROXY=http://172.18.0.6:7890
+# 拉源码的脚本必须在「检出仓库之前」就能用，所以服务器上放一份 bootstrap 副本。
+# 它走 GitHub API + codeload 下 tar 包（github.com:443 在这台机器不通）。
+BOOTSTRAP=/opt/cyt-common/deploy/git-hub.sh
 WORK=/tmp/cyt-common-build-$$
 cleanup() { rm -rf "$WORK"; echo "==&gt; 已清理临时工作区 $WORK"; }
 trap cleanup EXIT
 
-clone_it() {
-  local proxy="$1"
-  if [[ -n "$proxy" ]]; then
-    env GIT_TERMINAL_PROMPT=0 GIT_HTTP_LOW_SPEED_LIMIT=1000 GIT_HTTP_LOW_SPEED_TIME=20 \
-      HTTP_PROXY="$proxy" HTTPS_PROXY="$proxy" \
-      git clone --depth 1 --branch "$BRANCH" "$REPO" "$WORK"
-  else
-    env GIT_TERMINAL_PROMPT=0 GIT_HTTP_LOW_SPEED_LIMIT=1000 GIT_HTTP_LOW_SPEED_TIME=20 \
-      git clone --depth 1 --branch "$BRANCH" "$REPO" "$WORK"
-  fi
-}
-
 echo "==&gt; 分支: $BRANCH   只构建不重启: $SKIP_DEPLOY"
-if ! clone_it ""; then
-  echo "==&gt; 直连 GitHub 失败，改走代理 $PROXY 重试"
-  rm -rf "$WORK"
-  clone_it "$PROXY"
-fi
+bash "$BOOTSTRAP" fetch "$BRANCH" "$WORK"
 cd "$WORK"
-echo "==&gt; 当前提交: $(git log --oneline -1)"
 SKIP_DEPLOY="$SKIP_DEPLOY" bash deploy/test-server/ci-build.sh
 </command>
       <configuredLocalRules/>

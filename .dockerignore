@@ -1,6 +1,7 @@
 # Docker build context = 仓库根目录。挡掉本地开发产物，否则光 node_modules 就要传 485MB。
 .git
 .gitignore
+.deploy-sha
 **/node_modules
 **/target
 **/dist

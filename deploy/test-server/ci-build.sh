@@ -8,7 +8,12 @@ ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT"
 
 echo "==> 工作区: $ROOT"
-echo "==> 分支: $(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo '(非 git)')  提交: $(git rev-parse --short HEAD 2>/dev/null || echo '-')"
+# 源码由 git-hub.sh 以 tarball 形式取回，没有 .git；版本记在 .deploy-sha
+if [[ -f "$ROOT/.deploy-sha" ]]; then
+  echo "==> 源码提交: $(cut -c1-12 "$ROOT/.deploy-sha")"
+else
+  echo "==> 分支: $(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo '(非 git)')  提交: $(git rev-parse --short HEAD 2>/dev/null || echo '-')"
+fi
 
 echo "==> 1/2 构建镜像并推送"
 bash "$ROOT/deploy/test-server/build-on-server.sh" "$ROOT"

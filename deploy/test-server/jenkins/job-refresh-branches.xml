@@ -13,19 +13,12 @@
   <builders>
     <hudson.tasks.Shell>
       <command>set -Eeuo pipefail
-TOKEN=$(cat /opt/jenkins/github_token_common)
-REPO="https://wangzi-prince:${TOKEN}@github.com/wangzi-prince/CYT-Common.git"
-PROXY=http://172.18.0.6:7890
+BOOTSTRAP=/opt/cyt-common/deploy/git-hub.sh
 WORK=/tmp/cyt-common-refresh-$$
 trap 'rm -rf "$WORK"' EXIT
 
-if ! env GIT_TERMINAL_PROMPT=0 GIT_HTTP_LOW_SPEED_LIMIT=1000 GIT_HTTP_LOW_SPEED_TIME=20 \
-     git clone --depth 1 --branch main "$REPO" "$WORK"; then
-  echo "==&gt; 直连 GitHub 失败，改走代理 $PROXY 重试"
-  rm -rf "$WORK"
-  env GIT_TERMINAL_PROMPT=0 HTTP_PROXY="$PROXY" HTTPS_PROXY="$PROXY" \
-    git clone --depth 1 --branch main "$REPO" "$WORK"
-fi
+# 固定取 main 上的刷新脚本，保证刷新逻辑本身稳定，不受待发布分支影响
+bash "$BOOTSTRAP" fetch main "$WORK"
 cd "$WORK"
 bash deploy/test-server/refresh-branches.sh main
 </command>
