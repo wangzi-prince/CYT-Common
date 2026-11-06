@@ -24,7 +24,7 @@ set -a; . "$JENKINS_ENV_FILE"; set +a
   echo "ERROR: $JENKINS_ENV_FILE 里要有 JENKINS_USER 与 JENKINS_PASSWORD" >&2; exit 2; }
 
 echo "==> 拉取远端分支列表"
-mapfile -t BRANCHES < <(bash "$SELF_DIR/git-hub.sh branches")
+mapfile -t BRANCHES < <(bash "$SELF_DIR/git-hub.sh" branches)
 (( ${#BRANCHES[@]} > 0 )) || { echo "ERROR: 没拿到分支（GitHub 连不上或 token 过期）" >&2; exit 1; }
 
 # 选项参数的第一项就是构建时的默认值
