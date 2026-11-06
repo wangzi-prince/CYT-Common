@@ -56,10 +56,13 @@ if choices is None:
     choices = ET.SubElement(param, "choices")
 for child in list(choices):
     choices.remove(child)
-for b in branches:
-    ET.SubElement(choices, "string").text = b
-# Jenkins 用 Arrays$ArrayList 反序列化 choices，这个 class 属性丢了任务会读不出来
+# Jenkins 的 XStream 格式：choices 是 Arrays$ArrayList，里面必须再套一层
+# <a class="string-array">。只写扁平的 <string> 时 Jenkins 会把整个 choices
+# 判为无效并丢掉，连 BRANCH 参数一起消失（实测过一次，别改回去）。
 choices.set("class", "java.util.Arrays$ArrayList")
+array = ET.SubElement(choices, "a", {"class": "string-array"})
+for b in branches:
+    ET.SubElement(array, "string").text = b
 tree.write(path, encoding="UTF-8", xml_declaration=True)
 print(f"已重写 {len(branches)} 个分支选项")
 PY
@@ -86,11 +89,27 @@ http_code="$(curl -s -o "$RESP" -w '%{http_code}' \
   --data-binary "@$JOB_CONFIG" \
   "$JENKINS_URL/job/$JOB/config.xml")"
 
-if [[ "$http_code" == "200" ]]; then
-  echo "✅ 分支列表已更新（下次 Build with Parameters 就是新列表）"
-  rm -f "$RESP"
-else
+if [[ "$http_code" != "200" ]]; then
   echo "❌ 更新失败 HTTP $http_code：$(head -c 400 "$RESP")" >&2
   rm -f "$RESP"
   exit 1
 fi
+rm -f "$RESP"
+
+# 回读校验：Jenkins 会「静默吞掉」格式不对的 choices（HTTP 仍是 200），
+# 所以必须确认 BRANCH 参数和它的选项都还在，别让下拉框悄悄消失。
+CHECK_JSON="$(curl -s -u "$JENKINS_USER:$JENKINS_PASSWORD" \
+  "$JENKINS_URL/job/$JOB/api/json?depth=2")"
+if ! printf '%s' "$CHECK_JSON" | python3 -c '
+import json, sys
+d = json.load(sys.stdin)
+ps = [p for a in d.get("property", []) for p in a.get("parameterDefinitions", [])]
+b = next((p for p in ps if p.get("name") == "BRANCH"), None)
+choices = (b or {}).get("choices") or []
+print("BRANCH 选项回读：", choices, file=sys.stderr)
+sys.exit(0 if b and len(choices) > 0 else 1)
+'; then
+  echo "❌ Jenkins 回读不到 BRANCH 选项，配置可能被吞掉；请用 jenkins/job-deploy.xml 恢复任务" >&2
+  exit 1
+fi
+echo "✅ 分支列表已更新（下次 Build with Parameters 就是新列表）"

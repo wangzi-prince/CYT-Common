@@ -106,3 +106,14 @@ curl -s -m 10 -o /dev/null -w 'proxy:%{http_code}\n' -x http://172.18.0.6:7890 h
 
 代理容器 `marketing-proxy` 在 1panel-network 上的 IP 若变了，改 `git-hub.sh` 的 `GH_PROXY`
 并重新同步 bootstrap 副本。
+
+若 `Build with Parameters` 里 `BRANCH` 下拉不见了（Jenkins 对格式错误的 choices 会静默吞掉），
+用模板恢复任务配置再跑一次刷新任务：
+
+```bash
+curl -s -u admin:<密码> -H 'Content-Type: application/xml; charset=utf-8' \
+  --data-binary @deploy/test-server/jenkins/job-deploy.xml \
+  -X POST http://127.0.0.1:8090/job/cyt-common-deploy/config.xml
+```
+
+`refresh-branches.sh` 每次热更新后会回读 API 校验 BRANCH 选项仍在，失败会直接报错。
