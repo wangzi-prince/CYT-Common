@@ -23,6 +23,15 @@ python tools/gcloud_credentials.py apply
 
 ## 新增与轮换
 
+同步到管理页面中的“生产环境”分区时，明确指定目标：
+
+```powershell
+python tools/gcloud_credentials.py plan --env production --plan-file target/gcloud-production-plan.json
+python tools/gcloud_credentials.py apply --env production --allow-production --plan-file target/gcloud-production-plan.json
+```
+
+此操作写入本机凭据库的 `production` 分区，保留已有不同值；导入前需核对计划中的平台、Secret 和数字版本。它不切换网关运行环境，也不更新云端部署。
+
 1. 本地新增：选择环境和调用方作用域，点击“新增凭据”，选择变量并填写新值。私钥、证书和 JSON 使用多行输入，保持换行。`CUSTOM_` 变量用于自定义 HTTP 平台的鉴权引用。
 2. 本地更新：点击“更新 / 轮换”，输入框保持空白，填写新的供应商凭据后加密保存；后续请求读取新值。页面显示来源、云端版本与更新时间，修改记录进入审计。保存本地值不会更新云端。
 3. 云端轮换：先在 Secret Manager 中增加版本，再重新生成并检查计划；确认选中的版本后执行 `python tools/gcloud_credentials.py apply --overwrite`。该选项会替换计划中已有的不同本地值。保留原版本以便供应商允许时回退，验收完成后再按供应商规则撤销旧令牌。
@@ -34,4 +43,4 @@ python tools/gcloud_credentials.py apply
 
 `gcloud` 登录、应用默认凭据（ADC）、Gmail/Drive 用户 OAuth 是不同用途。此次 Secret Manager 同步没有发现可明确对应的 Google 用户 OAuth 组合，因此没有借用其他业务密钥或个人 CLI refresh token。Gmail/Drive 需按本项目的 `GOOGLE_CLIENT_ID`、`GOOGLE_CLIENT_SECRET`、`GOOGLE_REFRESH_TOKEN` 配置，并确保目标账号与 scopes 正确；GCS 按项目支持的服务账号/ADC 配置单独接入。
 
-生产环境应使用服务身份访问 Secret Manager，只授予需要的 Secret 权限，部署时固定版本并按环境隔离。此工具用于本地开发同步，不是生产凭据发布服务。参见 Google 官方 [ADC 说明](https://docs.cloud.google.com/docs/authentication/application-default-credentials) 与 [Secret Manager 最佳实践](https://docs.cloud.google.com/secret-manager/docs/best-practices)。
+生产部署应使用服务身份访问 Secret Manager，只授予需要的 Secret 权限，部署时固定版本并按环境隔离。此工具同步到本机凭据库中的指定分区；发布到云端需使用部署流程。参见 Google 官方 [ADC 说明](https://docs.cloud.google.com/docs/authentication/application-default-credentials) 与 [Secret Manager 最佳实践](https://docs.cloud.google.com/secret-manager/docs/best-practices)。

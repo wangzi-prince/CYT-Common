@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import group.cyt.common.core.config.GatewaySettings;
+import group.cyt.common.core.exception.GatewayException;
 import group.cyt.common.core.persistence.GatewayStore;
 import group.cyt.common.core.util.JsonUtils;
 import group.cyt.common.module.credential.service.CredentialService;
@@ -41,6 +42,12 @@ class CredentialServiceTest {
     var registry = mock(OperationRegistry.class);
     when(registry.contract()).thenReturn(contract());
     return new CredentialService(mock(GatewayStore.class), new GatewaySettings(env), registry);
+  }
+
+  private GatewayStore emptyStore() {
+    var store = mock(GatewayStore.class);
+    when(store.one(anyString(), anyString(), anyString())).thenReturn(null);
+    return store;
   }
 
   @SuppressWarnings("unchecked")
@@ -168,13 +175,152 @@ class CredentialServiceTest {
                   {"name":"GOOGLE_APPLICATION_CREDENTIALS","secret":false}
                 ]}]}
                 """));
-    String json = "{\"private_key\":\"fixture-private-key\",\"client_email\":\"fixture@example.com\"}";
+    String json =
+        "{\"private_key\":\"fixture-private-key\",\"client_email\":\"fixture@example.com\"}";
     var env = new MockEnvironment().withProperty("GOOGLE_APPLICATION_CREDENTIALS", json);
     var service =
         new CredentialService(mock(GatewayStore.class), new GatewaySettings(env), registry);
 
-    var variable = varOf(item(service.inventory(List.of()), "gcs"), "GOOGLE_APPLICATION_CREDENTIALS");
+    var variable =
+        varOf(item(service.inventory(List.of()), "gcs"), "GOOGLE_APPLICATION_CREDENTIALS");
     assertEquals(json.length() + " 字符", variable.get("preview"));
     assertFalse(JsonUtils.write(variable).contains("fixture-private-key"));
+  }
+
+  @Test
+  void disclosesStoredCredentialFromSelectedEnvironmentAndAuditsWithoutItsValue() {
+    var store = mock(GatewayStore.class);
+    var registry = mock(OperationRegistry.class);
+    when(registry.contract()).thenReturn(contract());
+    var service =
+        new CredentialService(
+            store,
+            new GatewaySettings(
+                new MockEnvironment().withProperty("CREDENTIAL_MASTER_KEY", "fixture-master-key")),
+            registry);
+    String plain = "fixture-private-value\nwith original newlines";
+    when(store.one(
+            "SELECT ciphertext FROM gateway_secret WHERE env=? AND name=?",
+            "staging",
+            "CUSTOM_TEST_TOKEN"))
+        .thenReturn(JsonUtils.obj("ciphertext", service.encrypt(plain)));
+    var disclosed =
+        service.disclose("staging", "CUSTOM_TEST_TOKEN", "copy", "test-admin", List.of());
+    assertEquals(plain, disclosed.get("value"));
+    assertEquals("db", disclosed.get("source"));
+    verify(store)
+        .audit(
+            "test-admin",
+            "secrets_copy",
+            "staging:CUSTOM_TEST_TOKEN",
+            JsonUtils.obj("source", "db"));
+    verifyNoMoreInteractions(registry);
+  }
+
+  @Test
+  void disclosureSupportsManagedSharedScopedAndDefaultAccountAliasValues() {
+    var registry = mock(OperationRegistry.class);
+    when(registry.contract()).thenReturn(contract());
+    var env =
+        new MockEnvironment()
+            .withProperty("ENV", "local")
+            .withProperty("DOCUSIGN_INTEGRATION_KEY", "fixture-shared")
+            .withProperty("DOCUSIGN_MARKETING_INTEGRATION_KEY", "fixture-scoped")
+            .withProperty("QUICKCEP_ACCESS_ID", "fixture-default-account");
+    var service = new CredentialService(emptyStore(), new GatewaySettings(env), registry);
+    assertEquals(
+        "fixture-shared",
+        service
+            .disclose("local", "DOCUSIGN_INTEGRATION_KEY", "view", "admin", List.of("marketing"))
+            .get("value"));
+    assertEquals(
+        "fixture-scoped",
+        service
+            .disclose(
+                "local",
+                "DOCUSIGN_MARKETING_INTEGRATION_KEY",
+                "view",
+                "admin",
+                List.of("marketing"))
+            .get("value"));
+    assertEquals(
+        "fixture-default-account",
+        service
+            .disclose("local", "QUICKCEP_DEFAULT_ACCESS_ID", "view", "admin", List.of())
+            .get("value"));
+  }
+
+  @Test
+  void disclosureCannotReadGatewayBootstrapSettingsOrFallBackAcrossEnvironments() {
+    var store = emptyStore();
+    var registry = mock(OperationRegistry.class);
+    when(registry.contract()).thenReturn(contract());
+    var env =
+        new MockEnvironment()
+            .withProperty("ENV", "local")
+            .withProperty("DOCUSIGN_INTEGRATION_KEY", "fixture-local-only")
+            .withProperty("ADMIN_JWT_SECRET", "fixture-admin-key")
+            .withProperty("CREDENTIAL_MASTER_KEY", "fixture-master-key");
+    var service = new CredentialService(store, new GatewaySettings(env), registry);
+    assertEquals(
+        403,
+        assertThrows(
+                GatewayException.class,
+                () -> service.disclose("local", "ADMIN_JWT_SECRET", "view", "admin", List.of()))
+            .status);
+    assertEquals(
+        403,
+        assertThrows(
+                GatewayException.class,
+                () ->
+                    service.disclose("local", "CREDENTIAL_MASTER_KEY", "view", "admin", List.of()))
+            .status);
+    assertEquals(
+        404,
+        assertThrows(
+                GatewayException.class,
+                () ->
+                    service.disclose(
+                        "staging", "DOCUSIGN_INTEGRATION_KEY", "copy", "admin", List.of()))
+            .status);
+    assertEquals(
+        404,
+        assertThrows(
+                GatewayException.class,
+                () -> service.disclose("local", "DOCUSIGN_PRIVATE_KEY", "view", "admin", List.of()))
+            .status);
+    verify(store, never()).audit(anyString(), anyString(), anyString(), any());
+  }
+
+  @Test
+  void disclosureRejectsInvalidNamesActionsAndUndecryptableValues() {
+    var store = mock(GatewayStore.class);
+    var service =
+        new CredentialService(
+            store, new GatewaySettings(new MockEnvironment()), mock(OperationRegistry.class));
+    assertEquals(
+        422,
+        assertThrows(
+                GatewayException.class,
+                () -> service.disclose("local", "../secret", "view", "admin", List.of()))
+            .status);
+    assertEquals(
+        422,
+        assertThrows(
+                GatewayException.class,
+                () -> service.disclose("local", "CUSTOM_TOKEN", "exportAll", "admin", List.of()))
+            .status);
+    when(store.one(
+            "SELECT ciphertext FROM gateway_secret WHERE env=? AND name=?",
+            "local",
+            "CUSTOM_TOKEN"))
+        .thenReturn(JsonUtils.obj("ciphertext", "invalid-ciphertext"));
+    assertEquals(
+        503,
+        assertThrows(
+                GatewayException.class,
+                () -> service.disclose("local", "CUSTOM_TOKEN", "view", "admin", List.of()))
+            .status);
+    verify(store, never()).audit(anyString(), anyString(), anyString(), any());
   }
 }

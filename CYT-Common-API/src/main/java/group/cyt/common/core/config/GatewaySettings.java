@@ -23,6 +23,10 @@ public class GatewaySettings {
     return env.getProperty(key, fallback);
   }
 
+  public boolean isSet(String key) {
+    return !get(key).isBlank();
+  }
+
   public boolean flag(String key, boolean fallback) {
     return JsonUtils.bool(get(key, Boolean.toString(fallback)));
   }

@@ -92,6 +92,11 @@ export const api = {
     }>(`${base}/environments/${encodeURIComponent(env)}/secrets`),
   saveSecret: (env: string, values: Record<string, string>) =>
     put(`${base}/environments/${encodeURIComponent(env)}/secrets`, { values }),
+  readSecret: (env: string, name: string, action: 'view' | 'copy') =>
+    post<{ name: string; value: string; source: string }>(
+      `${base}/environments/${encodeURIComponent(env)}/secrets/${encodeURIComponent(name)}/reveal`,
+      { action },
+    ),
   deleteSecret: (env: string, name: string) =>
     remove(`${base}/environments/${encodeURIComponent(env)}/secrets/${encodeURIComponent(name)}`),
   simulate: (body: unknown) => post<Record<string, unknown>>(`${base}/simulate`, body),

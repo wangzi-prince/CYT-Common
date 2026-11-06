@@ -47,6 +47,24 @@ class CredentialImportTest(unittest.TestCase):
                 tool.local_connection({'spring.datasource.url': 'jdbc:mysql://remote.example/cyt_common_api'})
             connect.assert_not_called()
 
+    def test_production_partition_requires_matching_plan_and_explicit_target(self):
+        config = {'ENV': 'local'}
+        args = SimpleNamespace(env='production', allow_production=False)
+        with self.assertRaises(tool.ImportFailure):
+            tool.validate_environment_target(config, {'target_environment': 'production'}, args)
+        args.allow_production = True
+        with self.assertRaises(tool.ImportFailure):
+            tool.validate_environment_target(config, {}, args)
+        with self.assertRaises(tool.ImportFailure):
+            tool.validate_environment_target(config, {'target_environment': 'local'}, args)
+        tool.validate_environment_target(config, {'target_environment': 'production'}, args)
+        with self.assertRaises(tool.ImportFailure):
+            tool.validate_environment_target({'ENV': 'production'}, {'target_environment': 'production'}, args)
+
+    def test_mismatched_environment_plan_is_rejected_for_all_partitions(self):
+        with self.assertRaises(tool.ImportFailure):
+            tool.validate_environment_target({'ENV': 'local'}, {'target_environment': 'staging'}, SimpleNamespace(env='local'))
+
     def test_existing_different_local_value_is_preserved_and_payload_is_not_logged(self):
         master = 'unit-test-master-value'
         cipher = Fernet(base64.urlsafe_b64encode(hashlib.sha256(master.encode()).digest()))

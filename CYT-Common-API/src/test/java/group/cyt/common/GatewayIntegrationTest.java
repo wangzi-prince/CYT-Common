@@ -1302,6 +1302,64 @@ class GatewayIntegrationTest {
     assertEquals(plain, echo.getBody());
   }
 
+  @Test
+  @Order(99)
+  void credentialDisclosureRequiresAdminAndNeverLeaksValuesIntoInventoryOrAudit() {
+    String token = admin(), name = "CUSTOM_DISCLOSURE_FIXTURE";
+    String value = "fixture-sensitive-value\nsecond-line";
+    credentials.save("local", Map.of(name, value), "fixture-admin");
+    String path = "/admin/api/environments/local/secrets/" + name + "/reveal";
+    assertEquals(
+        401,
+        request(HttpMethod.POST, path, JsonUtils.obj("action", "view"), null)
+            .getStatusCode()
+            .value());
+    assertEquals(
+        401,
+        request(HttpMethod.POST, path, JsonUtils.obj("action", "view"), "cyt_invalid_key")
+            .getStatusCode()
+            .value());
+    var viewed = request(HttpMethod.POST, path, JsonUtils.obj("action", "view"), token);
+    assertEquals(200, viewed.getStatusCode().value());
+    assertEquals(value, viewed.getBody().get("value"));
+    assertEquals("no-store", viewed.getHeaders().getCacheControl());
+    assertEquals(
+        value,
+        request(HttpMethod.POST, path, JsonUtils.obj("action", "copy"), token)
+            .getBody()
+            .get("value"));
+    var inventory = request(HttpMethod.GET, "/admin/api/environments/local/secrets", null, token);
+    assertFalse(JsonUtils.write(inventory.getBody()).contains("fixture-sensitive-value"));
+    var audit =
+        store.rows(
+            "SELECT action,target,detail FROM gateway_admin_audit WHERE target=? ORDER BY id",
+            "local:" + name);
+    assertEquals(
+        List.of("secrets_view", "secrets_copy"), audit.stream().map(r -> r.get("action")).toList());
+    assertFalse(JsonUtils.write(audit).contains("fixture-sensitive-value"));
+    assertEquals(
+        403,
+        request(
+                HttpMethod.POST,
+                "/admin/api/environments/local/secrets/ADMIN_JWT_SECRET/reveal",
+                JsonUtils.obj("action", "view"),
+                token)
+            .getStatusCode()
+            .value());
+    store.insert(
+        "gateway_environment",
+        JsonUtils.obj("key", "disclosure_fixture", "label", "Disclosure fixture"));
+    assertEquals(
+        404,
+        request(
+                HttpMethod.POST,
+                "/admin/api/environments/disclosure_fixture/secrets/" + name + "/reveal",
+                JsonUtils.obj("action", "view"),
+                token)
+            .getStatusCode()
+            .value());
+  }
+
   @AfterAll
   static void cleanup(@Autowired CallLogService logs) throws Exception {
     logs.flush();

@@ -2,6 +2,7 @@ package group.cyt.common.core.config;
 
 import group.cyt.common.core.persistence.GatewayStore;
 import group.cyt.common.core.util.JsonUtils;
+import group.cyt.common.module.adapter.AdapterDispatcher;
 import group.cyt.common.module.registry.service.OperationRegistry;
 import java.util.*;
 import org.springframework.boot.ApplicationArguments;
@@ -38,10 +39,10 @@ public class GatewayBootstrap implements ApplicationRunner {
       settings.markProductionEnvironment();
       List<String> issues = new ArrayList<>();
       if (settings.mock()) issues.add("MOCK_ALL 必须为 false");
-      for (var platform : registry.contract().path("platforms"))
-        if (settings.flag(
-            platform.path("platform").asText().toUpperCase(Locale.ROOT) + "_MOCK", false))
-          issues.add("生产环境不能开启平台模拟: " + platform.path("platform").asText());
+      for (var op : registry.operations())
+        for (String flag : AdapterDispatcher.mockFlags(op))
+          if (settings.flag(flag, false) && !issues.contains("生产环境不能开启模拟: " + flag))
+            issues.add("生产环境不能开启模拟: " + flag);
       if (settings.flag("GATEWAY_DEV_MODE", false)) issues.add("不能开启 GATEWAY_DEV_MODE");
       if (settings.flag("CUSTOM_API_ALLOW_LOOPBACK", false))
         issues.add("不能开启 CUSTOM_API_ALLOW_LOOPBACK");

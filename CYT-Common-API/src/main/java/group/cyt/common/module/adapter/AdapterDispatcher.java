@@ -33,10 +33,26 @@ public class AdapterDispatcher {
     this.workflows = workflows;
   }
 
+  /**
+   * 模拟态按 <PLATFORM>_<RESOURCE>_MOCK、<PLATFORM>_MOCK 的顺序取值，两者都未显式配置时回落到 MOCK_ALL；
+   * 这样可以在保持其余平台模拟的同时单独放开审批这类资源走真连。
+   */
   public boolean mock(OperationDefinition op) {
-    return registry.builtin(op.key())
-        && (settings.mock()
-            || settings.flag(op.platform().toUpperCase(Locale.ROOT) + "_MOCK", false));
+    if (!registry.builtin(op.key())) return false;
+    for (String flag : mockFlags(op))
+      if (settings.isSet(flag)) return settings.flag(flag, false);
+    return settings.mock();
+  }
+
+  /** 该操作的模拟开关名，按优先级排列；生产环境用同一份口径拒绝任何被打开的模拟开关。 */
+  public static List<String> mockFlags(OperationDefinition op) {
+    String platform = op.platform().toUpperCase(Locale.ROOT);
+    String[] segments = op.key().split("\\.");
+    return segments.length > 2
+        ? List.of(
+            platform + "_" + segments[1].toUpperCase(Locale.ROOT) + "_MOCK",
+            platform + "_MOCK")
+        : List.of(platform + "_MOCK");
   }
 
   public String environment() {

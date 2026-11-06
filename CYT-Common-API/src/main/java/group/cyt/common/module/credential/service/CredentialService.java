@@ -1,11 +1,11 @@
 package group.cyt.common.module.credential.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import group.cyt.common.core.config.GatewaySettings;
 import group.cyt.common.core.exception.GatewayException;
 import group.cyt.common.core.persistence.GatewayStore;
 import group.cyt.common.core.util.JsonUtils;
 import group.cyt.common.module.registry.service.OperationRegistry;
-import com.fasterxml.jackson.databind.JsonNode;
 import java.nio.*;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
@@ -91,9 +91,7 @@ public class CredentialService {
    * derive it here: two spellings mean the UI reports 「已配」 while every call answers 缺凭证.
    */
   public static String accountKey(String name) {
-    return name == null
-        ? ""
-        : name.strip().toUpperCase(Locale.ROOT).replaceAll("[^A-Z0-9]", "_");
+    return name == null ? "" : name.strip().toUpperCase(Locale.ROOT).replaceAll("[^A-Z0-9]", "_");
   }
 
   public String raw(String name) {
@@ -128,6 +126,41 @@ public class CredentialService {
       if (!value.isBlank()) return new String[] {value, "env"};
     }
     return new String[] {"", ""};
+  }
+
+  /**
+   * Explicit admin disclosure of one managed credential; inventory never includes secret values.
+   */
+  public Map<String, Object> disclose(
+      String env, String name, String action, String actor, List<String> systems) {
+    if (!name.matches("[A-Z][A-Z0-9_]{0,63}") || !Set.of("view", "copy").contains(action))
+      throw GatewayException.invalid("凭据名称或读取操作无效");
+    var stored =
+        store.one("SELECT ciphertext FROM gateway_secret WHERE env=? AND name=?", env, name);
+    String value;
+    String source;
+    if (stored != null) {
+      value = decrypt(JsonUtils.str(stored, "ciphertext"));
+      source = "db";
+    } else {
+      // Another deployment's environment variables must never be inferred from this process.
+      if (!settings.current().equals(env)) throw GatewayException.missing("此环境未保存该凭据");
+      boolean managed = false;
+      for (var platform : inventory(systems))
+        for (var variable : JsonUtils.list(JsonUtils.map(platform).get("vars"))) {
+          var entry = JsonUtils.map(variable);
+          if (name.equals(entry.get("name"))) managed = true;
+          for (var scoped : JsonUtils.list(entry.get("scoped")))
+            if (name.equals(JsonUtils.map(scoped).get("name"))) managed = true;
+        }
+      if (!managed) throw GatewayException.forbidden("仅支持读取凭据列表中的变量");
+      var resolved = readWithSource(name);
+      value = resolved[0];
+      source = resolved[1];
+    }
+    if (value.isEmpty()) throw GatewayException.missing("该凭据尚未配置");
+    store.audit(actor, "secrets_" + action, env + ":" + name, JsonUtils.obj("source", source));
+    return JsonUtils.obj("name", name, "value", value, "source", source);
   }
 
   /** LINGXING_DEFAULT_APP_ID → [LINGXING_APP_ID]。默认账号在环境变量里常省略账号段。 */
@@ -228,12 +261,18 @@ public class CredentialService {
     var resolved = scoped == null ? varName : scoped;
     var read = readWithSource(resolved);
     return JsonUtils.obj(
-        "system", system,
-        "name", resolved,
-        "set", !read[0].isBlank(),
-        "source", read[1],
-        "preview", preview(secret, read[0]),
-        "is_shared", resolved.equals(varName));
+        "system",
+        system,
+        "name",
+        resolved,
+        "set",
+        !read[0].isBlank(),
+        "source",
+        read[1],
+        "preview",
+        preview(secret, read[0]),
+        "is_shared",
+        resolved.equals(varName));
   }
 
   private boolean isMultiAccount(JsonNode spec) {
@@ -260,8 +299,7 @@ public class CredentialService {
 
     var candidates = new TreeSet<String>();
     if (writable())
-      for (var row :
-          store.rows("SELECT name FROM gateway_secret WHERE env=?", settings.current()))
+      for (var row : store.rows("SELECT name FROM gateway_secret WHERE env=?", settings.current()))
         candidates.add(JsonUtils.str(row, "name"));
     candidates.addAll(System.getenv().keySet());
     scan:
@@ -297,12 +335,12 @@ public class CredentialService {
       for (var v : spec.path("vars")) {
         var name = v.path("name").asText();
         var expanded = new ArrayList<Map<String, Object>>();
-        if (!name.contains(ACCOUNT_TOKEN))
-          expanded.add(JsonUtils.obj("name", name, "account", ""));
+        if (!name.contains(ACCOUNT_TOKEN)) expanded.add(JsonUtils.obj("name", name, "account", ""));
         else
           for (var acc : accounts)
             expanded.add(
-                JsonUtils.obj("name", name.replace(ACCOUNT_TOKEN, accountKey(acc)), "account", acc));
+                JsonUtils.obj(
+                    "name", name.replace(ACCOUNT_TOKEN, accountKey(acc)), "account", acc));
         for (var ex : expanded) {
           var varName = JsonUtils.str(ex, "name");
           var read = readWithSource(varName);
@@ -343,11 +381,13 @@ public class CredentialService {
               .toList();
       var splittableVars = new ArrayList<String>();
       var perSysSpecs = new ArrayList<JsonNode>();
-      spec.path("vars").forEach(v -> {
-        var varName = v.path("name").asText();
-        if (isSplittable(varName)) splittableVars.add(varName);
-        if (isPerSystem(varName)) perSysSpecs.add(v);
-      });
+      spec.path("vars")
+          .forEach(
+              v -> {
+                var varName = v.path("name").asText();
+                if (isSplittable(varName)) splittableVars.add(varName);
+                if (isPerSystem(varName)) perSysSpecs.add(v);
+              });
       var systemsReady =
           sys.stream()
               .filter(
@@ -366,26 +406,46 @@ public class CredentialService {
               .toList();
       out.add(
           JsonUtils.obj(
-              "platform", platform,
-              "label", spec.path("label").asText(),
-              "docs", spec.path("docs").asText(),
-              "note", spec.path("note").asText(),
-              "vars", varsOut,
-              "missing", missing,
-              "configured", missing.isEmpty() && !accountMissing,
-              "multi_account", multi,
-              "accounts", accounts,
-              "accounts_var", spec.path("accounts_var").asText(),
-              "default_account_var", spec.path("default_account_var").asText(),
-              "account_fallback", spec.path("account_fallback").asText(),
-              "account_missing", accountMissing,
-              "per_system_vars", perSystemVars,
-              "splittable_vars", splittableVars,
-              "scope_policy", effectivePolicy(platform),
-              "scope_policy_default", spec.path("scope_policy").asText("inherit"),
-              "strict_recommended", spec.path("strict_recommended").asBoolean(),
-              "system_aware", spec.path("system_aware").asBoolean(),
-              "systems_ready", systemsReady));
+              "platform",
+              platform,
+              "label",
+              spec.path("label").asText(),
+              "docs",
+              spec.path("docs").asText(),
+              "note",
+              spec.path("note").asText(),
+              "vars",
+              varsOut,
+              "missing",
+              missing,
+              "configured",
+              missing.isEmpty() && !accountMissing,
+              "multi_account",
+              multi,
+              "accounts",
+              accounts,
+              "accounts_var",
+              spec.path("accounts_var").asText(),
+              "default_account_var",
+              spec.path("default_account_var").asText(),
+              "account_fallback",
+              spec.path("account_fallback").asText(),
+              "account_missing",
+              accountMissing,
+              "per_system_vars",
+              perSystemVars,
+              "splittable_vars",
+              splittableVars,
+              "scope_policy",
+              effectivePolicy(platform),
+              "scope_policy_default",
+              spec.path("scope_policy").asText("inherit"),
+              "strict_recommended",
+              spec.path("strict_recommended").asBoolean(),
+              "system_aware",
+              spec.path("system_aware").asBoolean(),
+              "systems_ready",
+              systemsReady));
     }
     return out;
   }

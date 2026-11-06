@@ -1,11 +1,20 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { Plus, Refresh, Delete, Search, InfoFilled } from '@element-plus/icons-vue';
+import {
+  Plus,
+  Refresh,
+  Delete,
+  Search,
+  InfoFilled,
+  View,
+  CopyDocument,
+} from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { api } from '~/api';
 import type { CredentialState } from '~/api/types';
 import { useRequest, useAction, confirm, dateTime } from '~/composables/useRequest';
+import { useCredentialAccess } from '~/composables/useCredentialAccess';
 import PageHeader from '~/components/PageHeader.vue';
 import PageState from '~/components/PageState.vue';
 const router = useRouter();
@@ -30,6 +39,22 @@ const editing = ref(false);
 const multiline = ref(false);
 const reveal = ref(false);
 const form = reactive({ name: '', value: '' });
+const access = useCredentialAccess(api.readSecret, (value) => navigator.clipboard.writeText(value));
+const {
+  target: viewing,
+  value: viewedValue,
+  source: viewedSource,
+  loading: viewingLoading,
+  copying,
+} = access;
+watch([env, system], access.reset);
+onUnmounted(access.reset);
+async function copyCredential(name: string) {
+  const result = await access.copy(env.value, name);
+  if (result === 'copied') ElMessage.success('凭据已复制');
+  else if (result === 'clipboardUnavailable')
+    ElMessage.warning('剪贴板不可用，请通过“查看”手动复制');
+}
 watch(
   () => form.name,
   (name) => {
@@ -252,7 +277,7 @@ async function deleteEnv() {
   <div>
     <PageHeader
       title="环境与凭据"
-      description="按平台和调用系统管理上游凭据，查看缺失项、来源与轮换记录；密钥保存后不回显。"
+      description="按平台和调用系统管理上游凭据，查看来源、复制密钥与更新凭据。"
     >
       <el-button :icon="InfoFilled" @click="cloudHelp = true">GCP 同步说明</el-button>
       <el-button :icon="Refresh" :loading="secrets.loading.value" @click="reload"
@@ -411,13 +436,41 @@ async function deleteEnv() {
               </div></template
             ></el-table-column
           >
-          <el-table-column label="值 / 更新时间" min-width="185"
+          <el-table-column label="值 / 更新时间" min-width="240"
             ><template #default="{ row }"
               ><div class="credential-stack">
-                <span :class="{ 'credential-masked': row.secret }">{{
-                  row.set || row.stored ? (row.secret ? '••••••••' : row.preview || '已保存') : '—'
-                }}</span
-                ><span class="subtext">{{
+                <div class="credential-value">
+                  <span :class="{ 'credential-masked': row.secret }">{{
+                    row.set || row.stored
+                      ? row.secret
+                        ? '••••••••'
+                        : row.preview || '已保存'
+                      : '—'
+                  }}</span>
+                  <div v-if="row.set || row.stored" class="credential-value-actions">
+                    <el-tooltip content="查看完整值"
+                      ><el-button
+                        :icon="View"
+                        text
+                        circle
+                        size="small"
+                        :aria-label="`查看 ${row.name}`"
+                        @click="access.view(env, row.name)"
+                    /></el-tooltip>
+                    <el-tooltip content="复制凭据"
+                      ><el-button
+                        :icon="CopyDocument"
+                        text
+                        circle
+                        size="small"
+                        :loading="copying === row.name"
+                        :disabled="!!copying && copying !== row.name"
+                        :aria-label="`复制 ${row.name}`"
+                        @click="copyCredential(row.name)"
+                    /></el-tooltip>
+                  </div>
+                </div>
+                <span class="subtext">{{
                   row.stored
                     ? dateTime(row.stored.updated_at)
                     : row.source === 'env'
@@ -462,7 +515,7 @@ async function deleteEnv() {
       <div class="panel-body credential-guidance">
         <strong>日常更新与轮换</strong>
         <p>
-          平台密钥到期或重置后，点“更新 / 轮换”保存新值；旧值不回显。GCP
+          列表默认遮罩显示，点“查看”或“复制”读取完整值。平台密钥到期后，点“更新 / 轮换”保存新值。GCP
           导入项会标记云端版本，手动更新后改为数据库管理；重新同步不同值需要显式覆盖。
         </p>
         <strong>环境、作用域与主密钥</strong>
@@ -472,6 +525,51 @@ async function deleteEnv() {
         <p>这里管理的是上游凭据；业务系统访问网关使用的 API Key，请到“调用方系统”管理。</p>
       </div>
     </section>
+    <el-dialog
+      :model-value="!!viewing"
+      title="查看凭据"
+      width="min(680px,96vw)"
+      destroy-on-close
+      @close="access.reset"
+    >
+      <template v-if="viewing">
+        <div class="credential-detail-heading">
+          <strong class="mono">{{ viewing.name }}</strong
+          ><span
+            >{{ viewing.env }} ·
+            {{
+              viewedSource === 'db'
+                ? '加密数据库'
+                : viewedSource === 'env'
+                  ? '部署配置'
+                  : '正在读取'
+            }}</span
+          >
+        </div>
+        <el-skeleton v-if="viewingLoading" :rows="4" animated />
+        <el-input
+          v-else
+          :model-value="viewedValue"
+          type="textarea"
+          :rows="8"
+          readonly
+          aria-label="完整凭据值"
+          class="credential-detail-value"
+          spellcheck="false"
+        />
+      </template>
+      <template #footer
+        ><el-button @click="access.reset">关闭</el-button
+        ><el-button
+          type="primary"
+          :icon="CopyDocument"
+          :disabled="!viewing || viewingLoading"
+          :loading="!!copying"
+          @click="viewing && copyCredential(viewing.name)"
+          >复制凭据</el-button
+        ></template
+      >
+    </el-dialog>
     <el-dialog
       v-model="secretDialog"
       :title="editing ? '更新 / 轮换凭据' : '设置平台凭据'"
@@ -509,7 +607,7 @@ async function deleteEnv() {
             :show-password="!multiline"
             :rows="7"
             :class="{ 'credential-concealed': multiline && !reveal }"
-            placeholder="输入新值；保留原值请取消，保存后不回显"
+            placeholder="输入新值；保留原值请取消"
             autocomplete="new-password"
             spellcheck="false"
         /></el-form-item>
@@ -641,6 +739,49 @@ async function deleteEnv() {
 .credential-masked {
   letter-spacing: 2px;
   color: var(--app-text-muted);
+}
+.credential-value {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.credential-value > span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.credential-value-actions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 2px;
+}
+.credential-value-actions .el-button {
+  margin: 0;
+  width: 24px;
+  height: 24px;
+}
+.credential-detail-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 18px;
+  overflow-wrap: anywhere;
+}
+.credential-detail-heading strong {
+  font-size: 13px;
+  color: var(--app-text);
+}
+.credential-detail-heading span {
+  font-size: 12px;
+  color: var(--app-text-muted);
+}
+.credential-detail-value :deep(textarea) {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
 }
 .credential-guidance {
   color: var(--app-text-muted);

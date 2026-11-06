@@ -1,7 +1,8 @@
 """Plan and import registered platform credentials without printing secret payloads.
 
-Cloud reads use the existing gcloud session. Imports target only a loopback MySQL
-cyt_common database and preserve existing values unless --overwrite is explicit.
+Cloud reads use the existing gcloud session. Imports target only an explicitly
+configured loopback MySQL cyt_common database and preserve existing values unless
+--overwrite is explicit. A production partition requires an explicitly targeted plan.
 """
 from __future__ import annotations
 
@@ -146,7 +147,7 @@ def plan(args):
                 errors.append({'name': binding['name'], 'secret': binding['secret'], 'reason': 'version_unavailable'})
                 continue
         ready.append(binding)
-    result = {'project': args.project, 'service': args.service, 'region': args.region, 'generated_at': datetime.now(timezone.utc).isoformat(),
+    result = {'project': args.project, 'service': args.service, 'region': args.region, 'target_environment': getattr(args, 'env', 'local'), 'generated_at': datetime.now(timezone.utc).isoformat(),
               'bindings': sorted(ready, key=lambda b: b['name']), 'ambiguous': ambiguous, 'unavailable': errors}
     args.plan_file.parent.mkdir(parents=True, exist_ok=True)
     args.plan_file.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding='utf-8')
@@ -175,6 +176,16 @@ def local_connection(config):
                            charset='utf8mb4', autocommit=False, init_command="SET time_zone = '+00:00'")
 
 
+def validate_environment_target(config, document, args):
+    if config.get('ENV', 'local') != 'local' or args.env not in ('local', 'staging', 'test', 'production'):
+        raise ImportFailure('Import requires a local development connection and an existing environment partition')
+    planned = document.get('target_environment')
+    if planned is not None and planned != args.env:
+        raise ImportFailure('Plan environment does not match the explicit import target')
+    if args.env == 'production' and (not getattr(args, 'allow_production', False) or planned != 'production'):
+        raise ImportFailure('The production partition requires a production-targeted plan and --allow-production')
+
+
 def apply(args):
     from cryptography.fernet import Fernet
     if not args.plan_file.is_file():
@@ -192,8 +203,7 @@ def apply(args):
     if not local_file.is_file():
         raise ImportFailure('Configure application-local.properties before importing')
     config = properties(local_file)
-    if config.get('ENV', 'local') != 'local' or args.env not in ('local', 'staging', 'test'):
-        raise ImportFailure('This importer is restricted to non-production local development')
+    validate_environment_target(config, document, args)
     connection = local_connection(config)
     try:
         with connection.cursor() as cursor:
@@ -277,6 +287,7 @@ def main():
     parser.add_argument('--region', default='us-central1')
     parser.add_argument('--plan-file', type=Path, default=DEFAULT_PLAN)
     parser.add_argument('--env', default='local')
+    parser.add_argument('--allow-production', action='store_true', help='Import into the explicitly selected production partition of the local credential store')
     parser.add_argument('--overwrite', action='store_true', help='Replace different local values after reviewing the plan')
     args = parser.parse_args()
     try:

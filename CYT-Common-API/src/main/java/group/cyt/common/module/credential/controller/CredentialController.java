@@ -124,6 +124,21 @@ public class CredentialController {
     return JsonUtils.obj("ok", true, "saved", values.size());
   }
 
+  @PostMapping("/environments/{key}/secrets/{name}/reveal")
+  public Object revealSecret(
+      @PathVariable String key,
+      @PathVariable String name,
+      @RequestBody Map<String, Object> body,
+      HttpServletRequest req) {
+    env(key);
+    return secrets.disclose(
+        key,
+        name,
+        JsonUtils.str(body, "action"),
+        AuthenticationService.actor(req),
+        enabledSystemKeys());
+  }
+
   @DeleteMapping("/environments/{key}/secrets/{name}")
   public Object deleteSecret(
       @PathVariable String key, @PathVariable String name, HttpServletRequest req) {
