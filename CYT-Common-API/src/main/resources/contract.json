@@ -5122,7 +5122,7 @@
           },
           "limit": {
             "default": 20,
-            "description": "每页数量，Shopify GraphQL 最大 250",
+            "description": "每页数量；要带出每个商品的变体 SKU，实际每页按 50 封顶（Shopify 单查询成本上限）",
             "maximum": 250,
             "minimum": 1,
             "title": "Limit",

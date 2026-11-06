@@ -173,16 +173,24 @@ public class CustomerSourcesAdapter implements PlatformAdapter {
                 v -> {
                   Map<String, Object> row = JsonUtils.map(v);
                   Map<String, Object> reviewer = JsonUtils.map(row.get("reviewer"));
+                  // product_external_id 是 Shopify 商品数字 ID，不是 SKU：Judge.me 列表接口并不返回
+                  // product_external_id_type（2026-11-06 实测 epomaker 9329 条），商品身份原样带出去，
+                  // 归码由中台对着 Shopify 商品档案做 —— 把商品 ID 塞进 sku 会带歪订单归属。
+                  String extId = JsonUtils.str(row, "product_external_id").strip();
+                  String extType = JsonUtils.str(row, "product_external_id_type").strip();
+                  boolean isSku = "sku".equalsIgnoreCase(extType);
+                  // '0' 是店铺级评价（"Judge.me Shop Reviews"）挂的假商品号，不是商品
+                  String shopProductId = extId.matches("[1-9][0-9]*") ? extId : null;
                   return JsonUtils.obj(
                       "id", Objects.toString(row.get("id"), ""),
                       "rating", row.get("rating"),
                       "content", Objects.toString(row.get("body"), ""),
                       "customer_email", reviewer.get("email"),
                       "customer_name", reviewer.get("name"),
-                      "sku",
-                          "sku".equals(row.get("product_external_id_type"))
-                              ? row.get("product_external_id")
-                              : null,
+                      "sku", isSku ? extId : null,
+                      "product_id", isSku ? null : shopProductId,
+                      "product_handle", row.get("product_handle"),
+                      "product_title", row.get("product_title"),
                       "review_date", date10(row.get("created_at")),
                       "deleted", Boolean.TRUE.equals(row.get("deleted")),
                       "raw", row);

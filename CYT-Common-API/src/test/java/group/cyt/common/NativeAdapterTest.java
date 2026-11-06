@@ -842,6 +842,112 @@ class NativeAdapterTest {
     assertEquals(3, JsonUtils.integer(JsonUtils.map(result.get("cursor")).get("page"), 0));
   }
 
+  /**
+   * The real Judge.me list payload never says which kind of external id it sent (measured over all
+   * 9329 epomaker reviews): product_external_id is the Shopify numeric product id, so the gateway
+   * hands the product identity over instead of laundering it into sku, which would drag order
+   * attribution along with it. '0' is the fake product the shop-level reviews hang off.
+   */
+  @Test
+  void judgemeCarriesProductIdentityBecauseTheUpstreamHasNoSku() throws Exception {
+    var credentials =
+        credentials(
+            Map.of(
+                "JUDGEME_FIXTURE_API_TOKEN", "fixture-token",
+                "JUDGEME_FIXTURE_SHOP_DOMAIN", "fixture.myshop.example"));
+    var http = mock(UpstreamHttp.class);
+    var registry = registry();
+    var op = registry.get("judgeme.reviews.list");
+    var params =
+        registry.validate(
+            op, JsonUtils.map(JsonUtils.obj("account", "fixture", "limit", 3)));
+    when(http.json(anyString(), anyString(), anyMap(), isNull(), anyDouble()))
+        .thenReturn(
+            JsonUtils.obj(
+                "reviews",
+                List.of(
+                    JsonUtils.obj(
+                        "id", 1,
+                        "product_external_id", 8123456789012L,
+                        "product_handle", "kp80-keyboard",
+                        "product_title", "EPOMAKER KP80"),
+                    JsonUtils.obj("id", 2, "product_external_id", "0"),
+                    JsonUtils.obj(
+                        "id",
+                        3,
+                        "product_external_id",
+                        "SKU-9",
+                        "product_external_id_type",
+                        "SKU"))));
+    var result =
+        JsonUtils.map(
+            new CustomerSourcesAdapter(credentials, http).invoke(op, params, "fixture"));
+    var items = JsonUtils.list(result.get("items")).stream().map(JsonUtils::map).toList();
+    assertEquals("8123456789012", items.get(0).get("product_id"));
+    assertNull(items.get(0).get("sku"));
+    assertEquals("kp80-keyboard", items.get(0).get("product_handle"));
+    assertEquals("EPOMAKER KP80", items.get(0).get("product_title"));
+    assertNull(items.get(1).get("product_id")); // 店铺级评价不是商品
+    assertEquals("SKU-9", items.get(2).get("sku"));
+    assertNull(items.get(2).get("product_id"));
+  }
+
+  /**
+   * CS mirrors this page into shopify_products and reads variant codes straight off the node, and
+   * Shopify charges nested `first` args multiplicatively — so the page stays capped at 50 products
+   * even when the caller asks for the schema maximum.
+   */
+  @Test
+  void shopifyProductsListCarriesVariantCodesAndCapsThePage() throws Exception {
+    var credentials =
+        credentials(
+            Map.of(
+                "SHOPIFY_STORE", "fixture.myshopify.com",
+                "SHOPIFY_ACCESS_TOKEN", "fixture-token"));
+    var http = mock(UpstreamHttp.class);
+    var registry = registry();
+    var op = registry.get("shopify.products.list");
+    var params = registry.validate(op, JsonUtils.map(JsonUtils.obj("limit", 250)));
+    when(http.object(anyString(), anyString(), anyMap(), any()))
+        .thenReturn(
+            JsonUtils.obj(
+                "data",
+                JsonUtils.obj(
+                    "products",
+                    JsonUtils.obj(
+                        "edges",
+                        List.of(
+                            JsonUtils.obj(
+                                "node",
+                                JsonUtils.obj(
+                                    "id", "gid://shopify/Product/1",
+                                    "title", "KP80",
+                                    "variants",
+                                    JsonUtils.obj(
+                                        "count",
+                                        12,
+                                        "edges",
+                                        List.of(
+                                            JsonUtils.obj(
+                                                "node",
+                                                JsonUtils.obj("sku", "TH80-BLK"))))))),
+                        "pageInfo", JsonUtils.obj("hasNextPage", false, "endCursor", null)))));
+    var result =
+        JsonUtils.map(
+            new ShopifyAdapter(credentials, http, mock(TestWritePolicy.class))
+                .invoke(op, params, "fixture"));
+    var body = org.mockito.ArgumentCaptor.forClass(Map.class);
+    verify(http).object(eq("POST"), anyString(), anyMap(), body.capture());
+    assertEquals(50, JsonUtils.map(JsonUtils.map(body.getValue()).get("variables")).get("first"));
+    var node =
+        JsonUtils.map(JsonUtils.map(JsonUtils.list(result.get("items")).get(0)).get("variants"));
+    assertEquals(12, node.get("count"));
+    var firstVariant =
+        JsonUtils.map(JsonUtils.map(JsonUtils.list(node.get("edges")).get(0)).get("node"));
+    assertEquals("TH80-BLK", firstVariant.get("sku"));
+    assertEquals("fixture.myshopify.com", result.get("store"));
+  }
+
   @Test
   void stripeScalesAmountsAndCarriesTheIdCursor() throws Exception {
     var credentials = credentials(Map.of("STRIPE_FIXTURE_API_KEY", "sk_fixture"));

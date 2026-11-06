@@ -139,6 +139,11 @@ public class ShopifyAdapter implements PlatformAdapter {
       variables.put("sortKey", p.get("sort_key"));
       variables.put("reverse", p.get("reverse"));
     }
+    if (key.equals("products.list") && p.get("limit") instanceof Number n) {
+      // _PRODUCTS_QUERY 每页只取 50 个商品：嵌套的 first 相乘计费（50 商品 × 10 变体），
+      // 再大会撞 Shopify 单查询 1000 点上限。调用方要 250 也只给 50，翻页靠 endCursor。
+      variables.put("first", Math.min(50, n.intValue()));
+    }
     var result = query(c, template, variables);
     String resource = key.split("\\.")[0];
     var connection = JsonUtils.map(result.get(resource.equals("refunds") ? "orders" : resource));
