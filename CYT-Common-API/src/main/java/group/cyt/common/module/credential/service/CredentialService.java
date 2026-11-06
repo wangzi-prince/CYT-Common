@@ -311,7 +311,12 @@ public class CredentialService {
         var pre = name.substring(0, idx);
         var suf = name.substring(idx + ACCOUNT_TOKEN.length());
         if (!full.startsWith(pre) || !full.endsWith(suf)) continue;
-        var inner = full.substring(pre.length(), full.length() - suf.length());
+        // Matching both ends does not prove there is an account between them: the store-level
+        // LINGXING_APP_ID overlaps both LINGXING_{ACCOUNT}_APP_ID's prefix and suffix, and slicing
+        // it past the end threw and turned the whole credential inventory into a 500.
+        var end = full.length() - suf.length();
+        if (end <= pre.length()) continue;
+        var inner = full.substring(pre.length(), end);
         if (!inner.isBlank() && !readWithSource(full)[0].isBlank()) add.accept(inner);
         continue scan;
       }

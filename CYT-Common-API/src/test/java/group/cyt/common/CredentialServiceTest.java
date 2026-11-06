@@ -118,6 +118,44 @@ class CredentialServiceTest {
   }
 
   @Test
+  void inventoryIgnoresStoreLevelNamesThatOnlyLookLikeAccountScopedVars() throws Exception {
+    var registry = mock(OperationRegistry.class);
+    when(registry.contract())
+        .thenReturn(
+            JsonUtils.MAPPER.readTree(
+                """
+                {"credentials":[{"platform":"lingxing","accounts_var":"","default_account_var":"","account_fallback":"","vars":[
+                  {"name":"LINGXING_{ACCOUNT}_APP_ID","required":true,"secret":true,"per_system":false,"scoped":""},
+                  {"name":"LINGXING_{ACCOUNT}_APP_SECRET","required":true,"secret":true,"per_system":false,"scoped":""}
+                ]}]}
+                """));
+    var store = mock(GatewayStore.class);
+    when(store.one(anyString(), anyString(), anyString())).thenReturn(null);
+    // 仓库级变量：前缀和后缀都能对上带 {ACCOUNT} 的模板，中间却没有账号段。
+    // 曾经在这里 substring 越界，一个名字就把整张凭据清单打成 500。
+    when(store.rows("SELECT name FROM gateway_secret WHERE env=?", "test"))
+        .thenReturn(
+            List.of(
+                JsonUtils.obj("name", "LINGXING_APP_ID"),
+                JsonUtils.obj("name", "LINGXING_APP_SECRET"),
+                JsonUtils.obj("name", "LINGXING__APP_ID"),
+                JsonUtils.obj("name", "LINGXING_EPOMAKER_APP_ID"),
+                JsonUtils.obj("name", "LINGXING_EPOMAKER_APP_SECRET")));
+    var env =
+        new MockEnvironment()
+            .withProperty("ENV", "test")
+            .withProperty("CREDENTIAL_MASTER_KEY", "fixture-master-key")
+            .withProperty("LINGXING_EPOMAKER_APP_ID", "app-1")
+            .withProperty("LINGXING_EPOMAKER_APP_SECRET", "secret-1");
+    var service = new CredentialService(store, new GatewaySettings(env), registry);
+    var lingxing = item(service.inventory(List.of()), "lingxing");
+
+    // 反推出来的账号段就是变量名里那串大写
+    assertEquals(List.of("EPOMAKER"), lingxing.get("accounts"));
+    assertEquals(true, lingxing.get("configured"));
+  }
+
+  @Test
   void accountFallbackKeepsPlatformCallable() {
     var env = new MockEnvironment().withProperty("QUICKCEP_DEFAULT_ACCESS_ID", "id-default");
     var items = service(env).inventory(List.of());
