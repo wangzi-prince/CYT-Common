@@ -117,3 +117,18 @@ mvn test
 - 文档、调试、授权分别显示调用方向。direction=internal / third_party 用于导出对应接口；不传方向的既有导出仍兼容全部授权范围。方向过滤与调用方授权共同生效。
 - 配置接口新增 response_schema_json 描述经响应取值路径处理后的业务数据，文档与调试展示完整 HTTP 字段路径。配置型 HTTP 的业务体仍位于 data.data，不改变既有运行结果包装。
 - 已逐项描述的响应契约目前包括企微组织目录和通用分页汇总；其他内置操作若尚未登记业务响应字段，会明确显示待补齐，不根据模拟数据推测。SchemaFields 展开嵌套对象、数组、本地引用及空值类型。
+
+## 对外 API 字段命名
+
+新设计的自有业务 API 统一使用 lowerCamelCase：employeeId、departmentId、departmentName、includeChildren、pageSize、directManager、nextCursor。ID 等缩写按单词处理，例如 employeeId，而非 employeeID。请求、响应、Schema 与示例保持一致。
+
+命名风格是项目约定，不是 JSON 或 REST 的强制要求。Kubernetes 和 Keycloak 使用小驼峰业务字段；APISIX Admin API 使用 upstream_id、service_id 等下划线字段。参考：
+
+- https://github.com/kubernetes/apimachinery/blob/master/pkg/apis/meta/v1/types.go
+- https://www.keycloak.org/docs-api/latest/rest-api/index.html#UserRepresentation
+- https://github.com/apache/apisix/blob/master/docs/en/latest/admin-api.md
+- https://github.com/microsoft/api-guidelines/blob/vNext/azure/Guidelines.md#json
+
+第三方协议字段在适配层按官方名称收发，不通过全局 Jackson 策略或递归转换任意 JSON 键来改名。业务字典、动态字段别名、OAuth 标准字段和原始透传内容也不得盲目转换。内部数据库列名、操作标识及现有 URL 不受 JSON 字段命名规则影响。
+
+现行 /integrations 接口已使用 snake_case，包括网关 trace_id、latency_ms、status_code 等包装字段。保留这些既有协议，以保证调用方兼容；整体迁移为驼峰需要新的版本契约及同步更新 SDK、OpenAPI、幂等计算与回归测试。本轮只修正未注册的 OA 设计示例中的自有业务字段，并补充新建接口提示，没有批量改变现有运行接口。

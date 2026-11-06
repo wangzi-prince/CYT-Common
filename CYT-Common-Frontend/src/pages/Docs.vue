@@ -221,11 +221,15 @@ function debug() {
     <PageHeader
       v-if="!embedded"
       title="接入文档"
-      description="先选择调用方向：我们接入第三方，或我们的系统向其他系统提供业务接口。两类文档、示例和导出资料分别展示。"
+      description="查询接口参数、复制调用示例、下载接入资料"
     >
-      <el-button :icon="Document" @click="router.push('/exposed')">浏览对外能力</el-button>
+      <el-button
+        :icon="Document"
+        @click="router.push(direction === 'internal' ? '/exposed' : '/platforms')"
+        >{{ direction === 'internal' ? '对外能力' : '服务接入' }}</el-button
+      >
       <el-button :icon="Download" :disabled="!exportReady" :loading="busy" @click="exportDocs">{{
-        system ? '导出专属 OpenAPI' : '导出本方向 OpenAPI'
+        system ? '导出专属 OpenAPI' : '导出 OpenAPI'
       }}</el-button>
       <el-button
         type="primary"
@@ -245,36 +249,27 @@ function debug() {
     <section class="panel docs-direction">
       <el-radio-group v-model="direction" aria-label="文档调用方向"
         ><el-radio-button value="third_party">第三方接入文档</el-radio-button
-        ><el-radio-button value="internal">自有能力调用文档</el-radio-button></el-radio-group
+        ><el-radio-button value="internal">对外能力调用文档</el-radio-button></el-radio-group
       >
-      <p class="form-hint">
-        {{
-          direction === 'third_party'
-            ? '我们调用企微、领星等第三方服务。文档说明网关已封装的第三方接口，不会列入自有系统对外能力。'
-            : '其他系统调用我们的 OA、订单等业务能力。这里只展示明确登记为自有系统的接口；其第三方数据来源与内部实现不要求调用方重复接入。'
-        }}
-      </p>
       <el-button
         link
         type="primary"
         @click="router.push(direction === 'internal' ? '/exposed' : '/platforms')"
-        >{{ direction === 'internal' ? '管理自有对外能力' : '管理第三方接入' }}</el-button
+        >{{ direction === 'internal' ? '管理接口' : '管理服务' }}</el-button
       >
     </section>
     <section class="panel docs-context">
       <div class="docs-context-main">
         <div>
-          <strong>{{
-            embedded ? '当前调用方的接入资料' : '选择调用方（使用这些接口的系统）'
-          }}</strong>
-          <p>选择调用方后，只显示它获授权的接口，示例和导出资料保持一致。</p>
+          <strong>{{ embedded ? '当前调用方的接入资料' : '调用方接入资料' }}</strong>
+          <p>选择调用方，查看已授权接口并下载专属接入包。</p>
         </div>
         <el-select
           v-if="!fixedSystem"
           v-model="callerKey"
           filterable
           clearable
-          placeholder="全部接口参考 / 选择调用方"
+          placeholder="全部接口 · 选择调用方"
           aria-label="文档调用方"
         >
           <el-option
@@ -292,8 +287,8 @@ function debug() {
       <div class="docs-context-actions">
         <span>{{
           system
-            ? '交付方式：下载接入包 → 解压 → 打开 START_HERE.html；接入方无需后台账号。API Key 单独交付。'
-            : '管理员交付文档前请先选择调用方；接入包包含可离线阅读的指南、专属 OpenAPI 和 Python / TypeScript SDK。'
+            ? '解压接入包后打开 START_HERE.html 查看指南；API Key 单独交付。'
+            : '接入包包含离线指南、OpenAPI 和 Python / TypeScript SDK。'
         }}</span>
         <el-button
           v-if="embedded"
@@ -579,7 +574,12 @@ function debug() {
   padding: 20px;
 }
 .docs-direction {
-  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px 20px;
 }
 .docs-context-main {
   display: flex;

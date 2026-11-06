@@ -76,6 +76,7 @@ const count = computed(() =>
         :model-value="modelValue"
         class="module-mobile-select"
         filterable
+        :placeholder="`全部模块 · ${matching.length}`"
         aria-label="筛选业务模块"
         @update:model-value="emit('update:modelValue', $event)"
       >

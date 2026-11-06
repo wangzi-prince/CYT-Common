@@ -16,6 +16,9 @@ const { collapsed, density } = useUiPreferences();
 const mobile = ref(false);
 const env = ref('');
 const mockCount = ref(0);
+const pageTitle = computed(() =>
+  route.path === '/modules' && route.query.kind === 'internal' ? '对外接口配置' : route.meta.title,
+);
 const breadcrumbGroup = computed(() => {
   const parent = navigationPath(
     route.path,
@@ -97,7 +100,7 @@ function focusContent() {
               }"
               >{{ breadcrumbGroup }}</el-breadcrumb-item
             >
-            <el-breadcrumb-item>{{ route.meta.title }}</el-breadcrumb-item>
+            <el-breadcrumb-item>{{ pageTitle }}</el-breadcrumb-item>
           </el-breadcrumb>
         </div>
         <QuickNavigation />
