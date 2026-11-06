@@ -617,8 +617,6 @@ public class LingxingAdapter implements PlatformAdapter {
                         m.get(receive ? "from_name" : "to_name"),
                         "body",
                         "",
-                        "issue_type",
-                        "usage",
                         "flag",
                         flag,
                         "from_address",

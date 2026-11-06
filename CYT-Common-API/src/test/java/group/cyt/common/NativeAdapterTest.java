@@ -426,7 +426,16 @@ class NativeAdapterTest {
                   JsonUtils.read(new String((byte[]) a.getArgument(3), StandardCharsets.UTF_8));
               assertEquals("2026-11-01", body.get("start_date"));
               assertEquals("2026-11-05", body.get("end_date"));
-              return JsonUtils.write(JsonUtils.obj("code", 0, "data", List.of(), "total", 0))
+              return JsonUtils.write(
+                      JsonUtils.obj(
+                          "code",
+                          0,
+                          "data",
+                          List.of(
+                              JsonUtils.obj(
+                                  "webmail_uuid", "mail-1", "subject", "Invoice request")),
+                          "total",
+                          1))
                   .getBytes(StandardCharsets.UTF_8);
             });
     var registry = registry();
@@ -446,6 +455,8 @@ class NativeAdapterTest {
                 "2026-11-05"));
     var result = JsonUtils.map(adapter.invoke(op, params, "fixture"));
     assertEquals("2026-11-01", JsonUtils.map(result.get("cursor")).get("start_date"));
+    assertFalse(
+        JsonUtils.map(JsonUtils.list(result.get("items")).getFirst()).containsKey("issue_type"));
     params.put("start_date", "invalid");
     assertThrows(GatewayException.class, () -> adapter.invoke(op, params, "fixture"));
   }

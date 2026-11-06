@@ -149,26 +149,36 @@ public class ErpProxy {
   /** Separates relay faults from vendor responses; the two need opposite fixes. */
   private Object parse(Response response, String erp) throws IOException {
     int status = response.code();
-    String snippet =
-        new String(
-                response.body() == null ? new byte[0] : response.body().byteStream()
-                    .readNBytes(MAX_BYTES + 1),
-                StandardCharsets.UTF_8)
-            .strip()
-            .replace("\n", " ");
+    byte[] bytes =
+        response.body() == null
+            ? new byte[0]
+            : response.body().byteStream().readNBytes(MAX_BYTES + 1);
+    if (bytes.length > MAX_BYTES)
+      throw new GatewayException(502, "upstream_error", erp + " 代理响应超过大小限制", false);
+    String text = new String(bytes, StandardCharsets.UTF_8).strip();
+    String snippet = text.replace("\n", " ");
     if (snippet.length() > 300) snippet = snippet.substring(0, 300);
 
     if (status == 401)
       throw GatewayException.config(erp + " 代理鉴权失败（X-Proxy-Token 错误或缺失）: " + snippet);
     if (status == 404 && snippet.contains("unknown path"))
-      throw GatewayException.config(
-          erp + " 代理路径前缀无效（检查 PROXY_BASE 是否指向 erp-proxy）: " + snippet);
+      throw GatewayException.config(erp + " 代理路径前缀无效（检查 PROXY_BASE 是否指向 erp-proxy）: " + snippet);
     if (status == 429)
       throw new GatewayException(429, "rate_limited", erp + " 代理限流 HTTP 429: " + snippet, true);
     if (status == 502 || status == 504)
       throw new GatewayException(
-          502, "upstream_error", erp + " 代理上游网关错误 HTTP " + status + "（跨境抖动，稍后重试）: " + snippet, true);
-    if (response.isSuccessful()) return JsonUtils.parse(snippet.isEmpty() ? "null" : snippet);
-    throw new GatewayException(502, "upstream_error", erp + " 代理返回 HTTP " + status + ": " + snippet, false);
+          502,
+          "upstream_error",
+          erp + " 代理上游网关错误 HTTP " + status + "（跨境抖动，稍后重试）: " + snippet,
+          true);
+    if (response.isSuccessful()) {
+      try {
+        return JsonUtils.parse(text.isEmpty() ? "null" : text);
+      } catch (GatewayException e) {
+        throw new GatewayException(502, "upstream_error", erp + " 代理返回非 JSON 响应", false);
+      }
+    }
+    throw new GatewayException(
+        502, "upstream_error", erp + " 代理返回 HTTP " + status + ": " + snippet, false);
   }
 }
