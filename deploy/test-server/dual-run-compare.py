@@ -106,6 +106,22 @@ def load_bodies(path: str) -> list[dict]:
     return calls
 
 
+def sanitize_masked(calls: list[dict]) -> int:
+    """旧库写日志时脱敏过请求体（如 account="l***@epomaker.com"、page_token="***"）。
+    这些不是真实请求值：旧网关的 _verified_client 会拿非空 account 与授权邮箱比对，
+    用脱敏账号重放必然 403，产生「旧 403 / 新 200」的假阳性。
+    把含 *** 的 account 置空，其余脱敏值两端一致、不影响契约比较。
+    """
+    fixed = 0
+    for c in calls:
+        body = c.get("body") or {}
+        for k, v in list(body.items()):
+            if k == "account" and isinstance(v, str) and "***" in v:
+                body[k] = ""
+                fixed += 1
+    return fixed
+
+
 def request(port: int, path: str, body: dict, system: str, timeout: float):
     headers = {"Content-Type": "application/json", "X-System-Id": system}
     req = urllib.request.Request(
@@ -198,8 +214,12 @@ def main() -> int:
         print("没有可用请求体", file=sys.stderr)
         return 2
 
+    masked = sanitize_masked(calls)
     print(f"影子双跑：旧 {args.old_port} / 新 {args.new_port}，{len(calls)} 个真实操作，"
-          f"{args.repeat} 轮，身份 {args.system}\n")
+          f"{args.repeat} 轮，身份 {args.system}")
+    if masked:
+        print(f"（已把 {masked} 个日志脱敏的 account 置空，避免旧网关跨账号校验造成假阳性）")
+    print()
     verdicts = Counter()
     blocking = []
     rate_limited = []
