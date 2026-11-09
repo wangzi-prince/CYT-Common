@@ -95,7 +95,7 @@ bash deploy/test-server/refresh-branches.sh          # 刷新 Jenkins 分支下�
 ```bash
 python deploy/test-server/dual-run-compare.py               # 默认近 30 天、1 轮
 python deploy/test-server/dual-run-compare.py --repeat 3    # 加压观察限流触发
-python deploy/test-server/dual-run-compare.py --strict      # 有状态码不一致时退出码 1
+python deploy/test-server/dual-run-compare.py --strict      # 有阻断差异时退出码 1（旧端偶发超时不算）
 ```
 
 ### 与旧网关对齐的三个模拟开关
@@ -104,6 +104,18 @@ python deploy/test-server/dual-run-compare.py --strict      # 有状态码不一
 `docker-compose.yml` 用 `GMAIL_MOCK` / `GDRIVE_MOCK` / `GCS_MOCK` 单独放开这三个平台
 （默认 `true`，在 `.env` 里设 `false` 可切真连），
 避免 `MOCK_ALL=false` 时它们因为缺 Google 凭据直接 503。
+
+### 回归时允许出现的非阻断差异
+
+调用方 `CYT-CS/backend/services/common_api.py` 只看 `error.retryable` / `error.retry_after` 决定重试，
+不解析 `detail[].field`，也不按错误文案分支，所以下面几项不影响业务：
+
+- 403 / 422 的 `detail`、文案与 429 的文案不同；新版统一多 `trace_id`。
+- 429 已对齐核心契约：两端都在第 120 次触发，`type=quota_exceeded`、`retryable=true`、
+  `detail={limit,window_seconds,backend}`、`retry_after` 一致；新版额外带 `Retry-After` 头。
+- `judgeme.reviews.list` 新版多 `product_id` / `product_handle` / `product_title`，
+  CYT-CS 的 `shopify_catalog.py` 正好用它补 SKU，属于增强。
+- 旧网关真连上游偶发 `ERR` / 502（实测 judgeme、winit），脚本会重试一次并单列，不算替换差异。
 
 ## 排障
 

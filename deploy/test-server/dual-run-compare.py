@@ -234,9 +234,18 @@ def main() -> int:
             path = "/integrations/" + key.replace(".", "/")
             so, ho, bo = request(args.old_port, path, c["body"], args.system, args.timeout)
             sn, hn, bn = request(args.new_port, path, c["body"], args.system, args.timeout)
+            if so == "ERR" or sn == "ERR":
+                # 旧网关真连上游偶发超时（实测 judgeme.reviews.list），重试一次再判定，
+                # 避免把网络抖动当成替换差异；新服务自身 ERR 仍算阻断。
+                if so == "ERR":
+                    so, ho, bo = request(args.old_port, path, c["body"], args.system, args.timeout)
+                if sn == "ERR":
+                    sn, hn, bn = request(args.new_port, path, c["body"], args.system, args.timeout)
             do, dn = parse(bo), parse(bn)
             ds = diff(do, dn) if (do is not None and dn is not None) else []
-            if so != sn:
+            if so == "ERR":
+                verdict = "旧端超时"
+            elif so != sn:
                 verdict = "状态不同 <<<"
             elif ds:
                 verdict = f"{len(ds)} 处字段差异"
@@ -245,7 +254,7 @@ def main() -> int:
             verdicts[verdict.split(" <")[0]] += 1
             note = "; ".join(f"{d[0]}{d[1]}" for d in ds[:2])
             print(f"{key:<34} {str(so):<8} {str(sn):<8} {verdict:<14} {note}")
-            if so != sn:
+            if so != sn and so != "ERR":
                 blocking.append((key, so, sn, (error_summary(do), error_summary(dn))))
             if so in (429, 502) or sn in (429, 502):
                 rate_limited.append(
