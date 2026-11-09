@@ -85,7 +85,7 @@ public class QuotaService implements AutoCloseable {
                 Long.toString(q[0]),
                 JsonUtils.random(18));
         fallback = false;
-        if (!Long.valueOf(1).equals(ok)) throw limited(q[1]);
+        if (!Long.valueOf(1).equals(ok)) throw limited(q, q[1]);
         return;
       } catch (GatewayException e) {
         throw e;
@@ -97,13 +97,19 @@ public class QuotaService implements AutoCloseable {
     var bucket = buckets.computeIfAbsent(key, k -> new ArrayDeque<>());
     synchronized (bucket) {
       while (!bucket.isEmpty() && bucket.peekFirst() <= now - q[1]) bucket.removeFirst();
-      if (bucket.size() >= q[0]) throw limited(q[1] - (now - bucket.peekFirst()));
+      if (bucket.size() >= q[0]) throw limited(q, q[1] - (now - bucket.peekFirst()));
       bucket.addLast(now);
     }
   }
 
-  private GatewayException limited(long ms) {
-    var ex = new GatewayException(429, "rate_limited", "调用频率超过配额", true);
+  private GatewayException limited(long[] q, long ms) {
+    // CYT-CS 的 mabang_sync.py 靠 "quota_exceeded" 判断配额打满后要不要再等 10s 重试，
+    // 旧 Python 网关返回的就是这个 type 和 detail；换网关时保持，否则调用方会直接失败。
+    var ex =
+        new GatewayException(429, "quota_exceeded", "调用频率超过配额", true)
+            .detail(
+                JsonUtils.obj(
+                    "limit", q[0], "window_seconds", q[1] / 1000, "backend", backend()));
     ex.retryAfter = (int) Math.max(1, (ms + 999) / 1000);
     return ex;
   }
