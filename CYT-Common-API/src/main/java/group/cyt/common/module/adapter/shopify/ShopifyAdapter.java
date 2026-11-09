@@ -37,26 +37,37 @@ public class ShopifyAdapter implements PlatformAdapter {
     return platform.equals("shopify");
   }
 
+  private static String normalize(String s) {
+    return s == null ? "" : s.trim().replaceFirst("^https?://", "").replaceAll("/+$", "");
+  }
+
   public Object invoke(OperationDefinition op, Map<String, Object> p, String system) {
-    String actual =
-        credentials
-            .required("SHOPIFY_STORE", system)
-            .replaceFirst("^https?://", "")
-            .replaceAll("/$", "");
+    String requested = normalize(JsonUtils.str(p, "store"));
+    // 一个调用方身份按请求里的店铺自动取该店铺的专属凭据：上线时只需配置
+    // SHOPIFY_<店铺>_STORE / _ACCESS_TOKEN，不必为每个店铺登记一个接入系统。
+    // 找不到对应店铺凭据时保持原行为（下面按「店铺不一致」拒绝），不会串到别的店。
+    String credentialSystem = system;
+    if (!requested.isBlank()
+        && !normalize(credentials.resolve("SHOPIFY_STORE", system))
+            .equalsIgnoreCase(requested)) {
+      String scoped = credentials.systemForStore("SHOPIFY_STORE", requested);
+      if (scoped != null) credentialSystem = scoped;
+    }
+    String actual = normalize(credentials.required("SHOPIFY_STORE", credentialSystem));
     if (!actual.matches("[A-Za-z0-9][A-Za-z0-9.-]*"))
       throw GatewayException.config("Shopify 店铺域名无效");
-    String requested =
-        JsonUtils.str(p, "store").replaceFirst("^https?://", "").replaceAll("/$", "");
     if (!requested.isBlank() && !actual.equalsIgnoreCase(requested))
       throw GatewayException.forbidden("请求店铺与实际授权店铺不一致");
-    String version = credentials.resolve("SHOPIFY_API_VERSION", system);
+    String version = credentials.resolve("SHOPIFY_API_VERSION", credentialSystem);
     if (version.isBlank()) version = "2026-07";
     if (!version.matches("[0-9]{4}-[0-9]{2}")) throw GatewayException.config("Shopify API 版本格式无效");
     Client c =
         new Client(
             actual,
             "https://" + actual + "/admin/api/" + version + "/graphql.json",
-            Map.of("X-Shopify-Access-Token", credentials.required("SHOPIFY_ACCESS_TOKEN", system)));
+            Map.of(
+                "X-Shopify-Access-Token",
+                credentials.required("SHOPIFY_ACCESS_TOKEN", credentialSystem)));
     String key = op.key().substring(8);
     if (!op.readOnly()) writePolicy.requireTarget("shopify", requested);
     return switch (key) {

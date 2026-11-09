@@ -478,6 +478,46 @@ public class CredentialService {
         "strict_platforms", strict);
   }
 
+  /**
+   * 按店铺域名反查该用哪个系统段读取凭据。调用方只用一个系统身份时，由请求里的 store
+   * 决定实际店铺的 SHOPIFY_{SYSTEM}_* 凭据，免去为每个店铺登记一个接入系统。
+   * 找不到返回 null：适配器会保持原有「请求店铺与实际授权店铺不一致」的拒绝行为。
+   */
+  public String systemForStore(String varName, String requestedStore) {
+    if (requestedStore == null || requestedStore.isBlank()) return null;
+    var entry = scopedTemplates().get(varName);
+    if (entry == null) return null;
+    String tpl = entry[1];
+    int idx = tpl.indexOf("{SYSTEM}");
+    if (idx < 0) return null;
+    String pre = tpl.substring(0, idx);
+    String suf = tpl.substring(idx + "{SYSTEM}".length());
+    var names = new TreeSet<String>();
+    if (writable())
+      for (var row :
+          store.rows(
+              "SELECT name FROM gateway_secret WHERE env=? AND name LIKE ?",
+              settings.current(),
+              pre + "%" + suf))
+        names.add(JsonUtils.str(row, "name"));
+    for (var key : System.getenv().keySet()) names.add(key);
+    String wanted = normalizeStore(requestedStore);
+    for (var full : names) {
+      int end = full.length() - suf.length();
+      if (!full.startsWith(pre) || !full.endsWith(suf) || end <= pre.length()) continue;
+      String inner = full.substring(pre.length(), end);
+      if (inner.isBlank()) continue;
+      String value = normalizeStore(raw(full));
+      if (!value.isBlank() && value.equalsIgnoreCase(wanted))
+        return inner.toLowerCase(Locale.ROOT);
+    }
+    return null;
+  }
+
+  private static String normalizeStore(String s) {
+    return s == null ? "" : s.trim().replaceFirst("^https?://", "").replaceAll("/+$", "");
+  }
+
   public String resolve(String name, String system) {
     for (var platform : registry.contract().path("credentials"))
       for (var variable : platform.path("vars"))
