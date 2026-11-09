@@ -34,6 +34,29 @@ public class MockAdapter {
         true);
   }
 
+  /** 与旧 Python 网关 MockGmail.get_message 逐字段一致。旧库近 30 天有 60 次成功调用，缺 payload/_mock 会让调用方拿到不同形状。 */
+  private Object gmailMessagesGet(Map<String, Object> p) {
+    return JsonUtils.obj(
+        "id",
+        p.get("message_id"),
+        "threadId",
+        "t0001",
+        "labelIds",
+        List.of("INBOX", "UNREAD"),
+        "snippet",
+        "模拟邮件摘要：关于订单 #10231 的物流查询……",
+        "payload",
+        JsonUtils.obj(
+            "headers",
+            List.of(
+                JsonUtils.obj("name", "From", "value", "customer@example.com"),
+                JsonUtils.obj("name", "To", "value", "support@example.com"),
+                JsonUtils.obj("name", "Subject", "value", "Where is my order?"),
+                JsonUtils.obj("name", "Date", "value", "2026-10-18T07:12:00Z"))),
+        "_mock",
+        true);
+  }
+
   public Object invoke(OperationDefinition op, Map<String, Object> p, String system) {
     String key = op.key(), action = key.substring(key.lastIndexOf('.') + 1);
     String now = Instant.now().toString();
@@ -203,16 +226,7 @@ public class MockAdapter {
             key.contains("labels")
                 ? JsonUtils.obj("labels", List.of(JsonUtils.obj("id", "INBOX", "name", "INBOX")))
                 : gmailMessagesList(p);
-        case "get" ->
-            JsonUtils.obj(
-                "id",
-                p.get("message_id"),
-                "threadId",
-                "mock-thread",
-                "snippet",
-                "模拟邮件",
-                "labelIds",
-                List.of("INBOX"));
+        case "get" -> gmailMessagesGet(p);
         case "send" ->
             JsonUtils.obj(
                 "id",
