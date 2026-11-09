@@ -54,6 +54,12 @@ services:
       MOCK_ALL: ${MOCK_ALL:-true}
       GATEWAY_DEV_MODE: ${GATEWAY_DEV_MODE:-false}
       JAVA_SEED_ENABLED: "true"
+      # 旧 Python 网关的 gmail / gdrive / gcs 三个平台一直是模拟态，其余平台真连。
+      # 这里按平台单独放开，避免 MOCK_ALL=false 时这三个平台因为缺 Google 凭据直接 503。
+      # 在 .env 里设成 false 即可让某个平台走真连，不设则默认与旧网关保持一致。
+      GMAIL_MOCK: ${GMAIL_MOCK:-true}
+      GDRIVE_MOCK: ${GDRIVE_MOCK:-true}
+      GCS_MOCK: ${GCS_MOCK:-true}
       # ── 管理后台登录 / 凭据加密 ──
       ADMIN_AUTH_MODES: admin_jwt
       ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}

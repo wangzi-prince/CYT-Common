@@ -83,7 +83,27 @@ bash deploy/test-server/refresh-branches.sh          # 刷新 Jenkins 分支下�
 | `redeploy.sh` | 首次自动建编排目录与随机 `.env`，`up -d` 后等 `/health` |
 | `git-hub.sh` | 走 GitHub API 列分支、codeload 下源码包；直连优先、失败走 mihomo 代理重试 |
 | `refresh-branches.sh` | 热更新 Jenkins 的 BRANCH 下拉 |
+| `dual-run-compare.py` | 用旧库真实请求对 8085 / 8088 影子双跑，逐字段比对并盯 429/502 |
 | `jenkins/*.xml` | 两个 Jenkins 自由风格任务的配置模板（不含任何密钥） |
+
+## 新旧网关双跑对比（下线旧网关前回归）
+
+`dual-run-compare.py` 从旧库 `gateway_call_log` 导出近 30 天真实在用的操作与参数，
+对 8085 / 8088 各发一遍同样的请求，逐字段比对，并单列 429 / 502 的 `retryable` 与 `Retry-After`。
+**只读重放，不切流量、不改任何服务配置**；写操作默认跳过，真实请求体现场导出、不落盘不进 Git。
+
+```bash
+python deploy/test-server/dual-run-compare.py               # 默认近 30 天、1 轮
+python deploy/test-server/dual-run-compare.py --repeat 3    # 加压观察限流触发
+python deploy/test-server/dual-run-compare.py --strict      # 有状态码不一致时退出码 1
+```
+
+### 与旧网关对齐的三个模拟开关
+
+旧 Python 网关的 `gmail` / `gdrive` / `gcs` 一直是模拟态，其余平台真连。
+`docker-compose.yml` 用 `GMAIL_MOCK` / `GDRIVE_MOCK` / `GCS_MOCK` 单独放开这三个平台
+（默认 `true`，在 `.env` 里设 `false` 可切真连），
+避免 `MOCK_ALL=false` 时它们因为缺 Google 凭据直接 503。
 
 ## 排障
 
