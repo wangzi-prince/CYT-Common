@@ -617,6 +617,10 @@ public class LingxingAdapter implements PlatformAdapter {
                         m.get(receive ? "from_name" : "to_name"),
                         "body",
                         "",
+                        // CYT-CS requirement_connectors.project() 的 message 分支会读这个字段，
+                        // 旧网关固定返回 usage；缺了它同步进来的工单会丢分类。
+                        "issue_type",
+                        "usage",
                         "flag",
                         flag,
                         "from_address",

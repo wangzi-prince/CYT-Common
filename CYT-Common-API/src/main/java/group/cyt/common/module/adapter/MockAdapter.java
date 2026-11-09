@@ -15,6 +15,25 @@ public class MockAdapter {
   private final Map<String, Map<String, Object>> calendars = new ConcurrentHashMap<>(),
       schedules = new ConcurrentHashMap<>();
 
+  /** 与旧 Python 网关 MockGmail.list_messages 逐字段一致，替换网关时调用方拿到的模拟数据不变。 */
+  private Object gmailMessagesList(Map<String, Object> p) {
+    int count = Math.max(0, Math.min(JsonUtils.integer(p.get("max_results"), 5), 5));
+    List<Object> messages = new ArrayList<>();
+    for (int i = 0; i < count; i++) {
+      String suffix = String.format("%04d", i);
+      messages.add(JsonUtils.obj("id", "mock-msg-" + suffix, "threadId", "t" + suffix));
+    }
+    return JsonUtils.obj(
+        "resultSizeEstimate",
+        count,
+        "messages",
+        messages,
+        "nextPageToken",
+        "mock-next",
+        "_mock",
+        true);
+  }
+
   public Object invoke(OperationDefinition op, Map<String, Object> p, String system) {
     String key = op.key(), action = key.substring(key.lastIndexOf('.') + 1);
     String now = Instant.now().toString();
@@ -183,8 +202,7 @@ public class MockAdapter {
         case "list" ->
             key.contains("labels")
                 ? JsonUtils.obj("labels", List.of(JsonUtils.obj("id", "INBOX", "name", "INBOX")))
-                : JsonUtils.obj(
-                    "messages", List.of(), "nextPageToken", null, "resultSizeEstimate", 0);
+                : gmailMessagesList(p);
         case "get" ->
             JsonUtils.obj(
                 "id",
