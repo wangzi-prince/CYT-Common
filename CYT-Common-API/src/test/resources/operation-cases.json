@@ -272,6 +272,15 @@
     }
   },
   {
+    "operation": "judgeme.replies.list",
+    "params": {},
+    "normalized": {
+      "account": "",
+      "cursor": {},
+      "limit": 100
+    }
+  },
+  {
     "operation": "lingxing.aftersales.reasons",
     "params": {},
     "normalized": {

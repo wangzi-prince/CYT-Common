@@ -1,6 +1,6 @@
 {
   "generated_at": "2026-11-11",
-  "scope": "逐项核对全部 163 个内置操作的实际代码；新增业务接口和推荐标签均不自动视为深度封装。",
+  "scope": "逐项核对全部 164 个内置操作的实际代码；新增业务接口和推荐标签均不自动视为深度封装。",
   "references": [
     {
       "title": "企微审批：模板详情",
@@ -32,9 +32,9 @@
     }
   ],
   "depth_summary": {
-    "total": 163,
+    "total": 164,
     "counts": {
-      "enhanced": 80,
+      "enhanced": 81,
       "deep": 28,
       "test_only": 1,
       "basic": 49,
@@ -43,7 +43,7 @@
     "all_deep": false,
     "conclusion": "当前没有全部完成深度二次封装。推荐调用、business 标签和测试通过均不能替代逐项业务深度判断。",
     "basis": "静态代码逐项审阅；只评价实际已实现的语义转换、关联补齐与流程编排，不评价供应商真实账号验收。",
-    "scope": "当前检查 163 个注册内置业务操作；本地运行目录未检测到自定义 HTTP 定义。管理端 CRUD 不作为业务深封完成项。",
+    "scope": "当前检查 164 个注册内置业务操作；本地运行目录未检测到自定义 HTTP 定义。管理端 CRUD 不作为业务深封完成项。",
     "levels": [
       {
         "key": "deep",
@@ -672,6 +672,27 @@
           "path": "src/main/java/group/cyt/common/module/adapter/source/CustomerSourcesAdapter.java",
           "line": 152,
           "anchor": "private Map<String, Object> judgemeReviews("
+        }
+      ]
+    },
+    {
+      "key": "judgeme.replies.list",
+      "platform": "judgeme",
+      "summary": "读取 Judge.me 公开回复",
+      "source": "src/main/java/group/cyt/common/module/adapter/source/CustomerSourcesAdapter.java",
+      "current": "读取官方公开组件的回复正文，区分明确空值和缺字段，分页覆盖商品与店铺评价。",
+      "proposal": "调用方按账号和评价原文唯一关联私有 ID，保存检查点并处理平台缓存延迟。",
+      "caveat": "只覆盖公开评价的公开回复；UUID 不等于私有评价 ID，平台不返回回复时间。",
+      "assessment": "ready",
+      "recommended_operations": [],
+      "depth": "enhanced",
+      "depth_reason": "读取并验证公开回复分页，规范 UUID、商品标识和明确回复状态，遍历商品及店铺评价。",
+      "remaining_gap": "仅含公开评价的公开回复，无回复发生时间；私有 ID 关联和缓存核对由调用方完成。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/source/CustomerSourcesAdapter.java",
+          "line": 159,
+          "anchor": "private Map<String, Object> judgemePublicReplies("
         }
       ]
     },
@@ -3904,11 +3925,11 @@
       "assessment": "ready",
       "current": "按账号、Judge.me 评论 ID 和确认参数公开回复，默认不发通知邮件。",
       "proposal": "调用方审批通过后执行，明确成功再保存已回复；超时后人工核对。",
-      "caveat": "评论列表不返回历史回复；无供应商回复查询、编辑和删除能力。",
+      "caveat": "公开回复可用 judgeme.replies.list 回读；不提供平台回复编辑和删除写操作。",
       "recommended_operations": [],
       "depth": "enhanced",
       "depth_reason": "按账号解析店铺凭据，确认后公开发布回复，规范成功结果并禁止自动重试。",
-      "remaining_gap": "列表接口不返回已有回复；历史人工回复识别、审批和不确定结果核对由调用方完成。",
+      "remaining_gap": "公开回复读取是独立操作；审批和不确定结果核对由调用方完成。",
       "evidence": [
         {
           "path": "src/main/java/group/cyt/common/module/adapter/source/CustomerSourcesAdapter.java",

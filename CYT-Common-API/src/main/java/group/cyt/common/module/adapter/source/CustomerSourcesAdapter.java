@@ -57,6 +57,7 @@ public class CustomerSourcesAdapter implements PlatformAdapter {
     return switch (op.key()) {
       case "judgeme.reviews.list" -> judgemeReviews(account, cursor, limit, timeout, system);
       case "judgeme.reviews.reply" -> judgemeReply(account, params, timeout, system);
+      case "judgeme.replies.list" -> judgemePublicReplies(account, cursor, timeout, system);
       case "trustpilot.reviews.list" -> trustpilotReviews(account, cursor, limit, timeout, system);
       case "stripe.disputes.list" -> stripeDisputes(account, cursor, limit, timeout, system);
       case "paypal.disputes.list" -> paypalDisputes(account, cursor, limit, timeout, system);
@@ -154,6 +155,115 @@ public class CustomerSourcesAdapter implements PlatformAdapter {
   }
 
   // ── judge.me ────────────────────────────────────────────────────────────────
+
+  private Map<String, Object> judgemePublicReplies(
+      String account, Map<String, Object> cursor, double timeout, String system) {
+    int page = pageNumber(cursor);
+    String kind = Objects.toString(cursor.getOrDefault("review_type", "product-reviews"));
+    if (!Set.of("product-reviews", "shop-reviews").contains(kind))
+      throw GatewayException.invalid("公开评价类型无效");
+    String token = cred("judgeme", account, "API_TOKEN", true, system);
+    String shop = cred("judgeme", account, "SHOP_DOMAIN", true, system);
+    var data =
+        JsonUtils.map(
+            http.json(
+                "GET",
+                UpstreamHttp.query(
+                    "https://api.judge.me/api/v1/widgets/all_reviews_page",
+                    JsonUtils.obj(
+                        "shop_domain",
+                        shop,
+                        "json_request",
+                        "true",
+                        "review_type",
+                        kind,
+                        "page",
+                        page)),
+                Map.of("X-Api-Token", token),
+                null,
+                timeout));
+    Object current = data.get("current_page"), total = data.get("total_pages");
+    if (!(data.get("reviews") instanceof List<?>)
+        || !(current instanceof Number)
+        || !(total instanceof Number)
+        || ((Number) current).doubleValue() != page
+        || ((Number) total).intValue() < 0
+        || ((Number) total).doubleValue() != ((Number) total).intValue())
+      throw new GatewayException(502, "upstream_error", "Judge.me 公开回复未返回可验证的分页", false);
+    List<Map<String, Object>> items = new ArrayList<>();
+    Set<String> ids = new HashSet<>();
+    for (Object raw : (List<?>) data.get("reviews")) {
+      if (!(raw instanceof Map<?, ?>))
+        throw new GatewayException(502, "upstream_error", "Judge.me 公开评价格式无效", false);
+      var row = JsonUtils.map(raw);
+      String identity = JsonUtils.str(row, "uuid");
+      if (!identity.matches(
+          "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"))
+        throw new GatewayException(502, "upstream_error", "Judge.me 公开评价缺少有效 UUID", false);
+      identity = UUID.fromString(identity).toString();
+      Object rating = row.get("rating");
+      if (!ids.add(identity)
+          || !(rating instanceof Number)
+          || ((Number) rating).doubleValue() != ((Number) rating).intValue()
+          || ((Number) rating).intValue() < 1
+          || ((Number) rating).intValue() > 5)
+        throw new GatewayException(502, "upstream_error", "Judge.me 公开评价存在重复 UUID 或无效评分", false);
+      Object reply = row.get("reply_content");
+      boolean observed =
+          row.containsKey("reply_content") && (reply == null || reply instanceof String);
+      String content = reply instanceof String ? (String) reply : "";
+      String handle = "";
+      try {
+        String path = URI.create(JsonUtils.str(row, "product_url")).getPath();
+        if (path != null && path.contains("/products/"))
+          handle = path.split("/products/", 2)[1].split("/", 2)[0];
+      } catch (IllegalArgumentException ignored) {
+        // A missing product identity cannot be used for matching by the caller.
+      }
+      items.add(
+          JsonUtils.obj(
+              "id",
+              identity,
+              "rating",
+              ((Number) rating).intValue(),
+              "content",
+              JsonUtils.str(row, "body"),
+              "title",
+              JsonUtils.str(row, "title"),
+              "created_at",
+              row.get("created_at"),
+              "product_handle",
+              handle,
+              "review_type",
+              kind,
+              "grouped",
+              JsonUtils.bool(row.get("is_for_product_from_group"))
+                  || JsonUtils.bool(row.get("is_for_product_from_bundle")),
+              "reply_content",
+              content,
+              "reply_state",
+              observed ? (content.isBlank() ? "unreplied" : "replied") : "unknown"));
+    }
+    boolean nextPage = page < ((Number) total).intValue();
+    if (nextPage && items.isEmpty())
+      throw new GatewayException(502, "upstream_error", "Judge.me 公开评价分页为空但仍有后续", false);
+    boolean more = nextPage || kind.equals("product-reviews");
+    return JsonUtils.obj(
+        "items",
+        items,
+        "has_more",
+        more,
+        "cursor",
+        JsonUtils.obj(
+            "page",
+            nextPage ? page + 1 : 1,
+            "review_type",
+            nextPage ? kind : (more ? "shop-reviews" : "product-reviews")),
+        "coverage",
+        "published_public_replies",
+        "reply_timestamp_available",
+        false);
+  }
 
   private Map<String, Object> judgemeReply(
       String account, Map<String, Object> params, double timeout, String system) {

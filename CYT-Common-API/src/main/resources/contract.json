@@ -1605,6 +1605,51 @@
       "path": "/integrations/judgeme/reviews/list"
     },
     {
+      "key": "judgeme.replies.list",
+      "platform": "judgeme",
+      "summary": "读取 Judge.me 公开回复与状态",
+      "quota": "30/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 60,
+      "retry_max": 1,
+      "since": "2026-10",
+      "deprecated": false,
+      "description": "官方公开评价组件 JSON 分页。公开 UUID 与管理 API 评论 ID 不同；不提供回复时间，未返回的评价不能判为未回复。",
+      "tags": [
+        "read"
+      ],
+      "cost": "none",
+      "category": "评价回复",
+      "sort_order": 0,
+      "schema": {
+        "properties": {
+          "account": {
+            "default": "",
+            "maxLength": 254,
+            "title": "Account",
+            "type": "string"
+          },
+          "cursor": {
+            "additionalProperties": true,
+            "title": "Cursor",
+            "type": "object",
+            "default": {}
+          },
+          "limit": {
+            "default": 100,
+            "maximum": 100,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "title": "Page",
+        "type": "object"
+      },
+      "path": "/integrations/judgeme/replies/list"
+    },
+    {
       "key": "judgeme.reviews.reply",
       "platform": "judgeme",
       "summary": "确认后公开回复 Judge.me 评价",
@@ -10437,6 +10482,12 @@
       "operation_pattern": "judgeme.reviews.reply",
       "quota": "30/min",
       "note": "Judge.me 公开回复（审批后明确确认，不自动重试）"
+    },
+    {
+      "system": "cs",
+      "operation_pattern": "judgeme.replies.list",
+      "quota": "30/min",
+      "note": "Judge.me 公开回复与状态核对"
     }
   ]
 }
