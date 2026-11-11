@@ -62,6 +62,7 @@ for op in all_operations():
                  name='Fixture User', country='US', city='Los Angeles', postcode='90001',
                  address1='1 Test Street')
     if op.key == 'winit.returns.void': p['confirm'] = True
+    if op.key == 'judgeme.reviews.reply': p.update(review_id=111, body='Fixture reply', confirm=True)
     try:
         validated = op.params_model.model_validate(p).model_dump(mode='json')
     except Exception as error:

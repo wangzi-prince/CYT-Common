@@ -57,6 +57,7 @@ d('gmail.messages.send','enhanced','从业务文本构建 UTF-8 MIME，核对邮
 d('gmail.profile.get','enhanced','核对实际授权邮箱与 account 参数，返回授权身份。','这是身份检查，不能算完整邮件业务流程。',('google','var profile = http.object('))
 
 d('judgeme.reviews.list','enhanced','评价归一为评分、内容、客户、SKU 和日期。','仍是单来源单页；无订单关联补齐、评价回复或问题归因。',('sources','private Map<String, Object> judgemeReviews('))
+d('judgeme.reviews.reply','enhanced','按账号解析店铺凭据，确认后公开发布回复，规范成功结果并禁止自动重试。','列表接口不返回已有回复；历史人工回复识别、审批和不确定结果核对由调用方完成。',('sources','private Map<String, Object> judgemeReply('))
 d('trustpilot.reviews.list','enhanced','区分公开/私有读取并整理评价、客户与订单字段。','无跨源订单关联和回复流程，字段可见性取决于凭据。',('sources','private Map<String, Object> trustpilotReviews('))
 d('stripe.disputes.list','enhanced','统一争议金额单位、币种、客户、订单和截止日期。','订单号来自已有 metadata，没有自动关联交易/订单和生成取证缺项。',('sources','private Map<String, Object> stripeDisputes('))
 d('paypal.disputes.list','deep','自动从列表逐项补齐争议详情，整理买家、订单、金额和响应期限。','任一详情失败仍会使当页失败；多笔争议交易只选首笔，不是完整取证工作流。',('sources','private Map<String, Object> paypalDisputes('))

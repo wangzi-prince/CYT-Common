@@ -378,6 +378,9 @@ public class MockAdapter {
       return op.key().equals("mabang.orders.track")
           ? JsonUtils.obj("track_infos", List.of(), "count", 0)
           : JsonUtils.obj("orders", List.of(), "total", 0, "has_next", false, "next_cursor", null);
+    if (key.equals("judgeme.reviews.reply"))
+      return JsonUtils.obj(
+          "ok", false, "mock", true, "review_id", p.get("review_id"), "message", "模拟模式未发布回复");
     if (Set.of("judgeme", "trustpilot", "paypal").contains(op.platform()))
       return JsonUtils.obj(
           "items", List.of(), "has_more", false, "cursor", JsonUtils.obj("page", 1));

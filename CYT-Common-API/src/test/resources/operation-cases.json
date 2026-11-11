@@ -1494,5 +1494,21 @@
       "orderType": "SD",
       "inspectionWarehouseCode": ""
     }
+  },
+  {
+    "operation": "judgeme.reviews.reply",
+    "params": {
+      "account": "fixture",
+      "review_id": 111,
+      "body": "Fixture reply",
+      "confirm": true
+    },
+    "normalized": {
+      "account": "fixture",
+      "review_id": 111,
+      "body": "Fixture reply",
+      "send_reply_email": false,
+      "confirm": true
+    }
   }
 ]

@@ -34,6 +34,7 @@ review('gmail.messages.send', '已组装 UTF-8 MIME，验证邮箱及全部收�
 review('gmail.profile.get', '返回实际 OAuth 授权邮箱，并验证 account 匹配。', '适合作为接入后的身份核对步骤。', 'account 参数不能切换到未授权邮箱。', 'ready')
 
 review('judgeme.reviews.list', '将评价归一为客服数据结构，保留来源与游标。', '使用 collect 自动分页并显示部分失败；跨来源分析仍需统一评分尺度。', assessment='recommended', recommended=['judgeme.reviews.collect'])
+review('judgeme.reviews.reply', '按账号、Judge.me 评论 ID 和确认参数公开回复，默认不发通知邮件。', '调用方审批通过后执行，明确成功再保存已回复；超时后人工核对。', '评论列表不返回历史回复；无供应商回复查询、编辑和删除能力。', assessment='ready')
 review('trustpilot.reviews.list', '将评价与业务来源关联，维护分页游标。', '使用 collect 自动分页；后续可添加回复状态与低分原因分类。', assessment='recommended', recommended=['trustpilot.reviews.collect'])
 review('stripe.disputes.list', '已整理争议状态、证据和来源单号。', '使用 collect 汇总；截止日期和可提交动作应以供应商状态为准。', '不自动提交证据或接受争议。', 'recommended', ['stripe.disputes.collect'])
 review('paypal.disputes.list', '读取争议并补齐取证详情，归一客服字段。', '使用 collect 汇总；进一步可生成取证缺项清单。', '详情补齐存在额外调用成本；当前来源详情失败会使该页报错，后续可深化为逐条失败保留。', 'recommended', ['paypal.disputes.collect'])

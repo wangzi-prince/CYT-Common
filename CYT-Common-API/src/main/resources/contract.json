@@ -1605,6 +1605,67 @@
       "path": "/integrations/judgeme/reviews/list"
     },
     {
+      "key": "judgeme.reviews.reply",
+      "platform": "judgeme",
+      "summary": "确认后公开回复 Judge.me 评价",
+      "quota": "30/min",
+      "sensitive": true,
+      "idempotent": true,
+      "timeout_s": 30,
+      "retry_max": 1,
+      "since": "2026-10",
+      "deprecated": false,
+      "description": "按 account 解析店铺私有 Token，使用 Judge.me 评论 ID 公开回复。confirm=true 才发布；默认不发送通知邮件。使用稳定幂等键；超时后先核对平台，禁止自动重发。评论列表不返回回复，调用方应在明确成功后保存已回复状态。",
+      "tags": [
+        "write"
+      ],
+      "cost": "none",
+      "category": "评价回复",
+      "sort_order": 0,
+      "schema": {
+        "additionalProperties": false,
+        "properties": {
+          "account": {
+            "default": "",
+            "maxLength": 254,
+            "title": "Account",
+            "type": "string"
+          },
+          "review_id": {
+            "description": "Judge.me 评论 ID，不能使用中台主键或商品 ID",
+            "exclusiveMinimum": 0,
+            "title": "Review Id",
+            "type": "integer"
+          },
+          "body": {
+            "maxLength": 10000,
+            "minLength": 1,
+            "title": "Body",
+            "type": "string"
+          },
+          "send_reply_email": {
+            "default": false,
+            "description": "是否同时邮件通知评论人，默认关闭",
+            "title": "Send Reply Email",
+            "type": "boolean"
+          },
+          "confirm": {
+            "default": false,
+            "description": "公开发布回复必须明确传 true",
+            "title": "Confirm",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "review_id",
+          "body"
+        ],
+        "title": "JudgeMeReply",
+        "type": "object"
+      },
+      "path": "/integrations/judgeme/reviews/reply"
+    },
+    {
       "key": "lingxing.aftersales.reasons",
       "platform": "lingxing",
       "summary": "查询售后原因列表（客服模块）",
@@ -9650,9 +9711,9 @@
     },
     {
       "platform": "judgeme",
-      "label": "Judge.me 评价（只读）",
+      "label": "Judge.me 评价与回复",
       "docs": "https://judge.me/help/en/articles/8409180-using-judge-me-api",
-      "note": "只读归集，不提供退款、回复或其他业务写入。多账号均需独立配置。Trustpilot API_KEY 与 ACCESS_TOKEN 至少配置一个。PayPal ENV 默认 sandbox。",
+      "note": "支持读取评价及确认后公开回复。需店铺 Private API Token，多账号独立配置。默认不发送回复通知邮件。",
       "scope_policy": "inherit",
       "strict_recommended": false,
       "system_aware": false,
@@ -10370,6 +10431,12 @@
       "operation_pattern": "wecom.calendars.get_many",
       "quota": "120/min",
       "note": ""
+    },
+    {
+      "system": "cs",
+      "operation_pattern": "judgeme.reviews.reply",
+      "quota": "30/min",
+      "note": "Judge.me 公开回复（审批后明确确认，不自动重试）"
     }
   ]
 }

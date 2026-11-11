@@ -18,10 +18,9 @@ import java.util.*;
 import org.springframework.stereotype.Component;
 
 /**
- * Read-only CS sources: reviews, payment disputes, and the RD product catalog.
+ * CS sources and confirmed Judge.me public replies.
  *
- * <p>No mutation operations are registered. Missing credentials fail loudly rather than returning
- * mock data.
+ * <p>Missing credentials fail loudly rather than returning mock data.
  */
 @Component
 public class CustomerSourcesAdapter implements PlatformAdapter {
@@ -30,8 +29,9 @@ public class CustomerSourcesAdapter implements PlatformAdapter {
 
   /** Currencies with no minor unit — Stripe reports the amount already in the major unit. */
   private static final Set<String> ZERO_DECIMAL =
-      Set.of("BIF", "CLP", "DJF", "GNF", "JPY", "KMF", "KRW", "MGA", "PYG", "RWF", "UGX", "VND",
-          "VUV", "XAF", "XOF", "XPF");
+      Set.of(
+          "BIF", "CLP", "DJF", "GNF", "JPY", "KMF", "KRW", "MGA", "PYG", "RWF", "UGX", "VND", "VUV",
+          "XAF", "XOF", "XPF");
 
   private static final Set<String> THREE_DECIMAL = Set.of("BHD", "JOD", "KWD", "OMR", "TND");
 
@@ -56,11 +56,12 @@ public class CustomerSourcesAdapter implements PlatformAdapter {
     int limit = JsonUtils.integer(params.get("limit"), 100);
     return switch (op.key()) {
       case "judgeme.reviews.list" -> judgemeReviews(account, cursor, limit, timeout, system);
+      case "judgeme.reviews.reply" -> judgemeReply(account, params, timeout, system);
       case "trustpilot.reviews.list" -> trustpilotReviews(account, cursor, limit, timeout, system);
       case "stripe.disputes.list" -> stripeDisputes(account, cursor, limit, timeout, system);
       case "paypal.disputes.list" -> paypalDisputes(account, cursor, limit, timeout, system);
       case "rd.products.list" -> rdProducts(account, cursor, timeout, system);
-      default -> throw GatewayException.config("未知只读归集操作: " + op.key());
+      default -> throw GatewayException.config("未知客服来源操作: " + op.key());
     };
   }
 
@@ -70,11 +71,16 @@ public class CustomerSourcesAdapter implements PlatformAdapter {
    * SOURCE_{ACCOUNT}_FIELD, or SOURCE_FIELD when no account is named — the same layout the
    * credential page writes, so 「已配」 on the page means resolvable here.
    */
-  private String cred(String source, String account, String field, boolean required, String system) {
+  private String cred(
+      String source, String account, String field, boolean required, String system) {
     String key =
         account == null || account.isBlank()
             ? source.toUpperCase(Locale.ROOT) + "_" + field
-            : source.toUpperCase(Locale.ROOT) + "_" + CredentialService.accountKey(account) + "_" + field;
+            : source.toUpperCase(Locale.ROOT)
+                + "_"
+                + CredentialService.accountKey(account)
+                + "_"
+                + field;
     String value = credentials.resolve(key, system).strip();
     if (value.isEmpty() && required)
       throw GatewayException.config(source + " 缺少账号配置 " + key + "；不会返回模拟数据");
@@ -131,11 +137,11 @@ public class CustomerSourcesAdapter implements PlatformAdapter {
   /** Unix seconds → ISO-8601 string with explicit UTC offset, matching Python's isoformat(). */
   private static String epochDate(Object value) {
     if (value == null) return null;
-    long seconds = value instanceof Number n ? n.longValue()
-        : Long.parseLong(Objects.toString(value, "0"));
+    long seconds =
+        value instanceof Number n ? n.longValue() : Long.parseLong(Objects.toString(value, "0"));
     if (seconds == 0) return null;
     return LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), ZoneOffset.UTC)
-        .format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss"))
+            .format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss"))
         + "+00:00";
   }
 
@@ -148,6 +154,65 @@ public class CustomerSourcesAdapter implements PlatformAdapter {
   }
 
   // ── judge.me ────────────────────────────────────────────────────────────────
+
+  private Map<String, Object> judgemeReply(
+      String account, Map<String, Object> params, double timeout, String system) {
+    if (!Boolean.TRUE.equals(params.get("confirm")))
+      throw GatewayException.invalid("公开回复 Judge.me 评论需要 confirm=true");
+    String body = JsonUtils.str(params, "body").strip();
+    String id = Objects.toString(params.get("review_id"), "");
+    if (body.isEmpty() || body.length() > 10000 || !id.matches("[1-9][0-9]*"))
+      throw GatewayException.invalid("需要有效的 Judge.me 评论 ID 和非空回复正文");
+    String token = cred("judgeme", account, "API_TOKEN", true, system);
+    String shop = cred("judgeme", account, "SHOP_DOMAIN", true, system);
+    boolean sendEmail = Boolean.TRUE.equals(params.get("send_reply_email"));
+    var response =
+        http.exchange(
+            "POST",
+            UpstreamHttp.query("https://api.judge.me/api/v1/replies", Map.of("shop_domain", shop)),
+            Map.of("X-Api-Token", token, "Content-Type", "application/json"),
+            JsonUtils.write(
+                    JsonUtils.obj(
+                        "review_id",
+                        params.get("review_id"),
+                        "reply",
+                        Map.of("content", body),
+                        "send_reply_email",
+                        sendEmail))
+                .getBytes(StandardCharsets.UTF_8),
+            timeout,
+            null);
+    if (response.status() != 200)
+      throw new GatewayException(
+          502, "upstream_error", "Judge.me 未返回预期 HTTP 200；请核对平台记录，勿自动重发", false);
+    // HTTP success is the documented acknowledgement; the response body is unspecified.
+    Object data;
+    try {
+      data =
+          response.body().length == 0
+              ? Map.of()
+              : JsonUtils.parse(new String(response.body(), StandardCharsets.UTF_8));
+    } catch (RuntimeException e) {
+      throw new GatewayException(502, "upstream_error", "Judge.me 未确认回复成功；请核对平台记录，勿自动重发", false);
+    }
+    if (!(data instanceof Map<?, ?> result)
+        || result.get("error") != null
+        || result.get("errors") != null
+        || Boolean.FALSE.equals(result.get("ok"))
+        || Boolean.FALSE.equals(result.get("success")))
+      throw new GatewayException(502, "upstream_error", "Judge.me 未确认回复成功；请核对平台记录，勿自动重发", false);
+    return JsonUtils.obj(
+        "ok",
+        true,
+        "account",
+        account,
+        "review_id",
+        params.get("review_id"),
+        "reply",
+        body,
+        "send_reply_email",
+        sendEmail);
+  }
 
   private Map<String, Object> judgemeReviews(
       String account, Map<String, Object> cursor, int limit, double timeout, String system) {
@@ -222,8 +287,7 @@ public class CustomerSourcesAdapter implements PlatformAdapter {
                 "GET",
                 UpstreamHttp.query(
                     "https://api.trustpilot.com" + path,
-                    JsonUtils.obj(
-                        "page", page, "perPage", limit, "orderBy", "createdat.desc")),
+                    JsonUtils.obj("page", page, "perPage", limit, "orderBy", "createdat.desc")),
                 authHeaders,
                 null,
                 timeout));
@@ -277,12 +341,12 @@ public class CustomerSourcesAdapter implements PlatformAdapter {
                   Map<String, Object> row = JsonUtils.map(v);
                   Map<String, Object> evidence = JsonUtils.map(row.get("evidence"));
                   Map<String, Object> metadata = JsonUtils.map(row.get("metadata"));
-                  Map<String, Object> evidenceDetails =
-                      JsonUtils.map(row.get("evidence_details"));
+                  Map<String, Object> evidenceDetails = JsonUtils.map(row.get("evidence_details"));
                   return JsonUtils.obj(
                       "id", Objects.toString(row.get("id"), ""),
                       "amount", majorAmount(row.get("amount"), row.get("currency")),
-                      "currency", Objects.toString(row.get("currency"), "").toUpperCase(Locale.ROOT),
+                      "currency",
+                          Objects.toString(row.get("currency"), "").toUpperCase(Locale.ROOT),
                       "reason", row.get("reason"),
                       "status", row.get("status"),
                       "customer_email", evidence.get("customer_email_address"),
@@ -297,8 +361,7 @@ public class CustomerSourcesAdapter implements PlatformAdapter {
       throw new GatewayException(502, "upstream_error", "Stripe 声明下一页但未返回可用游标", false);
     String nextCursor = more ? Objects.toString(items.getLast().get("id"), "") : "";
     return JsonUtils.obj(
-        "items", items, "has_more", more,
-        "cursor", JsonUtils.obj("starting_after", nextCursor));
+        "items", items, "has_more", more, "cursor", JsonUtils.obj("starting_after", nextCursor));
   }
 
   // ── paypal disputes ─────────────────────────────────────────────────────────
@@ -337,8 +400,7 @@ public class CustomerSourcesAdapter implements PlatformAdapter {
             http.json(
                 "GET",
                 UpstreamHttp.query(
-                    base + "/v1/customer/disputes",
-                    JsonUtils.obj("page", page, "page_size", size)),
+                    base + "/v1/customer/disputes", JsonUtils.obj("page", page, "page_size", size)),
                 headers,
                 null,
                 timeout));
@@ -446,8 +508,7 @@ public class CustomerSourcesAdapter implements PlatformAdapter {
       throw GatewayException.invalid("RD 地址格式无效");
     }
     String scheme = uri.getScheme();
-    if (scheme == null)
-      throw GatewayException.invalid("RD 地址须为 HTTPS 或本机测试 HTTP 地址，不能包含认证或查询参数");
+    if (scheme == null) throw GatewayException.invalid("RD 地址须为 HTTPS 或本机测试 HTTP 地址，不能包含认证或查询参数");
     if (uri.getUserInfo() != null || uri.getQuery() != null || uri.getFragment() != null)
       throw GatewayException.invalid("RD 地址须为 HTTPS 或本机测试 HTTP 地址，不能包含认证或查询参数");
     if (scheme.equalsIgnoreCase("https")) return;
