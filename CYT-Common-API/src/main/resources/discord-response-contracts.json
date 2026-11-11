@@ -1,0 +1,170 @@
+{
+  "discord.identity.get": {
+    "type": "object",
+    "description": "Discord 原始字段保留；items 为该次授权读取结果。",
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "username": {
+        "type": "string"
+      },
+      "bot": {
+        "type": "boolean"
+      }
+    }
+  },
+  "discord.accounts.list": {
+    "type": "object",
+    "description": "Discord 原始字段保留；items 为该次授权读取结果。",
+    "properties": {
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    }
+  },
+  "discord.guilds.list": {
+    "type": "object",
+    "description": "Discord 原始字段保留；items 为该次授权读取结果。",
+    "properties": {
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    }
+  },
+  "discord.bots.list": {
+    "type": "object",
+    "description": "Discord 原始字段保留；items 为该次授权读取结果。",
+    "properties": {
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    }
+  },
+  "discord.channels.list": {
+    "type": "object",
+    "description": "Discord 原始字段保留；items 为该次授权读取结果。",
+    "properties": {
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    }
+  },
+  "discord.channels.get": {
+    "type": "object",
+    "description": "Discord 原始字段保留；items 为该次授权读取结果。",
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "guild_id": {
+        "type": "string"
+      },
+      "channel_id": {
+        "type": "string"
+      },
+      "content": {
+        "type": "string"
+      }
+    }
+  },
+  "discord.threads.list": {
+    "type": "object",
+    "description": "Discord 原始字段保留；items 为该次授权读取结果。",
+    "properties": {
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    }
+  },
+  "discord.messages.list": {
+    "type": "object",
+    "description": "Discord 原始字段保留；items 为该次授权读取结果。",
+    "properties": {
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "before": {
+        "type": "string"
+      },
+      "has_more": {
+        "type": "boolean"
+      }
+    }
+  },
+  "discord.messages.get": {
+    "type": "object",
+    "description": "Discord 原始字段保留；items 为该次授权读取结果。",
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "guild_id": {
+        "type": "string"
+      },
+      "channel_id": {
+        "type": "string"
+      },
+      "content": {
+        "type": "string"
+      }
+    }
+  },
+  "discord.events.list": {
+    "type": "object",
+    "description": "Discord 原始字段保留；items 为该次授权读取结果。",
+    "properties": {
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "cursor": {
+        "type": "integer"
+      },
+      "has_more": {
+        "type": "boolean"
+      },
+      "listener": {
+        "type": "object"
+      }
+    }
+  },
+  "discord.messages.send": {
+    "type": "object",
+    "description": "Discord 原始字段保留；items 为该次授权读取结果。",
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "guild_id": {
+        "type": "string"
+      },
+      "channel_id": {
+        "type": "string"
+      },
+      "content": {
+        "type": "string"
+      }
+    }
+  }
+}

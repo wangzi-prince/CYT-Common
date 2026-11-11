@@ -47,6 +47,18 @@ public class WecomAdapter implements PlatformAdapter {
   public Object invoke(OperationDefinition op, Map<String, Object> p, String system) {
     Context c = context(p, system);
     String key = op.key().substring(6);
+    if (key.startsWith("hr.")) {
+      String prefix = c.app().equals("default") ? "WEWORK" : "WEWORK_APP_" + c.app().toUpperCase(Locale.ROOT);
+      String hrSecret = credentials.resolve(prefix + "_HR_SECRET", system);
+      if (hrSecret.isBlank()) hrSecret = credentials.resolve("WEWORK_HR_SECRET", system);
+      if (!hrSecret.isBlank()) c = new Context(c.app(), c.corp(), hrSecret, c.contactSecret(), c.agent(), c.base(), c.headers());
+      if (key.equals("hr.get_fields"))
+        return call(c, "GET", "/hr/get_fields", Map.of(), null, false);
+      if (key.equals("hr.get_staff_info"))
+        return call(c, "POST", "/hr/get_staff_info", Map.of(),
+            JsonUtils.obj("userid", p.get("userid"), "get_all", false, "fieldids", p.get("fieldids")), false);
+      throw GatewayException.invalid("未知企微花名册操作");
+    }
     if (key.equals("auth.access_token"))
       return JsonUtils.obj(
           "errcode",

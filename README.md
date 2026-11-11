@@ -77,7 +77,9 @@ java -jar target/common-api-1.0.0-SNAPSHOT.jar
 
 ## 功能范围
 
-当前操作契约包含 16 个平台、144 个内置操作（原有 109 个，加 23 个企微审批和 12 个业务聚合能力），并保留原参数名、公开路径和旧操作名称别名，覆盖 DocuSign、企业微信、Shopify、Gmail、Google Drive、GCS、NAS MinIO、QuickCEP、领星、Winit 等平台。
+Discord 已增加 11 个原生接口、加密凭据登记、持久化实时监听及重启恢复；接入配置、缓存策略与切换边界见 [Discord 接入](docs/discord.md)。中台现用 Python 路由保持运行，Java 版需完成凭据与授权配置后再切换。
+
+操作目录由版本化契约生成，保留原参数名、公开路径和旧操作名称别名，覆盖 DocuSign、企业微信、Shopify、Gmail、Google Drive、GCS、NAS MinIO、QuickCEP、领星、Winit、Discord 等平台。
 
 管理界面包括调用总览、调用记录、审计日志、接入平台、操作目录、调用方系统、授权管理、环境与凭据、企微/DocuSign 回调、自定义模块及接口、调试台与接入文档。审批作为企业微信平台的业务接口集成在同一目录，提供按模板填写的调试辅助；封装指南从操作目录和接入文档进入。
 

@@ -32,13 +32,13 @@
     }
   ],
   "depth_summary": {
-    "total": 151,
+    "total": 162,
     "counts": {
+      "enhanced": 79,
       "deep": 28,
-      "enhanced": 68,
+      "test_only": 1,
       "basic": 49,
-      "supporting": 5,
-      "test_only": 1
+      "supporting": 5
     },
     "all_deep": false,
     "conclusion": "当前没有全部完成深度二次封装。推荐调用、business 标签和测试通过均不能替代逐项业务深度判断。",
@@ -3719,6 +3719,182 @@
           "anchor": "case \"total_offset\""
         }
       ]
+    },
+    {
+      "key": "discord.identity.get",
+      "current": "验证机器人身份",
+      "proposal": "保留原始字段，按调用方授权配置访问。",
+      "depth": "enhanced",
+      "depth_reason": "已实现原生请求、参数验证、权限错误及凭据隔离缓存；实时事件由持久化监听供给。",
+      "remaining_gap": "需要真实账号与权限验收；大量服务器部署需要额外配置分片。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/discord/DiscordAdapter.java",
+          "line": 1,
+          "anchor": "public class DiscordAdapter"
+        }
+      ],
+      "recommended_operations": []
+    },
+    {
+      "key": "discord.accounts.list",
+      "current": "发现已登记的机器人账号（不返回凭据）",
+      "proposal": "保留原始字段，按调用方授权配置访问。",
+      "depth": "enhanced",
+      "depth_reason": "已实现原生请求、参数验证、权限错误及凭据隔离缓存；实时事件由持久化监听供给。",
+      "remaining_gap": "需要真实账号与权限验收；大量服务器部署需要额外配置分片。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/discord/DiscordAdapter.java",
+          "line": 1,
+          "anchor": "public class DiscordAdapter"
+        }
+      ],
+      "recommended_operations": []
+    },
+    {
+      "key": "discord.guilds.list",
+      "current": "列出已加入的服务器",
+      "proposal": "保留原始字段，按调用方授权配置访问。",
+      "depth": "enhanced",
+      "depth_reason": "已实现原生请求、参数验证、权限错误及凭据隔离缓存；实时事件由持久化监听供给。",
+      "remaining_gap": "需要真实账号与权限验收；大量服务器部署需要额外配置分片。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/discord/DiscordAdapter.java",
+          "line": 1,
+          "anchor": "public class DiscordAdapter"
+        }
+      ],
+      "recommended_operations": []
+    },
+    {
+      "key": "discord.bots.list",
+      "current": "列出服务器机器人托管角色",
+      "proposal": "保留原始字段，按调用方授权配置访问。",
+      "depth": "enhanced",
+      "depth_reason": "已实现原生请求、参数验证、权限错误及凭据隔离缓存；实时事件由持久化监听供给。",
+      "remaining_gap": "需要真实账号与权限验收；大量服务器部署需要额外配置分片。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/discord/DiscordAdapter.java",
+          "line": 1,
+          "anchor": "public class DiscordAdapter"
+        }
+      ],
+      "recommended_operations": []
+    },
+    {
+      "key": "discord.channels.list",
+      "current": "列出服务器频道",
+      "proposal": "保留原始字段，按调用方授权配置访问。",
+      "depth": "enhanced",
+      "depth_reason": "已实现原生请求、参数验证、权限错误及凭据隔离缓存；实时事件由持久化监听供给。",
+      "remaining_gap": "需要真实账号与权限验收；大量服务器部署需要额外配置分片。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/discord/DiscordAdapter.java",
+          "line": 1,
+          "anchor": "public class DiscordAdapter"
+        }
+      ],
+      "recommended_operations": []
+    },
+    {
+      "key": "discord.channels.get",
+      "current": "读取频道及所属服务器",
+      "proposal": "保留原始字段，按调用方授权配置访问。",
+      "depth": "enhanced",
+      "depth_reason": "已实现原生请求、参数验证、权限错误及凭据隔离缓存；实时事件由持久化监听供给。",
+      "remaining_gap": "需要真实账号与权限验收；大量服务器部署需要额外配置分片。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/discord/DiscordAdapter.java",
+          "line": 1,
+          "anchor": "public class DiscordAdapter"
+        }
+      ],
+      "recommended_operations": []
+    },
+    {
+      "key": "discord.threads.list",
+      "current": "读取论坛活动和归档帖子",
+      "proposal": "保留原始字段，按调用方授权配置访问。",
+      "depth": "enhanced",
+      "depth_reason": "已实现原生请求、参数验证、权限错误及凭据隔离缓存；实时事件由持久化监听供给。",
+      "remaining_gap": "需要真实账号与权限验收；大量服务器部署需要额外配置分片。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/discord/DiscordAdapter.java",
+          "line": 1,
+          "anchor": "public class DiscordAdapter"
+        }
+      ],
+      "recommended_operations": []
+    },
+    {
+      "key": "discord.messages.list",
+      "current": "分页读取频道或帖子消息",
+      "proposal": "保留原始字段，按调用方授权配置访问。",
+      "depth": "enhanced",
+      "depth_reason": "已实现原生请求、参数验证、权限错误及凭据隔离缓存；实时事件由持久化监听供给。",
+      "remaining_gap": "需要真实账号与权限验收；大量服务器部署需要额外配置分片。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/discord/DiscordAdapter.java",
+          "line": 1,
+          "anchor": "public class DiscordAdapter"
+        }
+      ],
+      "recommended_operations": []
+    },
+    {
+      "key": "discord.messages.get",
+      "current": "读取原消息及回复上下文",
+      "proposal": "保留原始字段，按调用方授权配置访问。",
+      "depth": "enhanced",
+      "depth_reason": "已实现原生请求、参数验证、权限错误及凭据隔离缓存；实时事件由持久化监听供给。",
+      "remaining_gap": "需要真实账号与权限验收；大量服务器部署需要额外配置分片。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/discord/DiscordAdapter.java",
+          "line": 1,
+          "anchor": "public class DiscordAdapter"
+        }
+      ],
+      "recommended_operations": []
+    },
+    {
+      "key": "discord.events.list",
+      "current": "读取持久化实时消息及私信事件",
+      "proposal": "保留原始字段，按调用方授权配置访问。",
+      "depth": "enhanced",
+      "depth_reason": "已实现原生请求、参数验证、权限错误及凭据隔离缓存；实时事件由持久化监听供给。",
+      "remaining_gap": "需要真实账号与权限验收；大量服务器部署需要额外配置分片。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/discord/DiscordEvents.java",
+          "line": 1,
+          "anchor": "public class DiscordEvents"
+        }
+      ],
+      "recommended_operations": []
+    },
+    {
+      "key": "discord.messages.send",
+      "current": "确认后发送机器人消息",
+      "proposal": "保留原始字段，按调用方授权配置访问。",
+      "depth": "enhanced",
+      "depth_reason": "已实现原生请求、参数验证、权限错误及凭据隔离缓存；实时事件由持久化监听供给。",
+      "remaining_gap": "需要真实账号与权限验收；大量服务器部署需要额外配置分片。",
+      "evidence": [
+        {
+          "path": "src/main/java/group/cyt/common/module/adapter/discord/DiscordAdapter.java",
+          "line": 1,
+          "anchor": "public class DiscordAdapter"
+        }
+      ],
+      "recommended_operations": []
     }
   ]
 }

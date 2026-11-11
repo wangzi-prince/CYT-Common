@@ -15,7 +15,7 @@ public class CallLogService {
   private static final Logger log = LoggerFactory.getLogger(CallLogService.class);
   private static final Pattern SECRET =
       Pattern.compile(
-          "(?i).*(password|secret|token|authorization|api.?key|private.?key|signature|sign|content_base64|body_base64|raw|ciphertext).*");
+          "(?i).*(password|secret|token|authorization|api.?key|private.?key|signature|sign|content_base64|body_base64|raw|ciphertext|field_info|birthday|hire_date).*");
   private static final Set<String> CONTENT =
       Set.of(
           "body",

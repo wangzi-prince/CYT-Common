@@ -282,6 +282,12 @@ public class CredentialService {
   }
 
   /** 账号列表：声明变量 + 默认账号 + 从已有变量名反推，兜底 account_fallback。 */
+  public List<String> accounts(String platform) {
+    for (var spec : registry.contract().path("credentials"))
+      if (spec.path("platform").asText().equals(platform)) return accountsOf(spec);
+    return List.of();
+  }
+
   private List<String> accountsOf(JsonNode spec) {
     var seen = new LinkedHashMap<String, String>();
     java.util.function.Consumer<String> add =
@@ -479,8 +485,7 @@ public class CredentialService {
   }
 
   /**
-   * 按店铺域名反查该用哪个系统段读取凭据。调用方只用一个系统身份时，由请求里的 store
-   * 决定实际店铺的 SHOPIFY_{SYSTEM}_* 凭据，免去为每个店铺登记一个接入系统。
+   * 按店铺域名反查该用哪个系统段读取凭据。调用方只用一个系统身份时，由请求里的 store 决定实际店铺的 SHOPIFY_{SYSTEM}_* 凭据，免去为每个店铺登记一个接入系统。
    * 找不到返回 null：适配器会保持原有「请求店铺与实际授权店铺不一致」的拒绝行为。
    */
   public String systemForStore(String varName, String requestedStore) {
@@ -498,8 +503,7 @@ public class CredentialService {
           store.rows(
               "SELECT name FROM gateway_secret WHERE env=? AND name LIKE ?",
               settings.current(),
-              pre + "%" + suf))
-        names.add(JsonUtils.str(row, "name"));
+              pre + "%" + suf)) names.add(JsonUtils.str(row, "name"));
     for (var key : System.getenv().keySet()) names.add(key);
     String wanted = normalizeStore(requestedStore);
     for (var full : names) {
@@ -508,8 +512,7 @@ public class CredentialService {
       String inner = full.substring(pre.length(), end);
       if (inner.isBlank()) continue;
       String value = normalizeStore(raw(full));
-      if (!value.isBlank() && value.equalsIgnoreCase(wanted))
-        return inner.toLowerCase(Locale.ROOT);
+      if (!value.isBlank() && value.equalsIgnoreCase(wanted)) return inner.toLowerCase(Locale.ROOT);
     }
     return null;
   }

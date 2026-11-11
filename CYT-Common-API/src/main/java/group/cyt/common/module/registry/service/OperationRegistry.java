@@ -59,6 +59,11 @@ public class OperationRegistry {
         }
       }
     }
+    try (var input = getClass().getResourceAsStream("/discord-contract.json")) {
+      var discord = JsonUtils.MAPPER.readTree(input);
+      for (String section : List.of("operations", "platforms", "credentials"))
+        ((ArrayNode) contract.path(section)).addAll((ArrayNode) discord.path(section));
+    }
     for (JsonNode n : contract.path("operations")) {
       var op = JsonUtils.MAPPER.treeToValue(n, OperationDefinition.class);
       if (builtins.putIfAbsent(op.key(), op) != null)

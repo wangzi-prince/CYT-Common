@@ -20,7 +20,13 @@ public class DocumentationContracts {
     try (var input = getClass().getResourceAsStream("/response-contracts.json")) {
       contracts = JsonUtils.MAPPER.readTree(input);
     }
-    for (String resource : List.of("/contract.json", "/business-contract.json")) {
+    try (var input = getClass().getResourceAsStream("/discord-response-contracts.json")) {
+      ((com.fasterxml.jackson.databind.node.ObjectNode) contracts)
+          .setAll(
+              (com.fasterxml.jackson.databind.node.ObjectNode) JsonUtils.MAPPER.readTree(input));
+    }
+    for (String resource :
+        List.of("/contract.json", "/business-contract.json", "/discord-contract.json")) {
       try (var input = getClass().getResourceAsStream(resource)) {
         for (var op : JsonUtils.MAPPER.readTree(input).path("operations"))
           builtins.add(op.path("key").asText());

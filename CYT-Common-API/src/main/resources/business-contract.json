@@ -3348,6 +3348,107 @@
           {}
         ]
       }
+    },
+    {
+      "key": "wecom.hr.get_fields",
+      "platform": "wecom",
+      "summary": "读取企微花名册字段配置",
+      "description": "只读指定字段；需花名册权限。密钥及 token 由网关持有，字段值不记入调用摘要。",
+      "quota": "300/min",
+      "sensitive": true,
+      "idempotent": false,
+      "timeout_s": 40,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "hr"
+      ],
+      "category": "员工花名册",
+      "sort_order": 10,
+      "path": "/integrations/wecom/hr/get-fields",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "app": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[a-z][a-z0-9_-]{0,31}$"
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "key": "wecom.hr.get_staff_info",
+      "platform": "wecom",
+      "summary": "读取员工指定花名册字段",
+      "description": "只读指定字段；需花名册权限。密钥及 token 由网关持有，字段值不记入调用摘要。",
+      "quota": "300/min",
+      "sensitive": true,
+      "idempotent": false,
+      "timeout_s": 40,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read",
+        "hr"
+      ],
+      "category": "员工花名册",
+      "sort_order": 20,
+      "path": "/integrations/wecom/hr/get-staff-info",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "app": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[a-z][a-z0-9_-]{0,31}$"
+          },
+          "userid": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^\\S+$"
+          },
+          "fieldids": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 100,
+            "uniqueItems": true,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "fieldid": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "sub_idx": {
+                  "type": "integer",
+                  "const": 0,
+                  "default": 0
+                }
+              },
+              "required": [
+                "fieldid"
+              ]
+            }
+          }
+        },
+        "required": [
+          "userid",
+          "fieldids"
+        ]
+      }
     }
   ],
   "native_extensions": [
@@ -3630,6 +3731,15 @@
           "hint": "与企微后台 API 接收配置一致，固定 43 位",
           "per_system": true,
           "scoped": "WEWORK_{SYSTEM}_CALLBACK_AES_KEY"
+        },
+        {
+          "name": "WEWORK_HR_SECRET",
+          "label": "花名册应用 Secret",
+          "required": false,
+          "secret": true,
+          "hint": "优先使用具备企微人事助手权限的应用 Secret，未设置时使用当前系统应用",
+          "per_system": true,
+          "scoped": "WEWORK_{SYSTEM}_HR_SECRET"
         }
       ]
     }

@@ -38,9 +38,9 @@ public class AdapterDispatcher {
    * 这样可以在保持其余平台模拟的同时单独放开审批这类资源走真连。
    */
   public boolean mock(OperationDefinition op) {
+    if (op.platform().equals("discord")) return false;
     if (!registry.builtin(op.key())) return false;
-    for (String flag : mockFlags(op))
-      if (settings.isSet(flag)) return settings.flag(flag, false);
+    for (String flag : mockFlags(op)) if (settings.isSet(flag)) return settings.flag(flag, false);
     return settings.mock();
   }
 
@@ -50,8 +50,7 @@ public class AdapterDispatcher {
     String[] segments = op.key().split("\\.");
     return segments.length > 2
         ? List.of(
-            platform + "_" + segments[1].toUpperCase(Locale.ROOT) + "_MOCK",
-            platform + "_MOCK")
+            platform + "_" + segments[1].toUpperCase(Locale.ROOT) + "_MOCK", platform + "_MOCK")
         : List.of(platform + "_MOCK");
   }
 

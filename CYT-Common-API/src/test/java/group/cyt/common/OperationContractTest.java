@@ -14,21 +14,15 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 class OperationContractTest {
   static Stream<Map<String, Object>> cases() throws Exception {
-    try (var input = OperationContractTest.class.getResourceAsStream("/operation-cases.json")) {
-      var original =
-          JsonUtils.MAPPER
-              .<List<Map<String, Object>>>readValue(
-                  input, new com.fasterxml.jackson.core.type.TypeReference<>() {})
-              .stream();
-      try (var business = OperationContractTest.class.getResourceAsStream("/business-cases.json")) {
-        return Stream.concat(
-            original,
-            JsonUtils.MAPPER
-                .<List<Map<String, Object>>>readValue(
-                    business, new com.fasterxml.jackson.core.type.TypeReference<>() {})
-                .stream());
+    List<Map<String, Object>> cases = new ArrayList<>();
+    for (String resource :
+        List.of("/operation-cases.json", "/business-cases.json", "/discord-cases.json"))
+      try (var input = OperationContractTest.class.getResourceAsStream(resource)) {
+        cases.addAll(
+            JsonUtils.MAPPER.<List<Map<String, Object>>>readValue(
+                input, new com.fasterxml.jackson.core.type.TypeReference<>() {}));
       }
-    }
+    return cases.stream();
   }
 
   @ParameterizedTest(name = "{index}: Python parameter contract")

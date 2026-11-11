@@ -1,0 +1,132 @@
+[
+  {
+    "operation": "discord.identity.get",
+    "params": {},
+    "normalized": {
+      "account": "",
+      "refresh": false
+    }
+  },
+  {
+    "operation": "discord.accounts.list",
+    "params": {},
+    "normalized": {
+      "account": "",
+      "refresh": false
+    }
+  },
+  {
+    "operation": "discord.guilds.list",
+    "params": {},
+    "normalized": {
+      "account": "",
+      "refresh": false
+    }
+  },
+  {
+    "operation": "discord.bots.list",
+    "params": {
+      "guild_id": "234567890123456"
+    },
+    "normalized": {
+      "account": "",
+      "refresh": false,
+      "guild_id": "234567890123456"
+    }
+  },
+  {
+    "operation": "discord.channels.list",
+    "params": {
+      "guild_id": "234567890123456"
+    },
+    "normalized": {
+      "account": "",
+      "refresh": false,
+      "guild_id": "234567890123456"
+    }
+  },
+  {
+    "operation": "discord.channels.get",
+    "params": {
+      "channel_id": "123456789012345"
+    },
+    "normalized": {
+      "account": "",
+      "refresh": false,
+      "channel_id": "123456789012345"
+    }
+  },
+  {
+    "operation": "discord.threads.list",
+    "params": {
+      "guild_id": "234567890123456",
+      "channel_id": "123456789012345"
+    },
+    "normalized": {
+      "account": "",
+      "refresh": false,
+      "channel_id": "123456789012345",
+      "guild_id": "234567890123456",
+      "archived": false,
+      "before": "",
+      "limit": 100
+    }
+  },
+  {
+    "operation": "discord.messages.list",
+    "params": {
+      "channel_id": "123456789012345"
+    },
+    "normalized": {
+      "account": "",
+      "refresh": false,
+      "channel_id": "123456789012345",
+      "before": "",
+      "limit": 100,
+      "preview": false
+    }
+  },
+  {
+    "operation": "discord.messages.get",
+    "params": {
+      "channel_id": "123456789012345",
+      "message_id": "345678901234567"
+    },
+    "normalized": {
+      "account": "",
+      "refresh": false,
+      "channel_id": "123456789012345",
+      "message_id": "345678901234567"
+    }
+  },
+  {
+    "operation": "discord.events.list",
+    "params": {},
+    "normalized": {
+      "account": "",
+      "refresh": false,
+      "after": 0,
+      "limit": 200
+    }
+  },
+  {
+    "operation": "discord.messages.send",
+    "params": {
+      "guild_id": "234567890123456",
+      "channel_id": "123456789012345",
+      "content": "Fixture reply",
+      "nonce": "123",
+      "confirm": true
+    },
+    "normalized": {
+      "account": "",
+      "refresh": false,
+      "channel_id": "123456789012345",
+      "guild_id": "234567890123456",
+      "content": "Fixture reply",
+      "nonce": "123",
+      "reply_to": "",
+      "confirm": true
+    }
+  }
+]

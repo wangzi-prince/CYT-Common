@@ -1,0 +1,592 @@
+{
+  "operations": [
+    {
+      "key": "discord.identity.get",
+      "platform": "discord",
+      "summary": "验证机器人身份",
+      "description": "验证机器人身份",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 30,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read"
+      ],
+      "category": "消息与频道",
+      "sort_order": 0,
+      "path": "/integrations/discord/identity/get",
+      "schema": {
+        "properties": {
+          "account": {
+            "default": "",
+            "maxLength": 100,
+            "pattern": "^[\\w.-]*$",
+            "title": "Account",
+            "type": "string"
+          },
+          "refresh": {
+            "default": false,
+            "title": "Refresh",
+            "type": "boolean"
+          }
+        },
+        "title": "Account",
+        "type": "object"
+      }
+    },
+    {
+      "key": "discord.accounts.list",
+      "platform": "discord",
+      "summary": "发现已登记的机器人账号（不返回凭据）",
+      "description": "发现已登记的机器人账号（不返回凭据）",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 30,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read"
+      ],
+      "category": "消息与频道",
+      "sort_order": 1,
+      "path": "/integrations/discord/accounts/list",
+      "schema": {
+        "properties": {
+          "account": {
+            "default": "",
+            "maxLength": 100,
+            "pattern": "^[\\w.-]*$",
+            "title": "Account",
+            "type": "string"
+          },
+          "refresh": {
+            "default": false,
+            "title": "Refresh",
+            "type": "boolean"
+          }
+        },
+        "title": "Account",
+        "type": "object"
+      }
+    },
+    {
+      "key": "discord.guilds.list",
+      "platform": "discord",
+      "summary": "列出已加入的服务器",
+      "description": "列出已加入的服务器",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 30,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read"
+      ],
+      "category": "消息与频道",
+      "sort_order": 2,
+      "path": "/integrations/discord/guilds/list",
+      "schema": {
+        "properties": {
+          "account": {
+            "default": "",
+            "maxLength": 100,
+            "pattern": "^[\\w.-]*$",
+            "title": "Account",
+            "type": "string"
+          },
+          "refresh": {
+            "default": false,
+            "title": "Refresh",
+            "type": "boolean"
+          }
+        },
+        "title": "Account",
+        "type": "object"
+      }
+    },
+    {
+      "key": "discord.bots.list",
+      "platform": "discord",
+      "summary": "列出服务器机器人托管角色",
+      "description": "列出服务器机器人托管角色",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 30,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read"
+      ],
+      "category": "消息与频道",
+      "sort_order": 3,
+      "path": "/integrations/discord/bots/list",
+      "schema": {
+        "properties": {
+          "account": {
+            "default": "",
+            "maxLength": 100,
+            "pattern": "^[\\w.-]*$",
+            "title": "Account",
+            "type": "string"
+          },
+          "refresh": {
+            "default": false,
+            "title": "Refresh",
+            "type": "boolean"
+          },
+          "guild_id": {
+            "pattern": "^\\d{15,22}$",
+            "title": "Guild Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "guild_id"
+        ],
+        "title": "Guild",
+        "type": "object"
+      }
+    },
+    {
+      "key": "discord.channels.list",
+      "platform": "discord",
+      "summary": "列出服务器频道",
+      "description": "列出服务器频道",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 30,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read"
+      ],
+      "category": "消息与频道",
+      "sort_order": 4,
+      "path": "/integrations/discord/channels/list",
+      "schema": {
+        "properties": {
+          "account": {
+            "default": "",
+            "maxLength": 100,
+            "pattern": "^[\\w.-]*$",
+            "title": "Account",
+            "type": "string"
+          },
+          "refresh": {
+            "default": false,
+            "title": "Refresh",
+            "type": "boolean"
+          },
+          "guild_id": {
+            "pattern": "^\\d{15,22}$",
+            "title": "Guild Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "guild_id"
+        ],
+        "title": "Guild",
+        "type": "object"
+      }
+    },
+    {
+      "key": "discord.channels.get",
+      "platform": "discord",
+      "summary": "读取频道及所属服务器",
+      "description": "读取频道及所属服务器",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 30,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read"
+      ],
+      "category": "消息与频道",
+      "sort_order": 5,
+      "path": "/integrations/discord/channels/get",
+      "schema": {
+        "properties": {
+          "account": {
+            "default": "",
+            "maxLength": 100,
+            "pattern": "^[\\w.-]*$",
+            "title": "Account",
+            "type": "string"
+          },
+          "refresh": {
+            "default": false,
+            "title": "Refresh",
+            "type": "boolean"
+          },
+          "channel_id": {
+            "pattern": "^\\d{15,22}$",
+            "title": "Channel Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "channel_id"
+        ],
+        "title": "Channel",
+        "type": "object"
+      }
+    },
+    {
+      "key": "discord.threads.list",
+      "platform": "discord",
+      "summary": "读取论坛活动和归档帖子",
+      "description": "读取论坛活动和归档帖子",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 30,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read"
+      ],
+      "category": "消息与频道",
+      "sort_order": 6,
+      "path": "/integrations/discord/threads/list",
+      "schema": {
+        "properties": {
+          "account": {
+            "default": "",
+            "maxLength": 100,
+            "pattern": "^[\\w.-]*$",
+            "title": "Account",
+            "type": "string"
+          },
+          "refresh": {
+            "default": false,
+            "title": "Refresh",
+            "type": "boolean"
+          },
+          "channel_id": {
+            "pattern": "^\\d{15,22}$",
+            "title": "Channel Id",
+            "type": "string"
+          },
+          "guild_id": {
+            "pattern": "^\\d{15,22}$",
+            "title": "Guild Id",
+            "type": "string"
+          },
+          "archived": {
+            "default": false,
+            "title": "Archived",
+            "type": "boolean"
+          },
+          "before": {
+            "default": "",
+            "maxLength": 64,
+            "title": "Before",
+            "type": "string"
+          },
+          "limit": {
+            "default": 100,
+            "maximum": 100,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "channel_id",
+          "guild_id"
+        ],
+        "title": "Threads",
+        "type": "object"
+      }
+    },
+    {
+      "key": "discord.messages.list",
+      "platform": "discord",
+      "summary": "分页读取频道或帖子消息",
+      "description": "分页读取频道或帖子消息",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 30,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read"
+      ],
+      "category": "消息与频道",
+      "sort_order": 7,
+      "path": "/integrations/discord/messages/list",
+      "schema": {
+        "properties": {
+          "account": {
+            "default": "",
+            "maxLength": 100,
+            "pattern": "^[\\w.-]*$",
+            "title": "Account",
+            "type": "string"
+          },
+          "refresh": {
+            "default": false,
+            "title": "Refresh",
+            "type": "boolean"
+          },
+          "channel_id": {
+            "pattern": "^\\d{15,22}$",
+            "title": "Channel Id",
+            "type": "string"
+          },
+          "before": {
+            "default": "",
+            "pattern": "^\\d{0,22}$",
+            "title": "Before",
+            "type": "string"
+          },
+          "limit": {
+            "default": 100,
+            "maximum": 100,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "preview": {
+            "default": false,
+            "title": "Preview",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "channel_id"
+        ],
+        "title": "Messages",
+        "type": "object"
+      }
+    },
+    {
+      "key": "discord.messages.get",
+      "platform": "discord",
+      "summary": "读取原消息及回复上下文",
+      "description": "读取原消息及回复上下文",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 30,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read"
+      ],
+      "category": "消息与频道",
+      "sort_order": 8,
+      "path": "/integrations/discord/messages/get",
+      "schema": {
+        "properties": {
+          "account": {
+            "default": "",
+            "maxLength": 100,
+            "pattern": "^[\\w.-]*$",
+            "title": "Account",
+            "type": "string"
+          },
+          "refresh": {
+            "default": false,
+            "title": "Refresh",
+            "type": "boolean"
+          },
+          "channel_id": {
+            "pattern": "^\\d{15,22}$",
+            "title": "Channel Id",
+            "type": "string"
+          },
+          "message_id": {
+            "pattern": "^\\d{15,22}$",
+            "title": "Message Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "channel_id",
+          "message_id"
+        ],
+        "title": "Message",
+        "type": "object"
+      }
+    },
+    {
+      "key": "discord.events.list",
+      "platform": "discord",
+      "summary": "读取持久化实时消息及私信事件",
+      "description": "读取持久化实时消息及私信事件",
+      "quota": "120/min",
+      "sensitive": false,
+      "idempotent": false,
+      "timeout_s": 30,
+      "retry_max": 1,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "read"
+      ],
+      "category": "消息与频道",
+      "sort_order": 9,
+      "path": "/integrations/discord/events/list",
+      "schema": {
+        "properties": {
+          "account": {
+            "default": "",
+            "maxLength": 100,
+            "pattern": "^[\\w.-]*$",
+            "title": "Account",
+            "type": "string"
+          },
+          "refresh": {
+            "default": false,
+            "title": "Refresh",
+            "type": "boolean"
+          },
+          "after": {
+            "default": 0,
+            "minimum": 0,
+            "title": "After",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 200,
+            "maximum": 500,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "title": "Events",
+        "type": "object"
+      }
+    },
+    {
+      "key": "discord.messages.send",
+      "platform": "discord",
+      "summary": "确认后发送机器人消息",
+      "description": "确认后发送机器人消息",
+      "quota": "120/min",
+      "sensitive": true,
+      "idempotent": true,
+      "timeout_s": 30,
+      "retry_max": 0,
+      "since": "2026-11",
+      "deprecated": false,
+      "tags": [
+        "write"
+      ],
+      "category": "消息与频道",
+      "sort_order": 10,
+      "path": "/integrations/discord/messages/send",
+      "schema": {
+        "properties": {
+          "account": {
+            "default": "",
+            "maxLength": 100,
+            "pattern": "^[\\w.-]*$",
+            "title": "Account",
+            "type": "string"
+          },
+          "refresh": {
+            "default": false,
+            "title": "Refresh",
+            "type": "boolean"
+          },
+          "channel_id": {
+            "pattern": "^\\d{15,22}$",
+            "title": "Channel Id",
+            "type": "string"
+          },
+          "guild_id": {
+            "default": "",
+            "pattern": "^\\d{0,22}$",
+            "title": "Guild Id",
+            "type": "string"
+          },
+          "content": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Content",
+            "type": "string"
+          },
+          "nonce": {
+            "pattern": "^\\d{1,25}$",
+            "title": "Nonce",
+            "type": "string"
+          },
+          "reply_to": {
+            "default": "",
+            "pattern": "^\\d{0,22}$",
+            "title": "Reply To",
+            "type": "string"
+          },
+          "confirm": {
+            "default": false,
+            "title": "Confirm",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "channel_id",
+          "content",
+          "nonce"
+        ],
+        "title": "Send",
+        "type": "object"
+      }
+    }
+  ],
+  "platforms": [
+    {
+      "platform": "discord",
+      "display_name": "Discord",
+      "platform_quota": "120/min"
+    }
+  ],
+  "credentials": [
+    {
+      "platform": "discord",
+      "label": "Discord",
+      "docs": "https://docs.discord.com/developers/quick-start/getting-started",
+      "note": "Bot Token 仅由网关保存；开启 Message Content Intent。机器人个人私信与员工个人私信各自独立。",
+      "scope_policy": "inherit",
+      "strict_recommended": false,
+      "system_aware": false,
+      "accounts_var": "DISCORD_ACCOUNTS",
+      "default_account_var": "",
+      "account_fallback": "",
+      "vars": [
+        {
+          "name": "DISCORD_{ACCOUNT}_BOT_TOKEN",
+          "label": "Bot Token",
+          "required": true,
+          "secret": true,
+          "hint": "",
+          "example": "",
+          "per_system": false,
+          "scoped": "",
+          "account_scoped": true
+        }
+      ]
+    }
+  ]
+}

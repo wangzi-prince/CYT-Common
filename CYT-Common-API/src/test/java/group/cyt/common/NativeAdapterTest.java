@@ -11,6 +11,7 @@ import group.cyt.common.core.util.JsonUtils;
 import group.cyt.common.module.adapter.AdapterDispatcher;
 import group.cyt.common.module.adapter.MockAdapter;
 import group.cyt.common.module.adapter.PlatformAdapter;
+import group.cyt.common.module.adapter.discord.*;
 import group.cyt.common.module.adapter.docusign.DocusignAdapter;
 import group.cyt.common.module.adapter.google.*;
 import group.cyt.common.module.adapter.lingxing.LingxingAdapter;
@@ -870,18 +871,21 @@ class NativeAdapterTest {
     var registry = registry();
     var op = registry.get("judgeme.reviews.list");
     var params =
-        registry.validate(
-            op, JsonUtils.map(JsonUtils.obj("account", "fixture", "limit", 3)));
+        registry.validate(op, JsonUtils.map(JsonUtils.obj("account", "fixture", "limit", 3)));
     when(http.json(anyString(), anyString(), anyMap(), isNull(), anyDouble()))
         .thenReturn(
             JsonUtils.obj(
                 "reviews",
                 List.of(
                     JsonUtils.obj(
-                        "id", 1,
-                        "product_external_id", 8123456789012L,
-                        "product_handle", "kp80-keyboard",
-                        "product_title", "EPOMAKER KP80"),
+                        "id",
+                        1,
+                        "product_external_id",
+                        8123456789012L,
+                        "product_handle",
+                        "kp80-keyboard",
+                        "product_title",
+                        "EPOMAKER KP80"),
                     JsonUtils.obj("id", 2, "product_external_id", "0"),
                     JsonUtils.obj(
                         "id",
@@ -891,8 +895,7 @@ class NativeAdapterTest {
                         "product_external_id_type",
                         "SKU"))));
     var result =
-        JsonUtils.map(
-            new CustomerSourcesAdapter(credentials, http).invoke(op, params, "fixture"));
+        JsonUtils.map(new CustomerSourcesAdapter(credentials, http).invoke(op, params, "fixture"));
     var items = JsonUtils.list(result.get("items")).stream().map(JsonUtils::map).toList();
     assertEquals("8123456789012", items.get(0).get("product_id"));
     assertNull(items.get(0).get("sku"));
@@ -931,8 +934,10 @@ class NativeAdapterTest {
                             JsonUtils.obj(
                                 "node",
                                 JsonUtils.obj(
-                                    "id", "gid://shopify/Product/1",
-                                    "title", "KP80",
+                                    "id",
+                                    "gid://shopify/Product/1",
+                                    "title",
+                                    "KP80",
                                     "variants",
                                     JsonUtils.obj(
                                         "count",
@@ -940,9 +945,9 @@ class NativeAdapterTest {
                                         "edges",
                                         List.of(
                                             JsonUtils.obj(
-                                                "node",
-                                                JsonUtils.obj("sku", "TH80-BLK"))))))),
-                        "pageInfo", JsonUtils.obj("hasNextPage", false, "endCursor", null)))));
+                                                "node", JsonUtils.obj("sku", "TH80-BLK"))))))),
+                        "pageInfo",
+                        JsonUtils.obj("hasNextPage", false, "endCursor", null)))));
     var result =
         JsonUtils.map(
             new ShopifyAdapter(credentials, http, mock(TestWritePolicy.class))
@@ -1264,6 +1269,10 @@ class NativeAdapterTest {
         new LingxingAdapter(credentials, http, proxy, writePolicy, new TokenCache()),
         new WinitAdapter(credentials, http, writePolicy),
         new MabangAdapter(credentials, proxy),
+        new DiscordAdapter(
+            new DiscordClient(credentials, http, new GatewaySettings(new MockEnvironment())),
+            mock(DiscordEvents.class),
+            mock(DiscordGatewayListener.class)),
         new CustomerSourcesAdapter(credentials, http));
   }
 
