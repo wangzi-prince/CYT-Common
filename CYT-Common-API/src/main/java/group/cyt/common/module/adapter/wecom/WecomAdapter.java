@@ -11,6 +11,8 @@ import group.cyt.common.module.registry.service.*;
 import java.nio.charset.StandardCharsets;
 import java.time.*;
 import java.util.*;
+import java.util.concurrent.*;
+import jakarta.annotation.PreDestroy;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -28,6 +30,15 @@ public class WecomAdapter implements PlatformAdapter {
   private final UpstreamHttp http;
   private final TokenCache cache;
   private final OperationRegistry registry;
+  // 所有通讯录请求共享上限，避免多个调用方各自放大并发。
+  private final ExecutorService directoryPool = Executors.newFixedThreadPool(20, task -> {
+    Thread thread = new Thread(task, "wecom-directory-detail");
+    thread.setDaemon(true);
+    return thread;
+  });
+
+  @PreDestroy
+  public void close() { directoryPool.shutdownNow(); }
 
   public WecomAdapter(
       CredentialService credentials,
@@ -477,15 +488,10 @@ public class WecomAdapter implements PlatformAdapter {
     String mode = "contact_secret";
     if (p.get("userids") != null) {
       mode = "user_get";
-      for (Object id : JsonUtils.list(p.get("userids")))
-        try {
-          var u = call(c, "GET", "/user/get", JsonUtils.obj("userid", id), null, true);
-          users.put(JsonUtils.str(u, "userid"), u);
-        } catch (GatewayException e) {
-          if ("WECOM_60111".equals(e.code)) missing.add(id);
-          else throw e;
-        }
+      readDirectoryUsers(c, JsonUtils.list(p.get("userids")).stream().map(Object::toString).toList(),
+          true, true, users, missing);
     } else {
+      Set<String> detailIds = new LinkedHashSet<>();
       if (key.equals("directory.list")) wanted.add(JsonUtils.integer(p.get("department_id"), 1));
       for (int department : wanted) {
         var q =
@@ -512,11 +518,11 @@ public class WecomAdapter implements PlatformAdapter {
           for (Object v : simple) {
             var u = JsonUtils.map(v);
             String id = JsonUtils.str(u, "userid");
-            if (!users.containsKey(id))
-              users.put(id, call(c, "GET", "/user/get", JsonUtils.obj("userid", id), null, false));
+            detailIds.add(id);
           }
         }
       }
+      if (!detailIds.isEmpty()) readDirectoryUsers(c, new ArrayList<>(detailIds), false, false, users, missing);
     }
     List<Object> views = users.values().stream().map(u -> userView(u, names)).toList();
     var result =
@@ -545,6 +551,50 @@ public class WecomAdapter implements PlatformAdapter {
             c.app());
     if (key.equals("directory.list")) result.put("departments", deptViews);
     return result;
+  }
+
+  /** 先读完全部详情再返回快照；失败、限流或超时均不返回半套通讯录。 */
+  private void readDirectoryUsers(Context c, List<String> ids, boolean contact, boolean allowMissing,
+      Map<String, Map<String, Object>> users, List<Object> missing) {
+    if (ids.isEmpty()) return;
+    token(c, contact, false); // 预热一次，避免冷启动时 20 个线程重复申请 token。
+    record Detail(String id, Map<String, Object> user) {}
+    CompletionService<Detail> completed = new ExecutorCompletionService<>(directoryPool);
+    List<Future<Detail>> futures = new ArrayList<>();
+    Map<String, Map<String, Object>> results = new HashMap<>();
+    long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(150);
+    try {
+      for (String id : new LinkedHashSet<>(ids)) {
+        futures.add(completed.submit(() -> {
+          try { return new Detail(id, call(c, "GET", "/user/get", JsonUtils.obj("userid", id), null, contact)); }
+          catch (GatewayException error) {
+            if (allowMissing && "WECOM_60111".equals(error.code)) return new Detail(id, null);
+            throw error;
+          }
+        }));
+      }
+      for (int i = 0; i < futures.size(); i++) {
+        Future<Detail> future = completed.poll(Math.max(0, deadline - System.nanoTime()), TimeUnit.NANOSECONDS);
+        if (future == null)
+          throw new GatewayException(504, "upstream_timeout", "通讯录详情读取超时，未返回部分结果", true);
+        Detail detail = future.get();
+        results.put(detail.id(), detail.user());
+      }
+      // 维持请求顺序，只有全部成功才组装可返回的快照。
+      for (String id : new LinkedHashSet<>(ids)) {
+        var user = results.get(id);
+        if (user == null) missing.add(id);
+        else users.put(JsonUtils.str(user, "userid"), user);
+      }
+    } catch (InterruptedException error) {
+      Thread.currentThread().interrupt();
+      throw new GatewayException(504, "upstream_timeout", "通讯录读取已中断", true);
+    } catch (ExecutionException error) {
+      if (error.getCause() instanceof GatewayException gateway) throw gateway;
+      throw new GatewayException(502, "upstream_error", "通讯录详情读取失败，未返回部分结果", false);
+    } finally {
+      futures.forEach(future -> { if (!future.isDone()) future.cancel(true); });
+    }
   }
 
   private String departmentPath(
